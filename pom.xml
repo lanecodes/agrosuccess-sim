@@ -8,14 +8,30 @@
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-      		<source>1.8</source>	
-      		<target>1.8</target>
-        </configuration>
-      </plugin>
+    	<plugin>
+        	<artifactId>maven-compiler-plugin</artifactId>
+        	<version>3.5.1</version>
+        	<configuration>
+      			<source>1.8</source>	
+      			<target>1.8</target>
+        	</configuration>
+      	</plugin>
+
+    	<plugin>
+    	<!-- Include dependencies etc in distributable archive. See: 
+    	https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven -->
+    		<artifactId>maven-assembly-plugin</artifactId>
+        	<configuration>
+        		<archive>
+        			<manifest>
+        				<mainClass>me.ajlane.loadcypher.LCTTransDecider</mainClass>
+        			</manifest>
+        		</archive>
+          		<descriptorRefs>
+          			<descriptorRef>jar-with-dependencies</descriptorRef>
+          		</descriptorRefs>
+        	</configuration>
+    	</plugin>
     </plugins>
   </build>
   <dependencies>
