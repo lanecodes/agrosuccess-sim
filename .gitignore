@@ -1,2 +1,12 @@
 /bin/
 /target/
+
+# compiled classes
+*\$py.class
+
+# temporary files for illustration during development
+Building.py
+BuildingFactory.java
+BuildingType.java
+
+

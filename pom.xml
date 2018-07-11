@@ -7,7 +7,6 @@
   <description>Consumes cypher files in a structured way, building an embedded, queryable database.</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
-      <pluginManagement>
 	    <plugins>
 	    	<plugin>
 	        	<artifactId>maven-compiler-plugin</artifactId>
@@ -25,7 +24,7 @@
 	        	<configuration>
 	        		<archive>
 	        			<manifest>
-	        				<mainClass>me.ajlane.loadcypher.LCTTransDecider</mainClass>
+	        				<mainClass>me.ajlane.loadcypher.Main</mainClass>
 	        			</manifest>
 	        		</archive>
 	          		<descriptorRefs>
@@ -67,7 +66,6 @@
 			</plugin>
 	    	
 	    </plugins>
-  	</pluginManagement>
   </build>
   <dependencies>
   	<dependency>
