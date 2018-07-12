@@ -7,16 +7,25 @@ jar_location = jython().getClass().getProtectionDomain().getCodeSource().getLoca
 import os.path
 site.addsitedir(os.path.join(jar_location, 'Lib/site-packages'))
 
-import sys
+from cymod import EmbeddedGraphLoader
 
-print sys.path
-
-import cymod
-print cymod.__file__
-
-#from cymod import EmbeddedGraphLoader
-#print EmbeddedGraphLoader.__file__
-#eg = EmbeddedGraphLoader()
-
-#class GraphLoader(GraphLoaderType):
+class GraphLoader(GraphLoaderType):
+    def __init__(self, root_dir, fname_suffix, global_param_file=None):
+        self.gl =  EmbeddedGraphLoader(root_dir, 
+                                       fname_suffix, 
+                                       global_param_file)
+        
+        self.qg = self.gl.query_generator()
+        
+    def getNextQuery(self):
+        try:
+            next_query = self.qg.next()
+            if next_query:
+                return next_query
+            else:
+                # avoid case where an empty string causes self.qg.next() to return None
+                return ""       
+        
+        except StopIteration:
+            return None   
     

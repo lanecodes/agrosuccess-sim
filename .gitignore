@@ -9,4 +9,7 @@ Building.py
 BuildingFactory.java
 BuildingType.java
 
+# Documentation, not under vcs for the time being
+docs/*
+
 

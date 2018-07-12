@@ -1,34 +1,41 @@
 package me.ajlane.loadcypher;
 
-import me.ajlane.loadcypher.BuildingFactory;
-import me.ajlane.loadcypher.BuildingType;
+import me.ajlane.loadcypher.GraphLoaderType;
+import me.ajlane.loadcypher.GraphLoaderFactory;
 
 public class Main {
 
-	/*
-    private static void print(BuildingType building) {
-        System.out.println("Building Info: " +
-                building.getBuildingId() + " " +
-                building.getBuildingName() + " " +
-                building.getBuildingAddress());
-    }
-    */
+    private static void print(GraphLoaderType graphLoader) {
 
-    /**
-     * Create three building objects by calling the create() method of
-     * the factory.
-     */
+    	Boolean moreQueries = true;   
+    	int queryNo = 0;
+    	while (moreQueries) {    		
+    		String nextQuery = graphLoader.getNextQuery();
+    		
+    		if (nextQuery == null) {
+    			System.out.println("Null query!"); //moreQueries = false;
+    			moreQueries  = false;
+    		} else {
+        		System.out.println("Query No " + queryNo + ":\n" +
+                        graphLoader.getNextQuery());   
+        		queryNo++;
+    		} 	
+    				
+    	}
+        
+    }
+
 
     public static void main(String[] args) {
     	
-    	GraphLoaderFactory factory = new GraphLoaderFactory();
+    	String projectRoot = "/home/andrew/Gredos/";
+    	String cypherRoot = projectRoot + "views";
+    	String fnameSuffix = "_w";
+    	String globalParamFile = projectRoot + "global_parameters.json";    			
     	
-    	/*
-        BuildingFactory factory = new BuildingFactory();
-        print(factory.create("BUILDING-A", "100 WEST MAIN", "1"));
-        print(factory.create("BUILDING-B", "110 WEST MAIN", "2"));
-        print(factory.create("BUILDING-C", "120 WEST MAIN", "3"));
-    	 */
+    	GraphLoaderFactory factory = new GraphLoaderFactory();
+    	GraphLoaderType graphLoader = factory.create(cypherRoot, fnameSuffix, 
+    											globalParamFile);
+    	print(graphLoader);
     }
-
 }
