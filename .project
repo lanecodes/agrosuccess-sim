@@ -6,6 +6,11 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>repast.simphony.statecharts.diagram.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.python.pydev.PyDevBuilder</name>
 			<arguments>
 			</arguments>
@@ -22,8 +27,11 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.jdt.groovy.core.groovyNature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.python.pydev.pythonNature</nature>
+		<nature>repast.simphony.eclipse.repast_simphony_nature</nature>
+		<nature>repast.simphony.statecharts.diagram.repast_simphony_statechart_nature</nature>
 	</natures>
 </projectDescription>
