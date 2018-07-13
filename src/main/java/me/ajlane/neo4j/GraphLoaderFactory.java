@@ -1,7 +1,9 @@
-package me.ajlane.loadcypher;
+package me.ajlane.neo4j;
 
-import me.ajlane.loadcypher.GraphLoaderType;
 import org.python.util.PythonInterpreter;
+
+import me.ajlane.neo4j.GraphLoaderType;
+
 import org.python.core.PyObject;
 import org.python.core.PyString;
 
@@ -13,6 +15,7 @@ public class GraphLoaderFactory {
 		PythonInterpreter interp = new PythonInterpreter();
 		interp.exec("from GraphLoader import GraphLoader");
 		graphLoaderClass = interp.get("GraphLoader");
+		interp.cleanup();
    }
 	
    public GraphLoaderType create (String rootDir, String fnameSuffix, 

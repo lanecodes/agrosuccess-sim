@@ -1,4 +1,4 @@
-package me.ajlane.loadcypher;
+package me.ajlane.neo4j;
 
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;

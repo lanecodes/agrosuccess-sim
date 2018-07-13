@@ -1,4 +1,4 @@
-package me.ajlane.loadcypher;
+package me.ajlane.neo4j;
 
 public interface GraphLoaderType {
 	

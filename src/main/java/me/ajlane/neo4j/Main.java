@@ -1,7 +1,7 @@
-package me.ajlane.loadcypher;
+package me.ajlane.neo4j;
 
-import me.ajlane.loadcypher.GraphLoaderType;
-import me.ajlane.loadcypher.GraphLoaderFactory;
+import me.ajlane.neo4j.GraphLoaderFactory;
+import me.ajlane.neo4j.GraphLoaderType;
 
 public class Main {
 
