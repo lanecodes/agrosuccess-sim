@@ -12,6 +12,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.grid.GridPointTranslator;
+import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 import me.ajlane.repast.geo.DisaggregatedGeoRaster;
@@ -27,12 +28,27 @@ import me.ajlane.repast.geo.DisaggregatedGeoRaster;
 public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer {
 	
 	private String fileName;
-	protected ReferencedEnvelope envelope;
+	private ReferencedEnvelope envelope;
+	protected IGridValueLayer valueLayer;
 	protected int height;
 	protected int width;
-	protected T valueLayer;
-	 
 	
+	 /**
+	  * Creates a GridValueLayer with the specified name, density, and dimensions.
+	  * The default value of every cell in the grid will be -99999.0. The default border
+	  * behavior is strict.
+	  * 	 
+	  * @param fileName
+	  * 		the path to the georeferenced data file to be used to construct 
+	  *	    	the layer 
+	  * @param layerName
+	  *          the name of the value layer
+	  */
+	  public AbstractGeoRasterValueLayer(String fileName, String layerName)
+			  throws DataSourceException, IOException {
+		  this(fileName, layerName, -99999.0, new StrictBorders());
+	  }	  
+
 	/**
 	 * Creates a AbstractGeoRasterValueLayer with the specified fileName layerName, 
 	 * defaultValue and grid translator.
@@ -85,26 +101,51 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 		
 	}
 	
-	abstract protected void applyRasterToValueLayer(Raster raster);
-	
 	// inheriting concrete class implementation will create instance of 
 	// appropriate ValueLayer type
-	abstract protected T getValueLayer(String layerName, double defaultValue, 
+	abstract protected IGridValueLayer getValueLayer(String layerName, double defaultValue, 
 			GridPointTranslator translator);
 	
+	protected void applyRasterToValueLayer(Raster raster) {
+		// assumes raster only has one band (index 0)
+		for (int i=0; i<width; i++) {
+			for (int j=0; j<height; j++) {
+				valueLayer.set(raster.getSampleDouble(i, j, 0), i, j);
+			}
+		}
+	}
+	
 	public String getFileName() {
-		return this.fileName;
+		// Get name of file used to create the layer
+		return fileName;
+	}
+	
+	public ReferencedEnvelope getEnvelope() {
+		return envelope;
 	}
 
 	@Override
-	abstract public String getName();
+	public String getName() {
+		// Get name of layer
+		return valueLayer.getName();
+	}
 
 	@Override
-	abstract public double get(double... coordinates);
+	public double get(double... coordinates) {
+		// Get values given coordinates
+		return valueLayer.get(coordinates);
+
+	}
 
 	@Override
-	abstract public Dimensions getDimensions();
+	public Dimensions getDimensions() {
+		return valueLayer.getDimensions();
+
+	}
 
 	@Override
-	abstract public void set(double value, int... coordinate); 
+	public void set(double value, int... coordinate) {
+		valueLayer.set(value, coordinate);
+	}
+
 }
