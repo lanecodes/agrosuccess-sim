@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>me.ajlane</groupId>
+  <artifactId>agrosuccess</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>AgroSuccess</name>
+  <description>Agent-based model of land-cover change</description>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+			<source>1.8</source> 
+			<target>1.8</target> 
+        </configuration>
+      </plugin>
+      
+	  <plugin>
+	   		<groupId>org.apache.maven.plugins</groupId>
+	   		<artifactId>maven-install-plugin</artifactId>
+	   		<version>2.4</version>
+	   		<executions>
+	   			<!--  Install custom jython jar into local maven repo. See
+	   			https://blog.valdaris.com/post/custom-jar/-->
+	       		<execution>
+	           		<phase>initialize</phase>
+	           			<goals>
+	               			<goal>install-file</goal>
+	           			</goals>
+	           			<configuration>
+	               			<groupId>me.ajlane</groupId>
+	               			<artifactId>jython-cymod</artifactId>
+	               			<version>0.0.1</version>
+	               			<packaging>jar</packaging>
+	               			<file>${basedir}/lib/jython_v2.7.0-cymod_v0.0.1.jar</file>
+	           			</configuration>
+	       		</execution>
+	   		</executions>
+		</plugin>
+		
+    </plugins>
+  </build>
+  
+  <dependencies>
+  	<dependency>
+  	<!-- for applications using neo4j server -->
+  		<groupId>org.neo4j.driver</groupId>
+  		<artifactId>neo4j-java-driver</artifactId>
+  		<version>1.4.4</version>
+  	</dependency>
+  	
+  	<dependency>
+  	<!-- for embedded applications -->
+  		<groupId>org.neo4j</groupId>
+  		<artifactId>neo4j</artifactId>
+  		<version>3.4.0</version>
+  	</dependency>
+  	
+  	<dependency>
+  		<groupId>me.ajlane</groupId>
+  		<artifactId>jython-cymod</artifactId>
+  		<version>0.0.1</version>
+  	</dependency>
+  </dependencies>
+</project>

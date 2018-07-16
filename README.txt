@@ -1,0 +1,1 @@
+See advice here for Repast/ Maven integration https://sourceforge.net/p/repast/mailman/message/35615878/
