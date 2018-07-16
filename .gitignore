@@ -1,5 +1,21 @@
+# compiled source
+bin/
 target/
-MessageCenter.log4j.properties
-freezedried_data/
+
+# repast outputs
 freezedried_data/
 output/
+
+# logging
+MessageCenter.log4j.properties
+
+# compiled classes
+*\$py.class
+
+# temporary files for illustration during development
+Building.py
+BuildingFactory.java
+BuildingType.java
+
+# Documentation, not under vcs for the time being
+docs/*

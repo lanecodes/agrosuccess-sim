@@ -6,8 +6,20 @@
   <name>AgroSuccess</name>
   <description>Agent-based model of land-cover change</description>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
+   	<plugins>
+   	<!-- 
+   	I've had great difficulty getting maven to compile the project as it seems to be 
+   	unable to pull in the Repast Simphony Development Libraries. This appears to be
+   	related to its reluctance to recognise Eclipse classpath containers. This is the 
+   	same issue as is faced in this SO
+   	https://stackoverflow.com/questions/43822745/add-dependencies-to-maven-from-custom-eclipse-version-repast
+   	
+   	compilation plugin currently commented out. The intention is that maven should be 
+   	able to portably install non-Repast dependencies, and Repast itself can be used 
+   	for packaging , as suggested in this SorceForge post:
+   	https://sourceforge.net/p/repast/mailman/message/35615878/
+   	-->
+   	
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
@@ -15,7 +27,20 @@
 			<source>1.8</source> 
 			<target>1.8</target> 
         </configuration>
+           <executions>
+     			<execution>
+       				<id>default-compile</id>
+       				<phase>compile</phase>
+       				<goals>
+          				<goal>compile</goal>
+       				</goals>
+       				<configuration>
+         				<skipMain>true</skipMain> <!-- Skip -->
+       				</configuration>
+     			</execution>
+   			</executions>
       </plugin>
+    
       
 	  <plugin>
 	   		<groupId>org.apache.maven.plugins</groupId>
