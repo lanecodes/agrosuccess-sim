@@ -1,14 +1,39 @@
 package me.ajlane.neo4j;
 
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 
 import me.ajlane.neo4j.GraphLoaderFactory;
 import me.ajlane.neo4j.GraphLoaderType;
 
+/** Manual tests used to help understand how to use the Neo4j embedded
+ * 	graph database. This logic should be moved into formal unit tests.
+ * 
+ * @author andrew
+ *
+ */
 public class GraphLoadingTester {
+	
+	static String projectRoot = "/home/andrew/AgroSuccess/";
+	static String cypherRoot = projectRoot + "views";
+	static String fnameSuffix = "_w";
+	static String globalParamFile = projectRoot + "global_parameters.json";
+	
+    public static GraphLoaderType constructGraphLoader() {
+    	
+    	GraphLoaderFactory factory = new GraphLoaderFactory();
+    	GraphLoaderType graphLoader = factory.create(cypherRoot, fnameSuffix, 
+    											globalParamFile);
+    	
+    	return graphLoader;    	
+    }
 
+    /** Prints out the queries provided by a GraphLoaderType without
+     * putting them anywhere near a database. The check here is whether
+     * or not the correct *number* of queries are coming out of the graph
+     * loader. 
+     * 
+     */
     private static void print(GraphLoaderType graphLoader) {
 
     	Boolean moreQueries = true;   
@@ -22,19 +47,19 @@ public class GraphLoadingTester {
     		} else {
         		System.out.println("Query No " + queryNo + ":\n" + nextQuery);   
         		queryNo++;
-    		} 	
-    				
+    		} 		
     	}
-        
-    }
-    
-    private static void testQuery(EmbeddedGraphInstance graph) {
+    }    
+
+    /**
+     * Checks that, after loading real data into the embedded database, 
+     * the expected number of nodes are present.
+     * 
+     * @param graph
+     */
+    private static void testQueryOnData(EmbeddedGraphInstance graph) {
     	try ( Transaction tx = graph.beginTx() ) {
     		String query = "MATCH (n:LandCoverType {model_ID:\"AgroSuccess-dev\"}) RETURN n;";
-    		//String queryIn = "MERGE (n:Test {message:\"Hey!\"});";
-    		//String queryOut = "MATCH (n:Test) RETURN n;";
-    		
-    		//Result res = graph.execute(queryIn);
     		Result res = graph.execute(query);
     		while (res.hasNext()) {
     			System.out.println(res.next());
@@ -47,20 +72,20 @@ public class GraphLoadingTester {
 
     public static void main(String[] args) {
     	
-    	String projectRoot = "/home/andrew/AgroSuccess/";
-    	String cypherRoot = projectRoot + "views";
-    	String fnameSuffix = "_w";
-    	String globalParamFile = projectRoot + "global_parameters.json";    			
-    	
-    	//GraphLoaderFactory factory = new GraphLoaderFactory();
-    	//GraphLoaderType graphLoader = factory.create(cypherRoot, fnameSuffix, 
-    	//										globalParamFile);
+    	boolean printLoadedQueries = false;
+    	boolean loadData = false;
     	
     	EmbeddedGraphInstance graph = new EmbeddedGraphInstance("output/databases/agrosuccess.db"); 
-    	//graph.insertExternalCypher(cypherRoot, fnameSuffix, globalParamFile);
-    	//print(graphLoader);
-    	testQuery(graph);
-    	graph.shutdown();
     	
+    	if (loadData) {
+    		graph.insertExternalCypher(cypherRoot, fnameSuffix, globalParamFile);
+    	}
+    	
+    	if (printLoadedQueries) {
+    		print(constructGraphLoader());
+    	}
+   
+    	testQueryOnData(graph);
+    	graph.shutdown();    	
     }
 }

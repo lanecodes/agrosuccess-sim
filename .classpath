@@ -31,5 +31,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jython_v2.7.0-cymod_v0.0.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
