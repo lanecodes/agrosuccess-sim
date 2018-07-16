@@ -1,4 +1,4 @@
-package me.ajlane.neo4j;
+package me.ajlane.repast.geo.succession;
 
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
