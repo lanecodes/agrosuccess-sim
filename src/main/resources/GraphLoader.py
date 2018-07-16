@@ -1,4 +1,4 @@
-from me.ajlane.loadcypher import GraphLoaderType
+from me.ajlane.neo4j import GraphLoaderType
 
 # workaround to add Lib/site-packages to sys.path http://bugs.jython.org/issue2143 
 import site

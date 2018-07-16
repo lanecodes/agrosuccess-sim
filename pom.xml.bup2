@@ -16,32 +16,7 @@
 	      			<target>1.8</target>
 	        	</configuration>
 	      	</plugin>
-	
-	    	<plugin>
-	    	<!-- Include dependencies etc in distributable archive. See: 
-	    	https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven -->
-	    		<artifactId>maven-assembly-plugin</artifactId>
-	        	<configuration>
-	        		<archive>
-	        			<manifest>
-	        				<mainClass>me.ajlane.loadcypher.Main</mainClass>
-	        			</manifest>
-	        		</archive>
-	          		<descriptorRefs>
-	          			<descriptorRef>jar-with-dependencies</descriptorRef>
-	          		</descriptorRefs>
-	        	</configuration>
-	        	<executions>
-	    			<execution>
-	      				<id>make-assembly</id> <!-- this is used for inheritance merges -->
-	      				<phase>package</phase> <!-- bind to the packaging phase -->
-	      				<goals>
-	        				<goal>single</goal>
-	      				</goals>
-	    			</execution>
-	  			</executions>
-	    	</plugin>
-	    	
+ 
 	    	<plugin>
 	    		<groupId>org.apache.maven.plugins</groupId>
 	    		<artifactId>maven-install-plugin</artifactId>
@@ -69,9 +44,17 @@
   </build>
   <dependencies>
   	<dependency>
+  	<!-- for applications using neo4j server -->
   		<groupId>org.neo4j.driver</groupId>
   		<artifactId>neo4j-java-driver</artifactId>
   		<version>1.4.4</version>
+  	</dependency>
+  	
+  	<dependency>
+  	<!-- for embedded applications -->
+  		<groupId>org.neo4j</groupId>
+  		<artifactId>neo4j</artifactId>
+  		<version>3.4.0</version>
   	</dependency>
   	
   	<dependency>
