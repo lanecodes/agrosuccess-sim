@@ -1,0 +1,46 @@
+/**
+ * 
+ */
+package me.ajlane.repast.geo.succession;
+
+import java.io.IOException;
+
+import org.geotools.data.DataSourceException;
+
+import me.ajlane.repast.geo.GeoRasterValueLayer;
+import repast.simphony.space.grid.GridPointTranslator;
+
+/**
+ * @author andrew
+ *
+ */
+public class SoilMoistureLayer extends GeoRasterValueLayer {
+
+	/**
+	 * @param fileName
+	 * @param layerName
+	 * @param defaultValue
+	 * @param translator
+	 * @throws DataSourceException
+	 * @throws IOException
+	 */
+	public SoilMoistureLayer(String fileName, String layerName,
+			double defaultValue, GridPointTranslator translator)
+			throws DataSourceException, IOException {
+		super(fileName, layerName, defaultValue, translator);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param fileName
+	 * @param layerName
+	 * @throws DataSourceException
+	 * @throws IOException
+	 */
+	public SoilMoistureLayer(String fileName, String layerName)
+			throws DataSourceException, IOException {
+		super(fileName, layerName);
+		// TODO Auto-generated constructor stub
+	}
+
+}

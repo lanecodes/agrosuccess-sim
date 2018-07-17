@@ -48,7 +48,7 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 			  throws DataSourceException, IOException {
 		  this(fileName, layerName, -99999.0, new StrictBorders());
 	  }	  
-
+	  
 	/**
 	 * Creates a AbstractGeoRasterValueLayer with the specified fileName layerName, 
 	 * defaultValue and grid translator.
@@ -79,6 +79,36 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 		applyRasterToValueLayer(data.getRaster());
 		
 	}
+	
+	 /**
+	  * An alternative constructor for an AbstractGeoRasterValueLayer intended to be
+	  * used in situations where we know what geographical bounding box and dimensions
+	  * we require for the ValueLayer, but don't have a file which we intend to use to
+	  * construct one. Instead, we might decide to initialise its values using some sort
+	  * of application logic contained in a specialised subclass. In any case, we allow
+	  * that subclass freedom to implement that however is appropriate.
+	  * 
+	  * The default value of every cell in the grid will be -99999.0. The default border
+	  * behaviour is strict.
+	  * 	 
+	  * @param fileName
+	  * 		The path which should be used if the layer is ever saved to a georeferenced 
+	  * 		data file.
+	  * @param layerName
+	  *         The name of the value layer.
+	  * @param dimensions
+	  * 		The x, y dimensions of the ValueLayer
+	  * @param envelope
+	  * 		The (geo) ReferencedEnvelope specifying the geographical extent of the 
+	  * 		value layer (for potential use in subsequent GIS applications).  
+	  */
+	  public AbstractGeoRasterValueLayer(String fileName, String layerName, int[] dimensions,
+			  ReferencedEnvelope envelope) {
+		  this.envelope = envelope;
+		  width = dimensions[0];
+		  height = dimensions[1];		  
+		  valueLayer = getValueLayer(layerName, -99999.0, new StrictBorders());		  
+	  }	 
 	
 	/**
 	 * Reads fileName and pulls out a georeferenced envelope for the area
