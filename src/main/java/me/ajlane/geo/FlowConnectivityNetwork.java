@@ -192,7 +192,6 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 				}
 				
 				// assert flow goes from cell i to cell j
-				System.out.format("Setting i=%s, j=%s\n", i, j);
 				setEntry(i, j, 1.0);						
 				
 			}
