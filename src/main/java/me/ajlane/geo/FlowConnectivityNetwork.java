@@ -216,6 +216,21 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 		return this.numNodes - 1;
 	}
 	
+	/**
+	 * @return
+	 * 			A count of  the number of nodes which connect to the sink
+	 * 			node, allowing water to drain out of the grid
+	 */
+	public int sinkCount() {
+		double[] sinkCol = this.getColumn(getSinkNode());
+		double sum = 0; int i = 0;
+		while (i<sinkCol.length) {
+			sum += sinkCol[i];
+			i++;
+		}
+		return (int)sum;
+	}
+	
 	/*
 	 * For a FlowConnectivityMatrix to be valid there needs to be at
 	 * least one 
