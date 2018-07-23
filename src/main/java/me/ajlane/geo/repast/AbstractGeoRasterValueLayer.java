@@ -1,4 +1,4 @@
-package me.ajlane.repast.geo;
+package me.ajlane.geo.repast;
 
 import java.awt.image.Raster;
 import java.io.File;
@@ -10,12 +10,11 @@ import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
+import me.ajlane.geo.repast.DisaggregatedGeoRaster;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.grid.GridPointTranslator;
 import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.IGridValueLayer;
-
-import me.ajlane.repast.geo.DisaggregatedGeoRaster;
 
 /**
  * Abstraction to support the loading of data from geotagged raster data 

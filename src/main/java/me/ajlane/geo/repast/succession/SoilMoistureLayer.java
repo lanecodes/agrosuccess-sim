@@ -1,13 +1,13 @@
 /**
  * 
  */
-package me.ajlane.repast.geo.succession;
+package me.ajlane.geo.repast.succession;
 
 import java.io.IOException;
 
 import org.geotools.data.DataSourceException;
 
-import me.ajlane.repast.geo.GeoRasterValueLayer;
+import me.ajlane.geo.repast.GeoRasterValueLayer;
 import repast.simphony.space.grid.GridPointTranslator;
 
 /**
