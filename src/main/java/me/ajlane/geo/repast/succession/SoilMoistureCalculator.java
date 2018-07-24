@@ -20,12 +20,25 @@ public class SoilMoistureCalculator {
 	private GridValueLayer soilMoisture, landCoverType, soilMap, slope;
 	private SparseRealMatrix drainageMatrix;
 	private RealVector runoffVector;
+	private double sinkAffinityFactor;
 	private int nX, nY;
+	
 	
 	public SoilMoistureCalculator(FlowConnectivityNetwork flowNetwork,
 			double initialSoilMoisture, Context<Object> context) {
-		
-		
+		this(flowNetwork, initialSoilMoisture, 1.0, context);
+	}
+	
+	/**
+	 * @param flowNetwork
+	 * @param initialSoilMoisture
+	 * @param saf
+	 * 			Sink Affinity Factor
+	 * @param context
+	 */
+	public SoilMoistureCalculator(FlowConnectivityNetwork flowNetwork,
+			double initialSoilMoisture, double saf, Context<Object> context) {
+				
 		soilMoisture = (GridValueLayer) context.getValueLayer("soil moisture");
 		slope = (GridValueLayer) context.getValueLayer("slope");
 		soilMap = (GridValueLayer) context.getValueLayer("soil");
@@ -35,6 +48,7 @@ public class SoilMoistureCalculator {
 		nX = (int)soilMoisture.getDimensions().getWidth();
 		
 		drainageMatrix = calcDrainageMatrix(flowNetwork);
+		setSinkAffinityFactor(saf);
 		runoffVector = new ArrayRealVector(nX*nY+1);
 		
 		initSoilMoisture(initialSoilMoisture);
@@ -61,7 +75,7 @@ public class SoilMoistureCalculator {
 		return drainageMatrix;
 	}
 	
-	public SparseRealMatrix getDrainageMatrix() {
+	protected SparseRealMatrix getDrainageMatrix() {
 		return drainageMatrix;
 	}	
 	
@@ -244,42 +258,74 @@ public class SoilMoistureCalculator {
 	 * 			the x and y coordinates of the grid cell corresponding to runoff
 	 * 			node i, respectively.
 	 */
-	public int[] indexSpatialCoords(int i) {
+	private int[] indexSpatialCoords(int i) {
 		int coords[] = new int[2];
 		coords[0] = i%nX;
 		coords[1] = i/nX;
 		return coords;
 	}
 	
-	public void updateRunoffVector(double precip) {
+	/**
+	 * @param raf
+	 * 			Sink affinity factor, 0<saf<=1. A dimensionless parameter controlling 
+	 * 			how much water flows out of each cell which drains into the sink in 
+	 *  		each model time step. Specifically, precipitation * sinkAffinityFactor
+	 *  		will drain out of each cell connected to the sink in each time step.
+	 *  
+	 *    		saf = 0 implies no water leaves through the sink, so water would 
+	 *    		accumulate at the nodes which would otherwise drain the model.
+	 *    
+	 *    		saf > 1 could, in an extreme case, mean that a cell ended up with 
+	 *    		negative soil moisture (obviously unphysical). Therefore the maximum
+	 *    		water which can be safely extracted from each cell is equal to the 
+	 *    		amount of water going into it via precipitation. 
+	 */
+	private void setSinkAffinityFactor(double saf) {
+		if (saf<=0 || saf>1) {
+			System.out.println("sinkAffinityFactor must be >0 and <=1.");
+			throw new IllegalArgumentException();
+		} else {
+			sinkAffinityFactor =  saf;
+		}		
+	}
+	
+	protected void updateRunoffVector(double precip) {
 		for(int x=0; x<nX; x++) {
 			for(int y=0; y<nY; y++){
-				int i = spatialCellIndex(x, y);
 				double dX = (double) x;
 				double dY = (double) y;
+				
+				int i = spatialCellIndex(x, y);
 				
 				double cn = curveNumber(slope.get(dX, dY), 
 										(int)soilMap.get(dX, dY), 
 										(int)landCoverType.get(dX, dY));
 				
-				runoffVector.setEntry(i, cellRunoff(precip, abstractionRate(cn)));				
+				runoffVector.setEntry(i, cellRunoff(precip, abstractionRate(cn)));							
 			}
-		}		
+		}
+		// Sink node will extract precip mm of water per node connected to it
+		// per time step, producing neutral water balance
+		runoffVector.setEntry(nX*nY, precip*sinkAffinityFactor);
 	}
 	
 	protected RealVector getRunoffVector() {
 		return runoffVector;	
 	}
 	
-	private RealVector calcSoilMoistureVector() {
-		return drainageMatrix.operate(runoffVector);		
+	private RealVector calcSoilMoistureVector(double precip) {
+		updateRunoffVector(precip);
+		RealVector precipVector = new ArrayRealVector(nX*nY+1).mapAdd(precip);		
+		return drainageMatrix.operate(runoffVector).add(precipVector);		
 	}
 	
-	public void updateSoilMoistureLayer() {
-		double[] sm = calcSoilMoistureVector().toArray();
-		for(int i=0; i<sm.length; i++){
+	public void updateSoilMoistureLayer(double precip) {
+		double[] sm = calcSoilMoistureVector(precip).toArray();
+		// only go to sm.length-1 as vector includes runoff node
+		for(int i=0; i<sm.length-1; i++){
 			int[] coords = indexSpatialCoords(i);
-			soilMoisture.set(sm[i], coords[0], coords[1]);
+			//System.out.format("%d -> (%d, %d) = %3.2f\n", i, coords[1], coords[0], sm[i]);
+			soilMoisture.set(sm[i], coords[1], coords[0]);
 		}
 	}
 }
