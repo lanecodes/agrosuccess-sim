@@ -61,7 +61,6 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 		
 				
 		setMatrixValues(spatialFlowGrid);
-		checkDensity();
 		checkSinkExists();
 			
 	}
@@ -209,7 +208,7 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 	
 	/**
 	 * @return
-	 * 			Index of the sink mode
+	 * 			Index of the sink node
 	 */
 	public int getSinkNode() {
 		return this.numNodes - 1;
@@ -235,6 +234,12 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 	 * least one 
 	 */
 	private void checkSinkExists() {
+		if (sinkCount()<1) {
+			System.out.println("Provided flow direction grid doesn't include " + 
+								"any sinks. Check input GTiff.");
+			throw new IllegalStateException();			
+		}
+		
 		
 	}
 	
@@ -243,9 +248,9 @@ public class FlowConnectivityNetwork extends OpenMapRealMatrix implements Sparse
 	 * Density should be nX*nY/(nXnY+1)^2, we should test this to check
 	 * it is as expected
 	 */
-	private void checkDensity() {
-		
-	}
+	//private void checkDensity() {
+	//	
+	//}
 	
 	
 

@@ -77,6 +77,11 @@ public class SoilMoistureCalculatorTest {
 		//TODO check runoff vector matches pen-and-paper check
 	}
 	
+	@Test
+	public void updatedSoilMoistureValueLayerShouldBeThis() {
+		//TODO check runoff vector matches pen-and-paper check
+	}
+	
 	
 	
 	public static void main(String args[]) throws NotStrictlyPositiveException, NumberIsTooLargeException, DataSourceException, IOException {
