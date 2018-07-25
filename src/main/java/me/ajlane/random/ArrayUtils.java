@@ -72,7 +72,5 @@ public class ArrayUtils {
 			Arrays.sort(hand);
 		}
 		return hand;				
-	}
-	
-	
+	}	
 }
