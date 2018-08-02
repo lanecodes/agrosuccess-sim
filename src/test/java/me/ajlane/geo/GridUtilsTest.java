@@ -23,14 +23,14 @@ public class GridUtilsTest {
 	}
 	
 	@Test
-	public void shouldGetSpatialCoordsTwoOne() {
+	public void shouldGetSpatialCoordsOneTwo() {
 		/* 
 		 * Test array:
 		 * {0, 1, 2,
 		 *  3, 4, 5}
 		 */
 		int[] coords = GridUtils.indexToSpatialCoords(5, 3, 2);
-		assertEquals(coords[0], 2);
-		assertEquals(coords[1], 1);
+		assertEquals(1, coords[0]);
+		assertEquals(2, coords[1]);
 	}
 }

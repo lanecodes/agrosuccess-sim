@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ArrayUtilsTest {
@@ -52,6 +53,7 @@ public class ArrayUtilsTest {
 	 * empirically likelihood of frequencies having converged sufficiently for test to
 	 * reliably pass
 	 */
+	@Ignore // this passes, but convergence takes to long to run as part of test suite
 	@Test 
 	public void combinatoricSubsetsShouldBeEquallyLikely() {
 		
