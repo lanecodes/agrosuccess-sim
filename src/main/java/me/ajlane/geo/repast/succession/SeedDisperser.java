@@ -17,11 +17,9 @@ import repast.simphony.valueLayer.GridValueLayer;
  */
 public abstract class SeedDisperser {
 	
-	private GridValueLayer landCoverTypes;
+	GridValueLayer landCoverType;
 	
-	private GridValueLayer pineSeeds;
-	private GridValueLayer oakSeeds;
-	private GridValueLayer deciduousSeeds;
+	GridValueLayer pineSeeds, oakSeeds, deciduousSeeds;
 	
 	int height; // number of cells vertically
 	int width; // number of cells horizontally
@@ -47,7 +45,7 @@ public abstract class SeedDisperser {
 		}
 		
 		try {
-			landCoverTypes.getName();
+			landCoverType.getName();
 		} catch (NullPointerException e) {
 			System.out.println("SeedDisperser could not find 'lct' layer in context");
 		}
@@ -64,8 +62,8 @@ public abstract class SeedDisperser {
 		int[] deciduousDims = {(int)deciduousSeeds.getDimensions().getWidth(), 
 				  			   (int)deciduousSeeds.getDimensions().getHeight()};
 		
-		int[] landCoverTypesDims = {(int)landCoverTypes.getDimensions().getWidth(), 
-				  					(int)landCoverTypes.getDimensions().getHeight()};
+		int[] landCoverTypesDims = {(int)landCoverType.getDimensions().getWidth(), 
+				  					(int)landCoverType.getDimensions().getHeight()};
 		
 		if (!Arrays.equals(pineDims, oakDims) || !Arrays.equals(pineDims, deciduousDims) 
 				|| !Arrays.equals(pineDims, landCoverTypesDims)) {
@@ -75,8 +73,8 @@ public abstract class SeedDisperser {
 	}
 	
 	void processGridShape() {
-		height = (int)landCoverTypes.getDimensions().getHeight();
-		width = (int)landCoverTypes.getDimensions().getWidth();
+		height = (int)landCoverType.getDimensions().getHeight();
+		width = (int)landCoverType.getDimensions().getWidth();
 		n = height*width;
 	}
 	
