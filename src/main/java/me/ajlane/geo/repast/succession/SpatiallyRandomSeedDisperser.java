@@ -7,6 +7,10 @@ import repast.simphony.context.Context;
 import repast.simphony.valueLayer.GridValueLayer;
 
 /**
+ * Number of <strong>new</strong> seeds given by N_{\sigma} - No cells currently
+ * occupied by seeds of this species. 
+ * 
+ * 
  * @author andrew
  *
  */
