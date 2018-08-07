@@ -134,7 +134,7 @@ public class SoilMoistureCalculator {
 	 * 			1 = Burnt
 	 * 			2 = Barley
 	 *			3 = Wheat
-	 *			4 = Depleated agricultural land
+	 *			4 = Depleted agricultural land
 	 *			5 = Shrubland
 	 *			6 = Pine forest
 	 *			7 = Transition forest

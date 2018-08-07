@@ -86,5 +86,31 @@ public class SeedViabilityMonitorTest {
 			System.out.println(s.toString());
 		}
 	}
+	
+	@Test
+	public void shouldFindThreePineSeedsTwoOakAndOneDeciduous() {
+		
+		int time;
+		
+		// All seed species survive for three years
+		SeedViabilityMonitor svm = new SeedViabilityMonitor(2);
+		
+		time = 0;
+		// seeds deposited at some point during 0th year
+		svm.addSeed(new Seed("pine", time, 0, 0));
+		svm.addSeed(new Seed("oak", time, 0, 1));
+		
+		svm.deadSeeds(time);
+		
+		time = 1; //tick
+		svm.addSeed(new Seed("pine", time, 1, 0));
+		svm.addSeed(new Seed("pine", time, 1, 0));
+		svm.addSeed(new Seed("oak", time, 1, 0));
+		svm.addSeed(new Seed("deciduous", time, 1, 2));	
+		
+		assertEquals(3, svm.getNumSeeds("pine"));
+		assertEquals(2, svm.getNumSeeds("oak"));
+		assertEquals(1, svm.getNumSeeds("deciduous"));
+	}
 
 }
