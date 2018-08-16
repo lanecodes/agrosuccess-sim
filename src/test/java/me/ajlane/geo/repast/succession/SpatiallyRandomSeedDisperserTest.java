@@ -21,6 +21,11 @@ public class SpatiallyRandomSeedDisperserTest {
 		//System.out.println(gvl.getDimensions().getWidth());
 	}	
 	
+	@Test
+	public void windDispersedCellProbShortDistSmallGrid() {
+		
+	}
+	
 
 	@Test
 	public void test1() {

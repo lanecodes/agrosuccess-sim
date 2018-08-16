@@ -9,6 +9,9 @@ output/
 # logging
 MessageCenter.log4j.properties
 
+# editor fluff
+*.py~
+
 # compiled classes
 *\$py.class
 

@@ -47,6 +47,8 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		
 		landCoverType = (GridValueLayer)context.getValueLayer("lct");
 		
+		
+		// move these into seedLayersMap, referring to individual names get confusing
 		pineSeeds = (GridValueLayer)context.getValueLayer("pine seeds");
 		oakSeeds = (GridValueLayer)context.getValueLayer("oak seeds");
 		deciduousSeeds = (GridValueLayer)context.getValueLayer("deciduous seeds");		
@@ -64,12 +66,9 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		checkValueLayerDimensionsMatch();
 		processGridShape(xCellSize, yCellSize);	
 		
-		// minProb always high enough to ensure at least one seed for
-		// each species exists in model (guarantee 0 seeds for a species is 
-		// not an adsorbing state)
-		minProb = n > 1000 ? 0.001 : 1.0/n;
-		System.out.println("n: " + n);
-		System.out.println("minimum seed occupancy probability: " + minProb);
+		// initialise seed presence probability generators
+		acornPresenceProbGenerator = new AcornPresenceProbGenerator(n, cellSize);
+		windSeedPresenceProbGenerator = new WindSeedPresenceProbGenerator(n, cellSize);
 	}
 	
 	
@@ -107,9 +106,8 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * where $N_{\sigma}$ is the number of seed sources for species $\sigma$ and
   	 * $N_{tot}$ is the total number of model cells.
 	 * 
-	 * @param speciesName
-	 * 		Name of species for which we want to calculate the typical
-	 * 		distance from one of its seed sources
+	 * @param numSeedSources
+	 * 		Number of seed sources in grid
 	 * @return
 	 * 		Typical distance between a seed source of {@code speciesName},
 	 * 		and a cell which is not a source of that species, assuming 
@@ -117,23 +115,29 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * 		model grid. 
 	 * 		
 	 */
-	private double typicalDistanceToSeedSource(String speciesName) {
-		int numSeedSources = getSeedSourceCount(speciesName);
-		System.out.println("typical distance to " + speciesName + " source " + 0.5 * numSeedSources * cellSize / Math.sqrt(n));
-		return 0.5 * numSeedSources * cellSize / Math.sqrt(n);
-		
+	private double typicalDistanceToSeedSource(int numSeedSources) {
+		return 0.5 * numSeedSources * cellSize / Math.sqrt(n);		
 	}
 	
 	double  probCellHasSeed(String speciesName) {
-		if (getSeedSourceCount(speciesName) == 0) {
-			// case if there are no seeds in model, allow finite prob one or more come from outside
-			return minProb;
-		} else {
-			if (speciesName == "pine" || speciesName == "deciduous") {
-				return windDispersedProbability(typicalDistanceToSeedSource(speciesName));
+		int numSeedSources = getSeedSourceCount(speciesName);
+		if (speciesName == "pine" || speciesName == "deciduous") {
+			if (numSeedSources == 0) {
+				return windSeedPresenceProbGenerator.getMinProb();
 			} else {
-				return acornProbability(typicalDistanceToSeedSource(speciesName));
+				return windSeedPresenceProbGenerator.getProb(
+						typicalDistanceToSeedSource(numSeedSources));
+			} 
+		} else if (speciesName == "oak") {
+			if (numSeedSources == 0) {
+				return acornPresenceProbGenerator.getMinProb(); 				
+			} else {
+				return acornPresenceProbGenerator.getProb(
+						typicalDistanceToSeedSource(numSeedSources)); 
 			}
+		} else {
+			throw new IllegalArgumentException("speciesName must be one of 'pine', " +
+					"'deciduous' or 'oak'");
 		}
 	}	
 	
@@ -154,8 +158,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		System.out.println("expected number of " + speciesName + " seeds: " + (int)Math.round(n*prob));
 		return (int)Math.round(n*prob);		
 		
-	}
-	
+	}	
 	
 	/**
 	 * Calculate the number of seeds to add to the model depending on the
