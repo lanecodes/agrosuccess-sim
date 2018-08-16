@@ -3,6 +3,8 @@
  */
 package me.ajlane.geo.repast.succession;
 
+import java.util.Arrays;
+
 /**
  * Representation of a seed, containing its type, location and creation time.
  * 
@@ -54,6 +56,16 @@ public class Seed {
 	
 	public int getRow() {
 		return row;
+	}
+	
+	public void setType(String type) {
+		String[] validTypes = {"pine", "oak", "deciduous"}; 
+		if (Arrays.asList(validTypes).contains(type)) {
+			this.type = type;
+		} else {
+			throw new IllegalArgumentException("Seed type must be one of 'pine', 'oak' " +
+					"or 'deciduous'");
+		}
 	}
 	
 	public String getType() {

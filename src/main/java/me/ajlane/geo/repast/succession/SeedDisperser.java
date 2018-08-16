@@ -54,7 +54,13 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 public abstract class SeedDisperser {
 
 	GridValueLayer landCoverType;
+	
+	// track seeds in model
 	GridValueLayer pineSeeds, oakSeeds, deciduousSeeds;
+	SeedViabilityMonitor svm;
+	
+	// track model time step
+	int time;
 	
 	// maps seed source names (pine, oak, deciduous) to set of IDs
 	Map<String,Set<Integer>> seedSourceMap = getSeedSourceMap();
@@ -64,15 +70,18 @@ public abstract class SeedDisperser {
 	int n; // number of cells
 	double cellSize; // extent of raster grid cells in grid units, e.g. meters
 	
+	double minProb; // minimum probability for a cell to contain a species' seeds
+	
 	// acorn distribution parameters
-	double acornMean = 46.7;
-	double acornStd = 2.34;	
+	private double acornMean = 46.7;
+	private double acornStd = 2.34;	
+	private double maxLognormalDistance = 550; // maximum distance from seed source for probability to be lognormal
 	RealDistribution acornLogNormalDistribution = new LogNormalDistribution(acornMean, acornStd);	
 	
 	// wind distributed seed parameters
-	double distanceDecreaseParam = 5;
-	double minExponentialDistance = 75;
-	double maxExponentialDistance = 100;
+	private double distanceDecreaseParam = 5;
+	private double minExponentialDistance = 75;
+	private double maxExponentialDistance = 100;
 	RealDistribution windExpDistribution = new ExponentialDistribution(distanceDecreaseParam/ maxExponentialDistance);
 
 	void checkValueLayersAccessible() {
@@ -183,17 +192,31 @@ public abstract class SeedDisperser {
 		cellSize = geometricMean(xCellSize, yCellSize);
 	}
 	
+	/**
+	 * See Millington2009
+	 * @param distToClosestSeedSource
+	 * @return
+	 */
 	double acornProbability(double distToClosestSeedSource) {
-		return acornLogNormalDistribution.density(distToClosestSeedSource);
+		if (distToClosestSeedSource <= maxLognormalDistance){
+			return acornLogNormalDistribution.density(distToClosestSeedSource);			
+		} else {
+			return minProb;
+		}		
 	}
 	
+	/**
+	 * See Millington2009
+	 * @param distToClosestSeedSource
+	 * @return
+	 */
 	double windDispersedProbability(double distToClosestSeedSource) {
 		if (distToClosestSeedSource <= minExponentialDistance) {
 			return 0.95;
 		} else if (distToClosestSeedSource <= maxExponentialDistance) {
 			return windExpDistribution.density(distToClosestSeedSource);
 		} else {
-			return 0.001;
+			return minProb;
 		}
 	}
 

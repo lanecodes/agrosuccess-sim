@@ -16,6 +16,7 @@ public class DummyLandCoverTypeLayer3x3 extends DummyLayer3x3 {
 		case "burnt": setData(burnt()); break;
 		case "pine forest" : setData(pineForest()); break;
 		case "oak forest" : setData(oakForest()); break;
+		case "pine, oak and burnt" : setData(pineOakBurnt()); break;
 		default: System.out.println("Dummy landcover type layer must be one of " + 
 							"'wheat', 'burnt', 'pine forest' or 'oak forest'.");		
 		}
@@ -53,6 +54,15 @@ public class DummyLandCoverTypeLayer3x3 extends DummyLayer3x3 {
 		double array[][] = {
 				{9, 9, 9},
 				{9, 9, 9},
+				{9, 9, 9}
+		};
+		return array;		
+	}
+	
+	private double[][] pineOakBurnt() {
+		double array[][] = {
+				{6, 6, 1},
+				{1, 1, 1},
 				{9, 9, 9}
 		};
 		return array;		
