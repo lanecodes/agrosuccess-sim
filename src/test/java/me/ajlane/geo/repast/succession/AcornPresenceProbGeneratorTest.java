@@ -7,25 +7,38 @@ import org.junit.Test;
 public class AcornPresenceProbGeneratorTest {
 	
 	/**
-	 * For distances x<=550m probability follows the following lognormal distribution 
-	 * function:
+	 * For distances x<=550m probability of a cell having an acorn in it is given by:
+	 *
+	 * CDF(d+l/2) - CDF(d-l/2)
 	 * 
-	 * \[ 
-	 * f(x) = \frac{1}{x \sigma \sqrt{2 \pi}} \exp\left[- \frac{(\ln(x) - \mu)^2}{2\sigma^2}\right] 
-	 * \]
-	 * with $\sigma = 2.34m$ and $\mu = 46.7m$
+	 * where CDF is the lognormal distribution's cumulative distribution function,
+	 * d is the distance to the nearest seed source, and l is the cell edge length.
 	 * 
-	 * Hence 
-	 * f(100) = 
+	 * CDF(x; \mu, \sigma) = \frac{1}{2} + \frac{1}{2} \erf[(\ln(x) - \mu)/sqrt{2} \sigma)]
+	 * 
+	 * Following Pons and Pausas (2007) and Millington et al. (2009) we set $\sigma = 0.851$ and 
+	 * $\mu = 3.844$. Note that these values are in log-scale. The linear scale equivalents of these
+	 * are given my exp(mu) = 46.72m and exp(sigma) = 2.34m.
+	 * 
+	 * for a cell edge length of 25m, a cell centered 90m from the nearest seed source
+	 * has the following probability of having a seed in it:
+	 * 
+	 * P = 0.5 * (erf[(ln(90+12.5) - 3.844)/ (sqrt(2) * 0.851)] - erf[(ln(90-12.5) - 3.844)/ (sqrt(2) * 0.851)])
+	 * 	 = 0.5 * (erf[(4.629863 - 3.844)/ 1.203496] - erf[(4.350278 - 3.844)/ 1.203496]
+	 *   = 0.5 * (erf[0.6529835] - erf[0.4206728])
+	 *   = 0.5 * ( 0.6442315 - 0.4481037 )
+	 *   = 0.0980639	
+	 *   
+	 *  I have also reproduced this calculation independently in Python.
 	 *  
 	 */
 	@Test
 	public void medDistanceShouldFollowExponentialDecayFunction() {
 		ISeedPresenceProbGenerator probGenSmallGrid = new AcornPresenceProbGenerator(9, 25.0);
-		assertEquals(0.011109, probGenSmallGrid.getProb(90), 0.000001);
+		assertEquals(0.0980639, probGenSmallGrid.getProb(90), 0.000001);
 		
 		ISeedPresenceProbGenerator probGenLargeGrid = new AcornPresenceProbGenerator(1024, 25.0);
-		assertEquals(0.011109, probGenLargeGrid.getProb(90), 0.000001);
+		assertEquals(0.0980639, probGenLargeGrid.getProb(90), 0.000001);
 	}
 	
 	/**

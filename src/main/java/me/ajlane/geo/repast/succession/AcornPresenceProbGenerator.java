@@ -18,7 +18,8 @@ import org.apache.commons.math3.distribution.RealDistribution;
  * \]
  * 
  * Following Pons and Pausas (2007) and Millington et al. (2009) we set $\sigma = 0.851$ and 
- * $\mu = 3.844$. Note that these values are in log-scale
+ * $\mu = 3.844$. Note that these values are in log-scale. The linear scale equivalents of these
+ * are given my exp(mu) = 46.72m and exp(sigma) = 2.34m.
  * 
  * <strong>References</strong> 
  * Pons, J., & Pausas, J. G. (2007). Acorn dispersal estimated by radio-tracking. 

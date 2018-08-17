@@ -53,7 +53,7 @@ plt.show()
 
 # GET PROBABILITY OF FALLING IN CELL AT SPECIFIC DISTANCE
 def cell_occupancy_prob(d, l, cdf):
-    return cdf(d+l/2) - cdf(d-l/2)
+    return cdf(d+float(l)/2) - cdf(d-float(l)/2)
 
 cell_len = 25
 occupancy_xs = np.linspace(cell_len+1, 500, 5000)
@@ -81,9 +81,12 @@ def wind_cell_occupancy_prob(d, l):
     else:
         return 0.001
 
+plt.plot(occupancy_xs, np.vectorize(acorn_cell_occupancy_prob)(
+    occupancy_xs, cell_len), 'r')
+plt.plot(occupancy_xs, np.vectorize(wind_cell_occupancy_prob)(
+    occupancy_xs, cell_len), 'b')
 
-plt.plot(occupancy_xs, np.vectorize(acorn_cell_occupancy_prob)(occupancy_xs, cell_len), 'r')
-plt.plot(occupancy_xs, np.vectorize(wind_cell_occupancy_prob)(occupancy_xs, cell_len), 'b')
+print acorn_cell_occupancy_prob(90, 25)
 
 plt.show()
 
