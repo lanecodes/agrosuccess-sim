@@ -1,8 +1,9 @@
-package me.ajlane.repast.geo;
+package me.ajlane.geo.repast;
 
 import java.io.IOException;
 
 import org.geotools.data.DataSourceException;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import repast.simphony.space.grid.GridPointTranslator;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -18,6 +19,11 @@ public class GeoRasterValueLayer extends AbstractGeoRasterValueLayer<GridValueLa
 	public GeoRasterValueLayer(String fileName, String layerName)
 			throws DataSourceException, IOException {
 		super(fileName, layerName);
+	}
+	
+	public GeoRasterValueLayer(String fileName, String layerName, int[] dimensions,
+			  ReferencedEnvelope envelope) {
+		super(fileName, layerName, dimensions, envelope);
 	}
 
 	@Override

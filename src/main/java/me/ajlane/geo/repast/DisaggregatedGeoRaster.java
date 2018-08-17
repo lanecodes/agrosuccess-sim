@@ -1,4 +1,4 @@
-package me.ajlane.repast.geo;
+package me.ajlane.geo.repast;
 
 import java.awt.image.Raster;
 

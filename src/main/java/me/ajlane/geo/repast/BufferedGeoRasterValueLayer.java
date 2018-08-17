@@ -1,9 +1,10 @@
-package me.ajlane.repast.geo;
+package me.ajlane.geo.repast;
 
 import java.awt.image.Raster;
 import java.io.IOException;
 
 import org.geotools.data.DataSourceException;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import repast.simphony.space.grid.GridPointTranslator;
 import repast.simphony.valueLayer.BufferedGridValueLayer;
@@ -19,6 +20,11 @@ public class BufferedGeoRasterValueLayer extends AbstractGeoRasterValueLayer<Buf
 	public BufferedGeoRasterValueLayer(String fileName, String layerName)
 			throws DataSourceException, IOException {
 		super(fileName, layerName);
+	}
+	
+	public BufferedGeoRasterValueLayer(String fileName, String layerName, int[] dimensions,
+			  ReferencedEnvelope envelope) {
+		super(fileName, layerName, dimensions, envelope);
 	}
 
 	@Override
