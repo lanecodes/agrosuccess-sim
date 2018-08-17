@@ -2,6 +2,8 @@ package me.ajlane.random;
 
 import cern.jet.random.Uniform;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * See this https://stackoverflow.com/questions/1519736/random-shuffling-of-an-array SO for 
@@ -40,6 +42,22 @@ public class ArrayUtils {
 	}
 	
 	/**
+	 * Utility method to map a List<Integer> to a int[]. Non-trivial apparently.
+	 * 
+	 * @param list
+	 * 			Object to convert to an int[]
+	 * @return
+	 * 			Equivalent int[]
+	 */
+	private static int[] listToIntArray(List<Integer> list) {
+		int[] array = new int[list.size()];
+		for (int index=0; index<list.size(); index++) {
+			array[index] = (int)list.get(index);
+		}
+		return array;
+	}
+	
+	/**
 	 * @param n
 	 * 			Number of elements to draw at random from array
 	 * @param array
@@ -49,9 +67,24 @@ public class ArrayUtils {
 	 * 			n elements from array, drawn at random with equal 
 	 * 			probability
 	 */
-	static int[] randomDrawFromArray(int n, int[] array) {
+	public static int[] randomDrawFromArray(int n, int[] array) {
 		shuffleArray(array);
 		return Arrays.copyOfRange(array, 0, n);		
+	}
+	
+	
+	/**
+	 * @param n
+	 * 			Number of elements to draw at random from list
+	 * @param list
+	 * 			list to shuffle and draw from. 
+	 * @return
+	 * 			n elements from list, drawn at random with equal 
+	 * 			probability, returned as a list
+	 */
+	public static List<Integer> randomDrawFromList(int n, List<Integer> list) {
+		int[] shuffledArray = randomDrawFromArray(n, listToIntArray(list));
+		return Arrays.stream(shuffledArray).boxed().collect(Collectors.toList());		
 	}
 	
 	/**
@@ -66,7 +99,7 @@ public class ArrayUtils {
 	 * 			n elements from array, drawn at random with equal 
 	 * 			probability
 	 */
-	static int[] randomDrawFromArray(int n, int[] array, boolean sorted) {
+	public static int[] randomDrawFromArray(int n, int[] array, boolean sorted) {
 		int[] hand = randomDrawFromArray(n, array);
 		if (sorted==true) {
 			Arrays.sort(hand);

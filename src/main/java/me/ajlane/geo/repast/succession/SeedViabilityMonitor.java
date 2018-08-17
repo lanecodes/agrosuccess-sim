@@ -71,6 +71,26 @@ public class SeedViabilityMonitor {
 	}
 	
 	/**
+	 * @param seedType
+	 * 		The species for which we want to determine the number of seeds
+	 * 		currently in the model
+	 * @return
+	 * 		Number of seeds in the model of type seedType
+	 */
+	public int getNumSeeds(String seedType) {
+		if (seedType.equals("pine")) {
+			return pineQueue.size();
+		} else if (seedType.equals("oak")) {
+			return oakQueue.size();
+		} else if (seedType.equals("deciduous")) {
+			return deciduousQueue.size();
+		} else {
+			throw new IllegalArgumentException("Seed type must be one of 'pine', " + 
+							"'deciduous' or 'oak'");
+		}
+	}
+	
+	/**
 	 * @param currentTime
 	 * 		Present model time, used to calculate the age of seeds in specified queue
 	 * @param seedLifeTime

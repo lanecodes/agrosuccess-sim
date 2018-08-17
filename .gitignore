@@ -9,6 +9,9 @@ output/
 # logging
 MessageCenter.log4j.properties
 
+# editor fluff
+*.py~
+
 # compiled classes
 *\$py.class
 
@@ -16,6 +19,7 @@ MessageCenter.log4j.properties
 Building.py
 BuildingFactory.java
 BuildingType.java
+src/main/java/Scratch.java
 
 # Documentation, not under vcs for the time being
 docs/*

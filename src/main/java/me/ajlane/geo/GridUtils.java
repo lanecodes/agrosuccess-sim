@@ -29,7 +29,7 @@ public class GridUtils {
 	 * 			1D array with 2 elements such that coords[0] and coords[1] are
 	 * 			the row and column (respectively) of the corresponding grid cell.
 	 */
-	static int[] indexToSpatialCoords(int i, int nX, int nY) {
+	static public int[] indexToSpatialCoords(int i, int nX, int nY) {
 		int coords[] = new int[2];
 		coords[0] = i/nX;
 		coords[1] = i%nX;
@@ -54,7 +54,7 @@ public class GridUtils {
 	 * 			Index for the FlowConnectivityMatrix row/column and Runoff vector
 	 * 			elements describing the flow characteristics of spatial cell (x,y)
 	 */
-	static int spatialCoordsToIndex(int row, int col, int nX) {
+	static public int spatialCoordsToIndex(int row, int col, int nX) {
 		return row*nX + col;		
 	}
 
