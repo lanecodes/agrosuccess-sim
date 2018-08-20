@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
 
-	<parameter name="randomSeed" displayName="Default Random Seed" type="int" defaultValue="__NULL__" />
-
+	<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+			defaultValue="__NULL__" 
+	/>
+	
+	<parameter name="geoDataDirRootString" displayName="Geographic Data Root Directory" 
+			type="java.lang.String" 
+			defaultValue="data/geographic" 
+			isReadOnly="true" 
+	/>
+	
+	<parameter name="studySiteNameString" displayName="Study Site" type="java.lang.String" 
+			defaultValue="navarres" 
+			isReadOnly="true" 
+	/>
+	
 </parameters>
