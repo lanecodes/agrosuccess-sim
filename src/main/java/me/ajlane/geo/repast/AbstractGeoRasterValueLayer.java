@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.data.DataSourceException;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -43,8 +42,7 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 	  * @param layerName
 	  *          the name of the value layer
 	  */
-	  public AbstractGeoRasterValueLayer(String fileName, String layerName)
-			  throws DataSourceException, IOException {
+	  public AbstractGeoRasterValueLayer(String fileName, String layerName) {
 		  this(fileName, layerName, -99999.0, new StrictBorders());
 	  }	  
 	  
@@ -67,8 +65,7 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 	 *          the translator used
 	 */
 	public AbstractGeoRasterValueLayer(String fileName, String layerName,
-			double defaultValue, GridPointTranslator translator)
-			throws DataSourceException, IOException {
+			double defaultValue, GridPointTranslator translator) {
 		
 		DisaggregatedGeoRaster data = extractGeoTiffFileData(new File(fileName));
 		envelope = data.getEnvelope();
@@ -113,21 +110,21 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 	 * Reads fileName and pulls out a georeferenced envelope for the area
 	 * covered by the file and a Raster image representing the contained 
 	 * data. Returns a DisaggregatedGeoRaster containing this information.
-	 *  
-	 * @throws DataSourceException 
 	 */
-	private DisaggregatedGeoRaster extractGeoTiffFileData(File file) 
-				throws DataSourceException, IOException {
-		
-		GeoTiffReader reader = new GeoTiffReader(file, 
-				new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
-		
-		GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-		ReferencedEnvelope env = new ReferencedEnvelope(coverage.getEnvelope2D());	
-		Raster gridData = coverage.getRenderedImage().getData();
-		
-		return new DisaggregatedGeoRaster(env, gridData);
-		
+	private DisaggregatedGeoRaster extractGeoTiffFileData(File file) {		
+		try {
+			GeoTiffReader reader = new GeoTiffReader(file, 
+					new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+			
+			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+			ReferencedEnvelope env = new ReferencedEnvelope(coverage.getEnvelope2D());	
+			Raster gridData = coverage.getRenderedImage().getData();
+			
+			return new DisaggregatedGeoRaster(env, gridData);			
+		} catch (IOException e) {
+			System.out.println("Could not read " + file.getAbsolutePath());
+			throw new RuntimeException(e);
+		}		
 	}
 	
 	// inheriting concrete class implementation will create instance of 

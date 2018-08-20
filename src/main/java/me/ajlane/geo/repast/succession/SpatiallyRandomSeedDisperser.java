@@ -42,7 +42,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * 		GridValueLayer-s storing the spatial configuration of each type
 	 * 		of seed.
 	 */
-	SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, int pineSeedLifetime, 
+	public SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, int pineSeedLifetime, 
 			int oakSeedLifetime, int deciduousSeedLifetime, Context<Object> context){
 		
 		landCoverType = (GridValueLayer)context.getValueLayer("lct");

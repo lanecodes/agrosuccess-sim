@@ -2,4 +2,6 @@
 <parameters>
 	<siteName>navarres</siteName>
 	<meanMonthlyPrecipitation>41</meanMonthlyPrecipitation>
+	<gridCellPixelSizeX>26.582</gridCellPixelSizeX>
+	<gridCellPixelSizeY>26.582</gridCellPixelSizeY>
 </parameters>
