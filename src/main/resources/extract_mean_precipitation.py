@@ -1,10 +1,18 @@
 # coding utf-8
 """Extract mean annual precipitation values for study sites.
 
-Using the BC paleo-GCM data available from the below link, extract the 
-mean annual precipitation values for each study site.
+Using the BC paleo-GCM data available from the below URL, extract the
+mid-holocene average monthly precipitation values for each study site.
 
 http://www.worldclim.org/paleo-climate1
+
+Write this to the intermediate file ssite_precip_data.pkl to avoid
+re-downloading and/ or re-extracting data from required raster cells (this
+turned out to be more expensive than anticipated).
+
+Process the resulting dictionary into a pandas.DataFrame, calculate averages
+and write to tab-separated summary file ssite_precipitation.tsv
+
 """
 from subprocess import check_output
 from zipfile import ZipFile
