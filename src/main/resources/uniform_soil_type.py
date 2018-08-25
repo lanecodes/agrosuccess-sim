@@ -31,9 +31,9 @@ import subprocess
 from six import iteritems
 import numpy as np
 from osgeo import gdal, osr
+from map_generator import MapGenerator
 
-
-class UniformSoilMapGenerator:
+class UniformSoilMapGenerator(MapGenerator):
 
     def __init__(self, template_tif):
         """Initialise UniformSoilMapGenerator with a path to a template file.
@@ -42,18 +42,7 @@ class UniformSoilMapGenerator:
             template_tif (str): A file path to the template geotiff file to be
             used to construct the template.
         """
-        self._template_tif = template_tif
-
-    @property
-    def template_tif(self):
-        return self._template_tif
-
-    @template_tif.setter
-    def template_tif(self, new_template_tif):
-        if os.path.isfile(new_template_tif):
-            self._template_tif = new_template_tif
-        else:
-            raise ValueError(new_template_tif + " is not a readable file.")
+        super(UniformSoilMapGenerator, self).__init__(template_tif)
 
     def _soil_type_letter_to_number(self, soil_type_letter):
         # Map soil type letters to numerical representation. See
@@ -67,25 +56,6 @@ class UniformSoilMapGenerator:
             raise
 
         return soil_type_number
-
-    def _template_metadata(self, template_tif):
-        metadata = {}
-
-        try:
-            template = gdal.Open(template_tif)
-        except IOError as e:
-            print template_tif + ' couldn\'t be read'
-            raise
-
-        arr = template.GetRasterBand(1).ReadAsArray()
-        metadata['nCols'] = arr.shape[0]
-        metadata['nRows'] = arr.shape[1]
-        del arr
-
-        metadata['geo_transform'] = template.GetGeoTransform()
-        metadata['projection'] = template.GetProjection()
-
-        return metadata
 
     def to_geotiff(self, filename, soil_type_letter):
         geo_metadata = self._template_metadata(self._template_tif)
@@ -101,11 +71,11 @@ class UniformSoilMapGenerator:
         if (filename[-4:] == '.tif') or (filename[-5:] == '.tiff'): 
             out_file_name = filename
         else:
-            out_file_name = filename + '.tif'
+            out_file_name = filename + '.tif'                                      
             
         outdata = driver.Create(out_file_name,
                                 geo_metadata['nRows'],
-                                geo_metadata['nCols'],
+                                geo_metadata['nCols'], 
                                 1, # number of bands in output file
                                 gdal.GDT_UInt16) # data type
 
