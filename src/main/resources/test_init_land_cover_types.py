@@ -34,39 +34,6 @@ class LandcoverProportionManagerTestCase(unittest.TestCase):
         self.assertEqual(manager.original_prop_list,
                         [0.25, 0.25, 0.25, 0.25])
 
-    def test_return_correct_original_prop_list(self):
-        manager = LandcoverProportionManager(self.prop_lists[0])
-        self.assertEqual(manager.original_prop_list,
-                        [0.5, 0.5, 0.0, 0.0])
-
-        manager = LandcoverProportionManager(self.prop_lists[1])
-        self.assertEqual(manager.original_prop_list,
-                        [0.0, 0.0, 0.5, 0.5])
-
-        manager = LandcoverProportionManager(self.prop_lists[2])
-        self.assertEqual(manager.original_prop_list,
-                        [0.33, 0, 0.33, 0.33])
-
-        manager = LandcoverProportionManager(self.prop_lists[3])
-        self.assertEqual(manager.original_prop_list,
-                        [0.25, 0.25, 0.25, 0.25])        
-    def test_return_correct_original_prop_list(self):
-        manager = LandcoverProportionManager(self.prop_lists[0])
-        self.assertEqual(manager.original_prop_list,
-                        [0.5, 0.5, 0.0, 0.0])
-
-        manager = LandcoverProportionManager(self.prop_lists[1])
-        self.assertEqual(manager.original_prop_list,
-                        [0.0, 0.0, 0.5, 0.5])
-
-        manager = LandcoverProportionManager(self.prop_lists[2])
-        self.assertEqual(manager.original_prop_list,
-                        [0.33, 0, 0.33, 0.33])
-
-        manager = LandcoverProportionManager(self.prop_lists[3])
-        self.assertEqual(manager.original_prop_list,
-                        [0.25, 0.25, 0.25, 0.25])
-
     def test_return_correct_reduced_prop_list(self):
         manager = LandcoverProportionManager(self.prop_lists[0])
         self.assertEqual(manager.reduced_prop_list,
@@ -126,26 +93,30 @@ class RandomLandCoverGeneratorTestCase(unittest.TestCase):
     def tearDown(self):
         self.generator = None
 
-    def test_land_cover_type_labels_match_proportion_indices(self):
 
-        dem_array = self.generator.template_data
-        random_array_generator = self.generator._generate_random_cluster_array
 
-        props = [0.5, 0.5, 0, 0]
-        random_array = random_array_generator(dem_array, props)
-        print np.unique(random_array)
-        
-        props = [0.0, 0.0, 0.5, 0.5]
-        random_array = random_array_generator(dem_array, props)
-        print np.unique(random_array)        
+    def test_generated_landscapes_match_total_proportions(self):
+        props = [0.33, 0.33, 0, 0.33]
+        landscape = self.generator.match_proportions(props)
+        for i in range(len(props)):
+            self.assertAlmostEqual(landscape.landscape_proportions('all')(i),
+                                   props[i], places=2)
 
-        props = [0.33, 0, 0.33, 0.33]
-        random_array = random_array_generator(dem_array, props)
-        print np.unique(random_array)
+    def test_get_navarres_props_correct(self):
 
-        props = [0.25, 0.25, 0.25, 0.25]
-        random_array = random_array_generator(dem_array, props)
-        print np.unique(random_array)  
+        total_props = [0.0, 0.03381643, 0.65217391, 0.31400966]
+        upland_props = [0, 0, 0, 1]
+        tree_line = 400
+        landscape = self.generator.match_proportions(total_props, 60,
+                                                     upland_props,
+                                                     tree_line)
+        for i in range(len(total_props)):
+            self.assertAlmostEqual(landscape.landscape_proportions('all')(i),
+                                   total_props[i], places=2)
 
+        for i in range(len(upland_props)):
+            self.assertAlmostEqual(landscape.landscape_proportions('upland')(i),
+                                   upland_props[i], places=2)
+            
 if __name__ == "__main__":
     unittest.main()

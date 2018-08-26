@@ -12,6 +12,7 @@ shrubland
 
 generator = RandomLandscapeGenerator('my_dem.tif')
 landscape_cover = generator.match_proportions([0.1, 0.3, 0.2, 0.4])
+landscape_cover.to_geotiff('my_random_landscape.tif')
 
 Optionally we can also provide an upland land cover proportion list. This adds
 an additional contraint to enforce that a speci
@@ -48,12 +49,12 @@ class LandscapeCoverage(object):
         if array.shape == self.landcover_array.shape:
             self._upland_array = array
         else:
-            raise ValueError('dimensions of landcover_array, {0}, and '\
+            raise ValueError('dimensions of landcover_array, {0}, and ',
                              'upland_array, {1}, must match.'.format(
                                  self.landcover_array.shape, array.shape))
 
     def landscape_proportions(self, subset='all'):
-        """Return a dict assigning land cover proportion to land cover labels.
+        """Return a function assigning land cover proportion to land cover labels.
         
         Can choose to return proportions for the whole landscape, or looking
         at upland or lowland individually.
@@ -65,12 +66,21 @@ class LandscapeCoverage(object):
         elif subset == 'lowland':
             included_array = self.landcover_array[~self._upland_array]
         else:
-            raise ValueError('subset must be \'all\', \'upland\', or '\
+            raise ValueError('subset must be \'all\', \'upland\', or ',
                              '\'lowland\'')
 
         n = float(included_array.size)
         unique, counts = np.unique(included_array, return_counts=True)
-        return dict(zip(unique, counts/n))
+        prop_dict = dict(zip(unique, counts/n))
+
+        def label_proportion(label):
+            try:
+                return prop_dict[label]
+            except KeyError:
+                return 0.0
+
+        return label_proportion
+
 
     def to_geotiff(self, filename):
         driver = gdal.GetDriverByName('GTiff')
@@ -159,7 +169,7 @@ class RandomLandcoverGenerator(MapGenerator):
         super(RandomLandcoverGenerator, self).__init__(dem_filename)
         self._upland_array = None # stores boolean numpy array, true in upland
 
-    def _lowland_props(dem_array, rho_c_s, rho_c_hi_s, epsilon):
+    def _lowland_props(self, dem_array, rho_c_s, rho_c_hi_s, epsilon):
         """Calculate lowland land-cover proportions given highland and totals.
 
         Args:
@@ -231,9 +241,7 @@ class RandomLandcoverGenerator(MapGenerator):
 
             low_prop_manager = LandcoverProportionManager(lowland_props)
             up_prop_manager = LandcoverProportionManager(upland_props)
-            if not self._upland_array:
-                # only execute if this hasn't already been calculated for dem
-                self._upland_array = dem_array[dem_array>=tree_line]
+            self._upland_array = dem_array>=tree_line
                 
             # neutral landscape model applicable to the lowlands
             nlm_lo = nlmpy.randomClusterNN(nRows, nCols, percolation_threshold)
@@ -259,7 +267,7 @@ class RandomLandcoverGenerator(MapGenerator):
 
         return nlm            
 
-    def _score_landscape(trial_landscape, lct_props, upland_props=None):
+    def _score_landscape(self, trial_landscape, lct_props, upland_props=None):
         """Return root mean squared error over target landcover proporitons.
 
         If upland_props is specified, construct a vector over 
@@ -268,11 +276,23 @@ class RandomLandcoverGenerator(MapGenerator):
 
         Lowest score wins
         """
-        pass
-        # TODO
+        target_values = np.array(lct_props)
+        landscape_values = np.array(
+            [trial_landscape.landscape_proportions('all')(i)
+             for i in range(len(lct_props))])
 
+        if upland_props:
+            target_values = np.append(target_values, upland_props)
+            landscape_values = np.append(
+                landscape_values,
+                [trial_landscape.landscape_proportions('upland')(i)
+                 for i in range(len(upland_props))])
 
-    def match_proportions(lct_props, iterations=10, upland_props=None,
+        rmse = np.sqrt(((target_values - landscape_values) ** 2).mean())
+
+        return rmse                 
+
+    def match_proportions(self, lct_props, iterations=30, upland_props=None,
                           tree_line=None):
         """Return a LandscapeCoverage representing a random landscape.
 
@@ -309,15 +329,23 @@ class RandomLandcoverGenerator(MapGenerator):
         best_score = float('inf')
         improvement_counter = 0             
                                        
-        for i in iterations:
+        for i in range(iterations):
             # Generate array
+            array = self._generate_random_cluster_array(
+                self.template_data, lct_props, upland_props=upland_props,
+                tree_line=tree_line)
+
             # construct landscape
-            # score = self._score_landscape
+            landscape = LandscapeCoverage(array, self.geo_transform,
+                                          self.projection, self._upland_array)
+
+            score = self._score_landscape(landscape, lct_props, upland_props)
             if score < best_score:
-                best_landscape = landscape
+                best_score = score
+                best_landscape = landscape                
                 improvement_counter += 1
 
         print 'Improved landscape {0} times over {1} iterations'.format(
             improvement_counter, iterations)
 
-        return landscape
+        return best_landscape

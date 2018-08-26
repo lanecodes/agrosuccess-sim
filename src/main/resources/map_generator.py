@@ -39,6 +39,22 @@ class MapGenerator(object):
 
         return arr
 
+    @property
+    def geo_transform(self):
+        return self._template_metadata(self._template_tif)['geo_transform']
+
+    @property
+    def projection(self):
+        return self._template_metadata(self._template_tif)['projection']
+
+    @property
+    def ncols(self):
+        return self._template_metadata(self._template_tif)['nCols']
+
+    @property
+    def nrows(self):
+        return self._template_metadata(self._template_tif)['nrows']
+
     def _template_metadata(self, template_tif):
         metadata = {}
 
