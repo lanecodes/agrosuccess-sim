@@ -103,7 +103,6 @@ class RandomLandCoverGeneratorTestCase(unittest.TestCase):
                                    props[i], places=2)
 
     def test_get_navarres_props_correct(self):
-
         total_props = [0.0, 0.03381643, 0.65217391, 0.31400966]
         upland_props = [0, 0, 0, 1]
         tree_line = 400

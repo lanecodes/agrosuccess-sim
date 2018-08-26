@@ -31,3 +31,5 @@ site/*
 # geoTiff files, can be regenerated easily and will bloat repo
 data/**/*.tif
 
+# generated initial land_cover files
+data/geographic/**/initial_landcover.zip
