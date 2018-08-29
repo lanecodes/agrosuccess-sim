@@ -31,8 +31,8 @@ class LandcoverCacheGenerator(object):
         landscape = self.generator.match_proportions(self.total_props, 60,
                                                      self.upland_props,
                                                      self.tree_line)
-        landscape_file = str(landscape_num) + '.tif'
-        score_csv_file = str(landscape_num) + '.csv'
+        landscape_file = 'init-landcover' + str(landscape_num) + '.tif'
+        score_csv_file = 'init-landcover' + str(landscape_num) + '.csv'
         landscape.to_geotiff(landscape_file)
         self.write_score_csv(score_csv_file, landscape, self.total_props)
         self.generated_file_list_buffer.append(landscape_file)

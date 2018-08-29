@@ -32,4 +32,4 @@ site/*
 data/**/*.tif
 
 # generated initial land_cover files
-data/geographic/**/initial_landcover.zip
+data/geographic/**/navarres.zip

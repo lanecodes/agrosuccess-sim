@@ -51,13 +51,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 				gridDimensions, gridOrigin);
 		context.addValueLayer(soilMoisture);
 		
-		soilTypeMap = studySiteData.getSoilTypeMap("soil");
+		soilTypeMap = studySiteData.getSoilTypeMap(); // "soil"
 		context.addValueLayer(soilTypeMap);
 		
-		landCoverTypeMap = studySiteData.getLandCoverTypeMap("lct");
+		landCoverTypeMap = studySiteData.getLandcoverTypeMap(); // "lct"
 		context.addValueLayer(landCoverTypeMap);
 		
-		slopeMap = studySiteData.getSlope("slope");
+		slopeMap = studySiteData.getSlopeMap();
 		context.addValueLayer(slopeMap);
 		
 		pineSeeds = new GridValueLayer("pine seeds", 0, true, new StrictBorders(), 
@@ -73,8 +73,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 		context.addValueLayer(deciduousSeeds);
 		
 		// initialise pseudo agents
-		soilMoistureCalculator = new SoilMoistureCalculator(
-				studySiteData.getFlowConnectivityNetwork(), 0, context);
+		//soilMoistureCalculator = new SoilMoistureCalculator(
+		//		studySiteData.getFlowConnectivityNetwork(), 0, context);
 		
 		seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0], 
 				gridPixelSize[1], 9, 9, 9, context);	
