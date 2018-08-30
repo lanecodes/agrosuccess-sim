@@ -27,9 +27,11 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 	
 	private String fileName;
 	private ReferencedEnvelope envelope;
-	protected IGridValueLayer valueLayer;
-	protected int height;
-	protected int width;
+	IGridValueLayer valueLayer;
+	int height;
+	int width;
+	int minX;
+	int minY;	
 	
 	 /**
 	  * Creates a GridValueLayer with the specified name, density, and dimensions.
@@ -70,7 +72,9 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 		DisaggregatedGeoRaster data = extractGeoTiffFileData(new File(fileName));
 		envelope = data.getEnvelope();
 		height = data.getRaster().getHeight();
-		width = data.getRaster().getWidth();	
+		width = data.getRaster().getWidth();
+		minX = data.getRaster().getMinX();
+		minY = data.getRaster().getMinY();
 		valueLayer = getValueLayer(layerName, defaultValue, translator);
 		applyRasterToValueLayer(data.getRaster());
 		
@@ -132,11 +136,23 @@ public abstract class AbstractGeoRasterValueLayer<T> implements IGridValueLayer 
 	abstract protected IGridValueLayer getValueLayer(String layerName, double defaultValue, 
 			GridPointTranslator translator);
 	
-	protected void applyRasterToValueLayer(Raster raster) {
+	/**
+	 * NOTE: Raster images use a coordinate sytem with the origin in the 
+	 * <a href="https://docs.oracle.com/javase/7/docs/api/java/awt/image/Raster.html">top left hand corner</a>
+	 * with <a href="https://docs.oracle.com/javase/tutorial/2d/overview/coordinate.html">x values increasing 
+	 * to the right and y values increasing down</a>.
+	 * 
+	 * By contrast Repast models use Cartesian coordinates, conventionally represented in visualisations
+	 * such that the origin is in the bottom left. Hence while the (horizontal) x axis is unaffected, 
+	 * to ensure images are represented as expected in repast it is necessary to invert the y axis.
+	 *  
+	 * @param raster
+	 */
+	void applyRasterToValueLayer(Raster raster) {
 		// assumes raster only has one band (index 0)
-		for (int i=0; i<width; i++) {
-			for (int j=0; j<height; j++) {
-				valueLayer.set(raster.getSampleDouble(i, j, 0), i, j);
+		for (int x=0; x<width; x++) {
+			for (int y=0; y<height; y++) {
+				valueLayer.set(raster.getSampleDouble(x, y, 0), x, height-1-y);
 			}
 		}
 	}

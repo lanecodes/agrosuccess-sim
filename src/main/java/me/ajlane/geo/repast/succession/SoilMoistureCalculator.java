@@ -3,13 +3,10 @@
  */
 package me.ajlane.geo.repast.succession;
 
-import me.ajlane.geo.FlowConnectivityNetwork;
+import me.ajlane.geo.GridCell;
 import repast.simphony.context.Context;
 import repast.simphony.valueLayer.GridValueLayer;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.linear.SparseRealMatrix;
 
 /**
  * @author andrew
@@ -17,43 +14,39 @@ import org.apache.commons.math3.linear.SparseRealMatrix;
  */
 public class SoilMoistureCalculator {
 	
-	private GridValueLayer soilMoisture, landCoverType, soilMap, slope;
-	private SparseRealMatrix drainageMatrix;
-	private RealVector runoffVector;
-	private double sinkAffinityFactor;
+	private GridValueLayer soilMoisture, landCoverType, soilMap, slope, flowDirMap;
+	//private SparseRealMatrix drainageMatrix;
+	//private RealVector runoffVector;
 	private int nX, nY;
 	
 	
-	public SoilMoistureCalculator(FlowConnectivityNetwork flowNetwork,
+	public SoilMoistureCalculator(GridValueLayer flowDirectionMap,
 			double initialSoilMoisture, Context<Object> context) {
-		this(flowNetwork, initialSoilMoisture, 1.0, context);
+		this(flowDirectionMap, initialSoilMoisture, 1.0, context);
 	}
 	
 	/**
-	 * @param flowNetwork
+	 * @param flowDirectionMap
 	 * @param initialSoilMoisture
 	 * @param saf
 	 * 			Sink Affinity Factor
 	 * @param context
 	 */
-	public SoilMoistureCalculator(FlowConnectivityNetwork flowNetwork,
+	public SoilMoistureCalculator(GridValueLayer flowDirectionMap,
 			double initialSoilMoisture, double saf, Context<Object> context) {
 				
 		soilMoisture = (GridValueLayer) context.getValueLayer("soil moisture");
 		slope = (GridValueLayer) context.getValueLayer("slope");
 		soilMap = (GridValueLayer) context.getValueLayer("soil");
+		flowDirMap = (GridValueLayer) flowDirectionMap;		
 		landCoverType = (GridValueLayer) context.getValueLayer("lct");
 		
 		nY = (int)soilMoisture.getDimensions().getHeight();
 		nX = (int)soilMoisture.getDimensions().getWidth();
 		
-		drainageMatrix = calcDrainageMatrix(flowNetwork);
-		setSinkAffinityFactor(saf);
-		runoffVector = new ArrayRealVector(nX*nY+1);
-		
 		initSoilMoisture(initialSoilMoisture);
 
-	}
+	}	
 	
 	/**
 	 * The time-dependent soil moisture vector is given by:
@@ -69,15 +62,19 @@ public class SoilMoistureCalculator {
 	 * @return
 	 * 			calculated drainageMatrix
 	 */
+	/*
 	public static SparseRealMatrix calcDrainageMatrix(FlowConnectivityNetwork flow) {
 		SparseRealMatrix drainageMatrix;
 		drainageMatrix = (SparseRealMatrix) flow.transpose().subtract(flow);
 		return drainageMatrix;
 	}
+	*/
 	
+	/*
 	protected SparseRealMatrix getDrainageMatrix() {
 		return drainageMatrix;
 	}	
+	*/
 	
 	/**
 	 * Set all cells in the soil moisture ValueLayer to the same initial value
@@ -236,59 +233,8 @@ public class SoilMoistureCalculator {
 		}
 		return result;
 	}	
-
-	/**
-	 * @param x
-	 * 			Horizontal spatial grid index
-	 * @param y
-	 * 			Vertical spatial grid index
-	 * @return
-	 * 			Index for the FlowConnectivityMatrix row/column and Runoff vector
-	 * 			elements describing the flow characteristics of spatial cell (x,y)
-	 */
-	private int spatialCellIndex(int x, int y) {
-		return y*nY + x;		
-	}
 	
-	/**
-	 * @param i
-	 * 			Vector index of runoff node
-	 * @return
-	 * 			1D array with 2 elements such that coords[0] nad coords[1] are
-	 * 			the x and y coordinates of the grid cell corresponding to runoff
-	 * 			node i, respectively.
-	 */
-	private int[] indexSpatialCoords(int i) {
-		int coords[] = new int[2];
-		coords[0] = i%nX;
-		coords[1] = i/nX;
-		return coords;
-	}
-	
-	/**
-	 * @param raf
-	 * 			Sink affinity factor, 0<saf<=1. A dimensionless parameter controlling 
-	 * 			how much water flows out of each cell which drains into the sink in 
-	 *  		each model time step. Specifically, precipitation * sinkAffinityFactor
-	 *  		will drain out of each cell connected to the sink in each time step.
-	 *  
-	 *    		saf = 0 implies no water leaves through the sink, so water would 
-	 *    		accumulate at the nodes which would otherwise drain the model.
-	 *    
-	 *    		saf > 1 could, in an extreme case, mean that a cell ended up with 
-	 *    		negative soil moisture (obviously unphysical). Therefore the maximum
-	 *    		water which can be safely extracted from each cell is equal to the 
-	 *    		amount of water going into it via precipitation. 
-	 */
-	private void setSinkAffinityFactor(double saf) {
-		if (saf<=0 || saf>1) {
-			System.out.println("sinkAffinityFactor must be >0 and <=1.");
-			throw new IllegalArgumentException();
-		} else {
-			sinkAffinityFactor =  saf;
-		}		
-	}
-	
+	/*
 	protected void updateRunoffVector(double precip) {
 		for(int x=0; x<nX; x++) {
 			for(int y=0; y<nY; y++){
@@ -308,17 +254,24 @@ public class SoilMoistureCalculator {
 		// per time step, producing neutral water balance
 		runoffVector.setEntry(nX*nY, precip*sinkAffinityFactor);
 	}
+	*/
 	
+	/*
 	protected RealVector getRunoffVector() {
 		return runoffVector;	
 	}
+	*/
 	
+	/*
 	private RealVector calcSoilMoistureVector(double precip) {
 		updateRunoffVector(precip);
 		RealVector precipVector = new ArrayRealVector(nX*nY+1).mapAdd(precip);		
 		return drainageMatrix.operate(runoffVector).add(precipVector);		
 	}
+	*/
 	
+	/*
+	 * DEPRECIATED, reimplemented below without FlowDirectionNetwork 
 	public void updateSoilMoistureLayer(double precip) {
 		double[] sm = calcSoilMoistureVector(precip).toArray();
 		// only go to sm.length-1 as vector includes runoff node
@@ -328,4 +281,152 @@ public class SoilMoistureCalculator {
 			soilMoisture.set(sm[i], coords[1], coords[0]);
 		}
 	}
+	*/
+	
+	private boolean isOutlet(int flowDir, int thisCol, int thisRow) {
+		if (thisCol==0 && (flowDir==4 | flowDir==5 | flowDir==6)) {
+			
+			return true;
+			
+		} else if (thisCol==nX-1 && (flowDir==1 | flowDir==2 | flowDir==8)) {
+			
+			return true;
+			
+		} else if (thisRow==0 && (flowDir==2 | flowDir==3 | flowDir==4)) {
+			
+			return true;
+			
+		} else if (thisRow==nY-1 && (flowDir==6 | flowDir==7 | flowDir==8)) {
+			
+			return true;
+			
+		} else if (flowDir==9) {
+			
+			return true;
+			
+		} else {
+			
+			return false;
+			
+		}
+		
+	}
+	
+	private int targetRow(int flowDir, int thisRow) {
+		if (flowDir==6 | flowDir==7 | flowDir==8) {
+			
+			return thisRow+1;
+			
+		} else if (flowDir==1 | flowDir==5) {
+			
+			return thisRow;
+			
+		} else if (flowDir==2 | flowDir==3 | flowDir==4) {
+			
+			return thisRow-1;
+			
+		} else {
+			
+			return -1; // indicates no value, could be an error
+			
+		}
+	}
+	
+	private int targetCol(int flowDir, int thisCol) {
+		if (flowDir==1 | flowDir==2 | flowDir==8) {
+			
+			return thisCol+1;
+			
+		} else if (flowDir==3 | flowDir==7) {
+			
+			return thisCol;
+			
+		} else if (flowDir==4 | flowDir==5 | flowDir==6) {
+			
+			return thisCol-1;
+			
+		} else {
+			
+			return -1; // indicates no value, could be an error
+			
+		}
+	}
+	
+	/**
+	 * Determine which cell this cell drains into. If it is a sink cell return null,
+	 * else return an int[] specifying the row and column of the target cell.
+	 * @param row
+	 * 		Flow direction grid row number
+	 * @param col
+	 * 		Flow direction grid column number
+	 * @param flowDir
+	 * 		Value in flow direction grid
+	 * @return
+	 * 		array specifying the row and col of the target cell
+	 */
+	GridCell runoffTargetCell(int thisRow, int thisCol, int flowDir) {
+		if (isOutlet(flowDir, thisCol, thisRow)) {
+			return null;
+		} else {
+			return new GridCell(targetRow(flowDir, thisRow), 
+					targetCol(flowDir, thisCol));
+		}		
+	}
+	
+	/**
+	 * @param i
+	 * 		Row index in a 2-dimensional java array (top left origin)
+	 * @return
+	 * 		Corresponding y coordinate in the Cartesian (bottom-left origin)
+	 * 		Repast GridValueLayer 
+	 */
+	private int getY(int i) {
+		return nY-1-i;
+	}
+	
+	/**
+	 * @param j
+	 * 		Column index in a 2-dimensional java array (top left origin)
+	 * @return
+	 * 		Corresponding x coordinate in the Cartesian (bottom-left origin)
+	 * 		Repast GridValueLayer. x and j are are identical, but a method is 
+	 * 		provided to match semantics for non-trivial y coordinate case. 
+	 */
+	private int getX(int j) {
+		return j;
+	}
+	
+	public void updateSoilMoistureLayer(double precip) {
+		double[][] newSoilMoistureVals = new double[nY][nX];
+		for (int i=0; i<nY; i++) {
+			for (int j=0; j<nX; j++) {
+				// add precipitation
+				newSoilMoistureVals[i][j] += precip;
+				
+				// calculate runoff
+				double curveNumber = curveNumber(
+						slope.get(getX(j), getY(i)), 
+						(int)soilMap.get(getX(j), getY(i)), 
+						(int)landCoverType.get(getX(j), getY(i)));
+				double runoff = cellRunoff(precip, abstractionRate(curveNumber));
+				
+				// subtract runoff from this cell
+				newSoilMoistureVals[i][j] -= runoff;
+				
+				// add runoff to the draining cell, unless this cell is a sink
+				GridCell targetCell = runoffTargetCell(i, j, (int)flowDirMap.get(getX(j), getY(i)));
+				if (targetCell != null) {
+					newSoilMoistureVals[targetCell.getRow()][targetCell.getColumn()] += runoff;
+				}				
+				System.out.print("\n");
+			}
+		}
+		
+		// copy calculated values to soil moisture grid value layer
+		for (int i=0; i<nY; i++) {
+			for (int j=0; j<nX; j++) {
+				soilMoisture.set(newSoilMoistureVals[i][j], getX(j), getY(i));
+			}
+		} 
+	}	
 }
