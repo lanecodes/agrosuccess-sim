@@ -18,7 +18,7 @@ public class DummyLayer3x3 extends GridValueLayer {
 	protected void setData(double[][] data) {
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
-				this.set(data[i][j], i, j);
+				this.set(data[i][j], j, 3-1-i);
 			}
 		}
 	}

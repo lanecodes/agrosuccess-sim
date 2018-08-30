@@ -32,12 +32,6 @@ public class StudySiteDataContainerTest {
 		assertEquals(41.0, dataContainer.getPrecipitation(), 0.01);		
 	}
 	
-	@Ignore
-	@Test
-	public void navarresFlowConnectivityNetworkShouldInitialise() {
-		//FlowConnectivityNetwork flowNet = dataContainer.getFlowConnectivityNetwork();		
-	}
-	
 	@Test 
 	public void navarresSlopeShouldInitialise() {
 		GridValueLayer slope = dataContainer.getSlopeMap();
