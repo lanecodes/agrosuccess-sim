@@ -39,7 +39,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 		  
 		// directory containing study site-specific data needed to run simulations
 		File siteGeoDataDir = new File((String)params.getValue("geoDataDirRootString"), 
-				(String)params.getValue("studySiteNameString"));
+				(String)params.getValue("studySite"));
 		  
 		StudySiteDataContainer studySiteData = new StudySiteDataContainer(siteGeoDataDir);
 		

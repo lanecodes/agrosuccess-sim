@@ -72,10 +72,8 @@ public class AgroSuccessContextBuilderTest {
 	@Test
 	public void geoDataDirShouldExist() {
 		File siteGeoDataDir = new File((String)params.getValue("geoDataDirRootString"), 
-				(String)params.getValue("studySiteNameString"));
+				(String)params.getValue("studySite"));
 		
-		//System.out.println(siteGeoDataDir.getAbsolutePath());		
 		assertTrue(siteGeoDataDir.exists());
 	}
-
 }
