@@ -9,21 +9,18 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.TransactionWork;
 
+import me.ajlane.neo4j.EmbeddedGraphInstance;
+
 import static org.neo4j.driver.v1.Values.parameters;
 
 import java.util.HashMap;
 
-public class LCTTransDecider implements AutoCloseable
-{
-	private String model_ID;
-	private final Driver driver;
+public class LCTTransDecider implements AutoCloseable {
+	
 	private final HashMap<String, String> transLookup; 
 
-    public LCTTransDecider( String uri, String user, String password, String model_ID )
-    {
-        driver = GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
-        this.model_ID = model_ID;
-        this.transLookup = getLandCoverTransitionMap();
+    public LCTTransDecider(EmbeddedGraphInstance graphDatabase) {
+    	this.transLookup = getLandCoverTransitionMap(graphDatabase);
     }
 
     @Override
@@ -33,7 +30,7 @@ public class LCTTransDecider implements AutoCloseable
     }
 
     
-    public HashMap<String, String>  getLandCoverTransitionMap() {
+    public HashMap<String, String>  getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
         try ( Session session = driver.session() )
         {
             return session.readTransaction( new TransactionWork<HashMap<String, String>>()

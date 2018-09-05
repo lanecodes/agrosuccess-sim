@@ -20,10 +20,12 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.event.KernelEventHandler;
 import org.neo4j.graphdb.event.TransactionEventHandler;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
 import org.neo4j.graphdb.traversal.TraversalDescription;
+import org.neo4j.kernel.StoreLockException;
 
 /**
  * 
@@ -46,11 +48,57 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
 	
 	private GraphDatabaseService graphDb;
 	
+	/**
+	 * @param databaseDirectory
+	 * 		File path to the directory where the database should be located. If
+	 * 		a database already exists in that location it will be appended to	 * 		
+	 */
 	public EmbeddedGraphInstance(String databaseDirectory) {
+		this(databaseDirectory, false);
+	}
+	
+	/**
+	 * @param databaseDirectory
+	 * 		File path to the directory where the database should be located. 
+	 * @param overwriteDatabase
+	 * 		Specify if an existing database in the location specified by 
+	 * 		databaseDirectory should be deleted and overwritten if it 
+	 * 		exists. 
+	 */
+	public EmbeddedGraphInstance(String databaseDirectory, boolean overwriteDatabase) {
 		
-		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase( new File(databaseDirectory) );
-		registerShutdownHook( graphDb );
+		if (overwriteDatabase) {
+			deleteDir(new File(databaseDirectory));
+		}
 		
+		try {
+		
+		graphDb = new GraphDatabaseFactory()
+				.newEmbeddedDatabaseBuilder(new File(databaseDirectory))
+			    .setConfig( GraphDatabaseSettings.pagecache_memory, "512M" )
+			    .setConfig( GraphDatabaseSettings.string_block_size, "60" )
+			    .setConfig( GraphDatabaseSettings.array_block_size, "300" )
+			    .newGraphDatabase();
+		
+		registerShutdownHook(graphDb);
+		} catch (StoreLockException e) {
+			System.out.println("Couldn't lock database at " + databaseDirectory  + "\n" + 
+					"Check it isn't being accessed by another process.");
+			throw e;			
+		}		
+	}
+	
+	public static boolean deleteDir(File dir) {
+	    if (dir.isDirectory()) {
+	        String[] children = dir.list();
+	        for (int i=0; i<children.length; i++) {
+	            boolean success = deleteDir(new File(dir, children[i]));
+	            if (!success) {
+	                return false;
+	            }
+	        }
+	    }
+	    return dir.delete(); // if (deleteDir(File)...) {..} else {error, directory couldn't be deletd} 
 	}
 	
 	private static void registerShutdownHook( final GraphDatabaseService graphDb )
@@ -71,12 +119,17 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
 	public void insertExternalCypher(String cypherRoot, String fnameSuffix, 
 				String globalParamFile ) {
     	
+		System.out.print("Loading Cypher files into database:\n" + 
+						 "Cypher root: " + cypherRoot + "\n" +
+						 "Filename suffix: " + fnameSuffix + "\n" +
+						 "Parameter file: " + globalParamFile + "\n...");
+		
 		GraphLoaderFactory factory = new GraphLoaderFactory();
     	GraphLoaderType graphLoader = factory.create(cypherRoot, fnameSuffix, 
     											globalParamFile);
     	
     	Boolean moreQueries = true;   
-    	int queryNo = 0;
+    	//int queryNo = 0;
     	
     	try ( Transaction tx = graphDb.beginTx() ) {
     		
@@ -84,16 +137,17 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
         		String nextQuery = graphLoader.getNextQuery();
         		
         		if (nextQuery == null) {
-        			System.out.println("Loaded " + queryNo + " Cypher queries"); 
+        			//System.out.println("Loaded " + queryNo + " Cypher queries"); 
         			moreQueries  = false;
         		} else {
-            		System.out.println("Loading query\n:" + nextQuery);
+            		//System.out.println("Loading query\n:" + nextQuery);
             		Result res = graphDb.execute(nextQuery); res.close();       		
-            		queryNo++;
+            		//queryNo++;
         		}         		
         	}
         	tx.success();
     	}
+    	System.out.println("Finished loading Cypher from " + cypherRoot);
 	}
 
 	@Override
