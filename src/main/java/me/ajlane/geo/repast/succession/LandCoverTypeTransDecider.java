@@ -1,49 +1,78 @@
 package me.ajlane.geo.repast.succession;
 
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Transaction;
-import org.neo4j.driver.v1.TransactionWork;
+import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
-import static org.neo4j.driver.v1.Values.parameters;
+import static java.lang.Math.toIntExact;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class LCTTransDecider implements AutoCloseable {
+public class LandCoverTypeTransDecider {
 	
-	private final HashMap<String, String> transLookup; 
+	private HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+					  EnvironmentalConsequent<String>> transLookup;
+	
 
-    public LCTTransDecider(EmbeddedGraphInstance graphDatabase) {
+    public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase) {
     	this.transLookup = getLandCoverTransitionMap(graphDatabase);
     }
 
-    @Override
-    public void close() throws Exception
-    {
-        driver.close();
+    public HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+	  EnvironmentalConsequent<String>> getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
+    	
+    	HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+    		EnvironmentalConsequent<String>> transLookup;  
+    	transLookup = new HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+        					EnvironmentalConsequent<String>>();
+    	
+    	HashMap<String, Object> params = new HashMap<String, Object>();
+    	params.put("model_ID", "AgroSuccess-dev");
+    	
+    	String landCoverTransitionQuery 
+    		= "MATCH (lct1:LandCoverType)<-[:SOURCE]-(t:SuccessionTrajectory)-[:TARGET]->(lct2:LandCoverType) " +
+    		  "WHERE lct1.model_ID=$model_ID AND lct1.code<>lct2.code " +
+    		  "WITH lct1, lct2, t MATCH (e:EnvironCondition)-[:CAUSES]->(t) " +
+    		  "RETURN lct1.code as start_code, e.succession as succession, e.aspect as aspect," + 
+    		  "e.pine as pine, e.oak as oak, e.deciduous as deciduous, e.water as water, " + 
+    		  "lct2.code as end_code, e.delta_t as delta_t; ";
+    	
+    	try (Transaction tx = graph.beginTx()) {
+    		Result landCoverTransitionResults = graph.execute(landCoverTransitionQuery, params);
+    		while (landCoverTransitionResults.hasNext()) {
+    			Map<String, Object> transData = landCoverTransitionResults.next();
+    			
+    			EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String> envAntecedent
+    				= new EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>(
+    						transData.get("start_code").toString(),
+    						transData.get("succession").toString(),
+    						transData.get("aspect").toString(),
+    						(boolean)transData.get("pine"),
+    						(boolean)transData.get("oak"),
+    						(boolean)transData.get("deciduous"),
+    						transData.get("water").toString());
+    			
+    			EnvironmentalConsequent<String> envConsequent
+    				= new EnvironmentalConsequent<String>(
+    						transData.get("end_code").toString(),
+    						toIntExact((long)transData.get("delta_t")));
+    			
+    			transLookup.put(envAntecedent, envConsequent);    			
+    			tx.success();
+    		}
+    		
+    	}
+    	return transLookup;
     }
-
     
-    public HashMap<String, String>  getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
-        try ( Session session = driver.session() )
-        {
-            return session.readTransaction( new TransactionWork<HashMap<String, String>>()
-            {
-                @Override
-                public HashMap<String, String>  execute( Transaction tx )
-                {
-                    return getLandCoverTransitionData( tx, model_ID );
-                }
-            } );
-        }
-    }
+    HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+	  EnvironmentalConsequent<String>> getTransLookup() {
+    	return this.transLookup;
+    }    
     
+    /*
     private static HashMap<String, String> getLandCoverTransitionData( Transaction tx, String model_ID ) {
         HashMap<String, String> map = new HashMap<String, String>();
         StatementResult result = tx.run( 
@@ -94,7 +123,7 @@ public class LCTTransDecider implements AutoCloseable {
     {
     	String user = args[0];
     	String password = args[1];
-        try ( LCTTransDecider decider = new LCTTransDecider( "bolt://localhost:7687", user, password, "AgroSuccess-dev" ) )
+        try ( LandCoverTypeTransDecider decider = new LandCoverTypeTransDecider( "bolt://localhost:7687", user, password, "AgroSuccess-dev" ) )
         {
         	System.out.println(decider.getLandCoverTransitionMap());
         	System.out.println(decider.getNextLandCoverType("Burnt", "regeneration", "north", false, true, true, "xeric", "2"));
@@ -104,4 +133,6 @@ public class LCTTransDecider implements AutoCloseable {
         	// getNextLandCoverType?
         }
     }
+    
+    */
 }
