@@ -20,7 +20,13 @@ public class LandCoverTypeTransDecider {
     	this.transLookup = getLandCoverTransitionMap(graphDatabase);
     }
 
-    public HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
+    /**
+     * @param graph
+     * 		An established connection to a running EmbeddedGraphInstance database containing succession
+     * 		pathway data. At the time of writing it is assumed that 
+     * @return
+     */
+    HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
 	  EnvironmentalConsequent<String>> getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
     	
     	HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
@@ -70,7 +76,9 @@ public class LandCoverTypeTransDecider {
     HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
 	  EnvironmentalConsequent<String>> getTransLookup() {
     	return this.transLookup;
-    }    
+    }
+    
+    
     
     /*
     private static HashMap<String, String> getLandCoverTransitionData( Transaction tx, String model_ID ) {
