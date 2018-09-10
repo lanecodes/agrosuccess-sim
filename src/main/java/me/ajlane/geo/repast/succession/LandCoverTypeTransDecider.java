@@ -113,18 +113,6 @@ public class LandCoverTypeTransDecider {
     	return 2;    	
     }
     
-    int thisTimeInState(int lastTimeInState, int thisCurrentState, int lastCurrentState, 
-    		int thisTargetState, int lastTargetState) {
-    	if (thisCurrentState == lastCurrentState && thisTargetState == lastTargetState) {
-    		return lastTimeInState;
-    	}
-    	return 1;
-    }
-    
-    //int thisTransitionTime(lastTransitionTime)
-    
-    
-    
     /**
      * @param currentLandCoverState
      * 		Package of data specifying a cell's current land cover state and information
@@ -150,34 +138,64 @@ public class LandCoverTypeTransDecider {
     		int successionPathway, int aspect, int pineSeeds, int oakSeeds, 
     		int deciduousSeeds, double soilMoisture) {
     	
-    	//int lastLandCoverState.getCurrentState();
-    	//int lastLandCoverState.getTimeInState();
-    	// lastLandCoverState.getTargetState();
-    	// lastLandCoverState.getTargetStateTransitionTime();
+    	int thisCurrentState, thisTimeInState, thisTargetState, thisTargetStateTransitionTime = -1; 	
     	
-    	EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer> currentEnvConds
+    	EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer> lastEnvConds
 		= new EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>(
-				lastLandCoverState.getCurrentState(),
-				successionPathway,
-				aspect,
-				pineSeeds,
-				oakSeeds,
-				deciduousSeeds,
-				discretiseSoilMoisture(soilMoisture));
+				lastLandCoverState.getCurrentState(), successionPathway, aspect, pineSeeds,
+				oakSeeds, deciduousSeeds, discretiseSoilMoisture(soilMoisture));
     	
-    	// current environmental trajectory given specified combination of environmental conditions
-    	EnvironmentalConsequent<Integer> currentTargetState = this.transLookup.get(currentEnvConds);
+    	// current environmental trajectory given combination of environmental conditions last read from model
+    	EnvironmentalConsequent<Integer> currentTargetState = transLookup.get(lastEnvConds);
     	
-    	int lastTargetState = lastLandCoverState.getTargetState();
-    	int thisTargetState = currentTargetState.getTargetState();
+    	thisTimeInState = lastLandCoverState.getTimeInState() + 1;
     	
-    	//DUMMY!!
-    	LandCoverStateTransitionMessage result = new LandCoverStateTransitionMessage(1, 1, 1, 1);
-    	return result;   	
+    	if (currentTargetState.getTargetState() == lastLandCoverState.getTargetState()) {
+    	// If environmental changes haven't caused change in target state, target transition time stays the same
+    		thisTargetStateTransitionTime = lastLandCoverState.getTargetStateTransitionTime();
+    	} else {
+    	// If target state has changed due to changes in the environment, average target time WRT new and old states
+    		thisTargetStateTransitionTime = (int)Math.round(
+    				0.5 * (double)(lastLandCoverState.getTargetStateTransitionTime() + 
+    							   currentTargetState.getTransitionTime()));
+    	}
     	
+    	if (thisTimeInState >= thisTargetStateTransitionTime) {
+    	// Transition!
+    		thisCurrentState = currentTargetState.getTargetState();
+    		thisTimeInState = 1;
+    		
+        	// lookup the target state which will result from the change in actual land cover state
+    		EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer> thisEnvConds
+    		= new EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>(
+    				thisCurrentState, successionPathway, aspect, pineSeeds,
+    				oakSeeds, deciduousSeeds, discretiseSoilMoisture(soilMoisture));
+        	
+    		EnvironmentalConsequent<Integer> nextTargetState = transLookup.get(thisEnvConds);
+    		
+    		if (nextTargetState == null) {
+    			// handle case for when we implicitly stay in the same state because there is no rule to leave
+    			// TODO check this rule thoroughly
+    			thisTargetState = thisCurrentState;
+    			thisTargetStateTransitionTime = 1;
+    		} else {
+    			thisTargetState = nextTargetState.getTargetState();
+    			thisTargetStateTransitionTime = nextTargetState.getTransitionTime();    		    			
+    		}
+
+    	} else {
+    		thisCurrentState = lastLandCoverState.getCurrentState();
+    		thisTargetState = lastLandCoverState.getTargetState();
+    	}
+    	
+    	if (thisCurrentState == -1 || thisTimeInState == -1 || thisTargetState == -1 
+    			|| thisTargetStateTransitionTime == -1) {
+    		throw new IllegalArgumentException("LandCoverStateTransitionMessage not initialised.");
+    	}   	
+    	
+    	return new LandCoverStateTransitionMessage(thisCurrentState, thisTimeInState, thisTargetState, 
+    					thisTargetStateTransitionTime);
     }
-    
-    
     
     /*
     private static HashMap<String, String> getLandCoverTransitionData( Transaction tx, String model_ID ) {

@@ -86,8 +86,24 @@ public class LandCoverTypeTransDeciderTest {
 		
 		EnvironmentalConsequent<Integer> envConsequent = transLookup.get(codedEnvironmentalAntecedent1);
 		assertEquals(5, (int)envConsequent.getTargetState()); // shrubland
-		assertEquals(2, envConsequent.getTransitionTime());
+		assertEquals(2, envConsequent.getTransitionTime());		
+	}
+	
+	@Test 
+	public void decisionTestCase1() {
+		// Barley	regeneration	north	false	false	false	hydric	Shrubland	3
+		int currentState = 2; // barley
+		int timeInState = 2;
+		int targetState = 5; // shrubland
+		int targetStateTransitionTime = 3;
+		LandCoverStateTransitionMessage currentLandCoverState 
+			= new LandCoverStateTransitionMessage(currentState, timeInState, targetState, targetStateTransitionTime);
 		
+		LandCoverStateTransitionMessage nextLandCoverState 
+			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 0, 0, 0, 1500); // hydric
+		
+		System.out.println(nextLandCoverState);
+
 	}
 
 }

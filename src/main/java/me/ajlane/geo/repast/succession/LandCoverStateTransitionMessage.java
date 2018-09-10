@@ -28,11 +28,11 @@ public class LandCoverStateTransitionMessage {
 	 */
 	public LandCoverStateTransitionMessage(int currentState, int timeInState,
 			int targetState, int targetStateTransitionTime) {
-
+		
 		this.currentState = currentState;
 		this.timeInState = timeInState;
 		this.targetState = targetState;
-		this.targetStateTransitionTime = targetStateTransitionTime;
+		this.targetStateTransitionTime = targetStateTransitionTime;		
 	}
 
 	public int getCurrentState() {
@@ -50,4 +50,12 @@ public class LandCoverStateTransitionMessage {
 	public int getTargetStateTransitionTime() {
 		return targetStateTransitionTime;
 	}
+
+	@Override
+	public String toString() {
+		return "LandCoverStateTransitionMessage [currentState=" + currentState
+				+ ", timeInState=" + timeInState + ", targetState="
+				+ targetState + ", targetStateTransitionTime="
+				+ targetStateTransitionTime + "]";
+	}	
 }
