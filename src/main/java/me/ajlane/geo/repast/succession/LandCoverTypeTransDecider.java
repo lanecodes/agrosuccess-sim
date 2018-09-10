@@ -12,11 +12,24 @@ import java.util.Map;
 
 public class LandCoverTypeTransDecider {
 	
-	private HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
-					  EnvironmentalConsequent<String>> transLookup;
-	
+	private HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
+					  EnvironmentalConsequent<Integer>> transLookup;
+	private EnvironmentalStateAliasTranslator envStateAliasTranslator;
+	private String modelID;	
 
-    public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase) {
+    /**
+     * @param graphDatabase
+     * 		Running connection to a graph database containing the model configuration
+     * @param envStateAliasTranslator
+     * 		Model specific translator to go between aliases specifying combinations of 
+     * 		environmental condition
+     * @param modelID
+     */
+    public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase,
+    		EnvironmentalStateAliasTranslator envStateAliasTranslator, 
+    		String modelID) {
+    	this.modelID = modelID;
+    	this.envStateAliasTranslator = envStateAliasTranslator;
     	this.transLookup = getLandCoverTransitionMap(graphDatabase);
     }
 
@@ -26,16 +39,17 @@ public class LandCoverTypeTransDecider {
      * 		pathway data. At the time of writing it is assumed that 
      * @return
      */
-    HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
-	  EnvironmentalConsequent<String>> getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
+    HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
+	  EnvironmentalConsequent<Integer>> getLandCoverTransitionMap(EmbeddedGraphInstance graph) {
     	
-    	HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
-    		EnvironmentalConsequent<String>> transLookup;  
-    	transLookup = new HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
-        					EnvironmentalConsequent<String>>();
+    	HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
+			EnvironmentalConsequent<Integer>> transLookup;  
+	
+    	transLookup = new HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
+    					EnvironmentalConsequent<Integer>>();
     	
     	HashMap<String, Object> params = new HashMap<String, Object>();
-    	params.put("model_ID", "AgroSuccess-dev");
+    	params.put("model_ID", modelID); 
     	
     	String landCoverTransitionQuery 
     		= "MATCH (lct1:LandCoverType)<-[:SOURCE]-(t:SuccessionTrajectory)-[:TARGET]->(lct2:LandCoverType) " +
@@ -49,21 +63,21 @@ public class LandCoverTypeTransDecider {
     		Result landCoverTransitionResults = graph.execute(landCoverTransitionQuery, params);
     		while (landCoverTransitionResults.hasNext()) {
     			Map<String, Object> transData = landCoverTransitionResults.next();
+    			    			
+    			EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer> envAntecedent
+    				= new EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>(
+    						this.envStateAliasTranslator.numericalValueFromAlias("landCoverState", transData.get("start_code").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("succession", transData.get("succession").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("aspect", transData.get("aspect").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("seedPresence", transData.get("pine").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("seedPresence", transData.get("oak").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("seedPresence", transData.get("deciduous").toString()),
+    						this.envStateAliasTranslator.numericalValueFromAlias("water", transData.get("water").toString()));
     			
-    			EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String> envAntecedent
-    				= new EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>(
-    						transData.get("start_code").toString(),
-    						transData.get("succession").toString(),
-    						transData.get("aspect").toString(),
-    						(boolean)transData.get("pine"),
-    						(boolean)transData.get("oak"),
-    						(boolean)transData.get("deciduous"),
-    						transData.get("water").toString());
-    			
-    			EnvironmentalConsequent<String> envConsequent
-    				= new EnvironmentalConsequent<String>(
-    						transData.get("end_code").toString(),
-    						toIntExact((long)transData.get("delta_t")));
+    			EnvironmentalConsequent<Integer> envConsequent
+				= new EnvironmentalConsequent<Integer>(
+						this.envStateAliasTranslator.numericalValueFromAlias("landCoverState", transData.get("end_code").toString()),
+						toIntExact((long)transData.get("delta_t")));    			
     			
     			transLookup.put(envAntecedent, envConsequent);    			
     			tx.success();
@@ -73,9 +87,94 @@ public class LandCoverTypeTransDecider {
     	return transLookup;
     }
     
-    HashMap<EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String>, 
-	  EnvironmentalConsequent<String>> getTransLookup() {
+    HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
+	  EnvironmentalConsequent<Integer>> getTransLookup() {
     	return this.transLookup;
+    }
+    
+    /**
+     * Classify soil moisture measured in mm to one of xeric, mesic or hydric 
+     * using the schema described in Millington et al. 2009. That is: 
+     * - xeric <=500 mm
+     * - 500 mm< mesic <=1000 mm
+     * - hydric >1000 mm
+     * 
+     * @param soilMoisture
+     * 		Cell soil moisture specified in mm
+     * @return
+     * 		0=xeric, 1=mesic, 2=hydric
+     */
+    int discretiseSoilMoisture(double soilMoisture) {
+    	if (soilMoisture <= 500) {
+    		return 0;
+    	} else if (soilMoisture <= 1000) {
+    		return 1;
+    	}
+    	return 2;    	
+    }
+    
+    int thisTimeInState(int lastTimeInState, int thisCurrentState, int lastCurrentState, 
+    		int thisTargetState, int lastTargetState) {
+    	if (thisCurrentState == lastCurrentState && thisTargetState == lastTargetState) {
+    		return lastTimeInState;
+    	}
+    	return 1;
+    }
+    
+    //int thisTransitionTime(lastTransitionTime)
+    
+    
+    
+    /**
+     * @param currentLandCoverState
+     * 		Package of data specifying a cell's current land cover state and information
+     * 		needed to specify its trajectory
+     * @param successionPathway
+     * 		Regeneration or secondary succession. regeneration=0, secondary=1
+     * @param aspect
+     * 		north=0, south=1
+     * @param pineSeeds
+     * 		Are pine seeds present? false=0, true=1
+     * @param oakSeeds
+     * 		Are oak seeds present? false=0, true=1
+     * @param deciduousSeeds
+     * 		Are deciduous seeds present? false=0, true=1
+     * @param soilMoisture
+     * 		Soil moisture of cell in mm
+     * @return
+     * 		Package of data specifying cell's transition state in the next timestep
+     * 		in consideration of its environmental state
+     */
+    public LandCoverStateTransitionMessage nextLandCoverTransitionState(
+    		LandCoverStateTransitionMessage lastLandCoverState, 
+    		int successionPathway, int aspect, int pineSeeds, int oakSeeds, 
+    		int deciduousSeeds, double soilMoisture) {
+    	
+    	//int lastLandCoverState.getCurrentState();
+    	//int lastLandCoverState.getTimeInState();
+    	// lastLandCoverState.getTargetState();
+    	// lastLandCoverState.getTargetStateTransitionTime();
+    	
+    	EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer> currentEnvConds
+		= new EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>(
+				lastLandCoverState.getCurrentState(),
+				successionPathway,
+				aspect,
+				pineSeeds,
+				oakSeeds,
+				deciduousSeeds,
+				discretiseSoilMoisture(soilMoisture));
+    	
+    	// current environmental trajectory given specified combination of environmental conditions
+    	EnvironmentalConsequent<Integer> currentTargetState = this.transLookup.get(currentEnvConds);
+    	
+    	int lastTargetState = lastLandCoverState.getTargetState();
+    	int thisTargetState = currentTargetState.getTargetState();
+    	
+    	//DUMMY!!
+    	LandCoverStateTransitionMessage result = new LandCoverStateTransitionMessage(1, 1, 1, 1);
+    	return result;   	
+    	
     }
     
     
