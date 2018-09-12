@@ -102,8 +102,82 @@ public class LandCoverTypeTransDeciderTest {
 		LandCoverStateTransitionMessage nextLandCoverState 
 			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 0, 0, 0, 1500); // hydric
 		
-		System.out.println(nextLandCoverState);
+		//System.out.println(nextLandCoverState);
 
+	}
+	
+	/**
+	 * Test that if statement 1 from Millington2009 holds
+	 * If C(t) = C(t-1) THEN Tin(t) = 1
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Burnt	regeneration	north	true	false	false	hydric	Shrubland	2
+	 * 1		0				0		1		0		0		2		5			2
+	 * 
+	 * timeInState = 1
+	 * 
+	 */
+	@Test 
+	public void statement1TestCase() {
+		
+		LandCoverStateTransitionMessage currentLandCoverState 
+		= new LandCoverStateTransitionMessage(1, 1, 5, 2);
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+		= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 1, 0, 0, 1500);
+		
+		assertEquals(1, nextLandCoverState.getTimeInState());		
+	}
+	
+	/**
+	 * Test that if statement 2 from Millington2009 holds
+	 * If C(t) = C(t-1) AND Delta D(t) = Delta D(t-1) THEN Tin(t) = Tin(t-1) + 1
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Wheat	regeneration	north	false	true	false	hydric	Shrubland	3
+	 * 3		0				0		0		1		0		2		5			3
+	 * 
+	 * timeInState = 1
+	 * 
+	 */
+	@Test 
+	public void statement2TestCase() {
+		
+		LandCoverStateTransitionMessage currentLandCoverState 
+		= new LandCoverStateTransitionMessage(3, 1, 5, 3); // initial time in state =1
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+		= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 0, 1, 0, 1500);
+		
+		assertEquals(2, nextLandCoverState.getTimeInState()); // new time in state is 2
+	}
+	
+	/**
+	 * Test that if statement 3 from Millington2009 holds
+	 * If C(t) = C(t-1) AND Delta D(t) != Delta D(t-1) THEN Tin(t) = 1
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Shrubland	secondary	south	true	true	false	hydric	Pine		15
+	 * 5			1			1		1		1		0		2		6			15
+	 * 
+	 * timeInState = 1
+	 * suppose previous target state was TransForest (coded 7). Change in environmental conditions
+	 * means we're now tranitioning towards pine
+	 * 
+	 */
+	@Test 
+	public void statement3TestCase() {
+		LandCoverStateTransitionMessage currentLandCoverState 
+			= new LandCoverStateTransitionMessage(5, 2, 7, 15); // initial time in state =1
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
+		
+				
+		assertEquals(1, nextLandCoverState.getTimeInState()); // new time in state is 1		
 	}
 
 }

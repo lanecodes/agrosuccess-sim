@@ -147,7 +147,7 @@ public class LandCoverTypeTransDecider {
     	
     	// current environmental trajectory given combination of environmental conditions last read from model
     	EnvironmentalConsequent<Integer> currentTargetState = transLookup.get(lastEnvConds);
-    	
+    	    	
     	thisTimeInState = lastLandCoverState.getTimeInState() + 1;
     	
     	if (currentTargetState.getTargetState() == lastLandCoverState.getTargetState()) {
@@ -158,6 +158,11 @@ public class LandCoverTypeTransDecider {
     		thisTargetStateTransitionTime = (int)Math.round(
     				0.5 * (double)(lastLandCoverState.getTargetStateTransitionTime() + 
     							   currentTargetState.getTransitionTime()));
+    		
+    		if (thisTimeInState < thisTargetStateTransitionTime){
+    			thisTimeInState = 1; // see Millington2009 statement 3, reset time in state count when target changes    			
+    		}   		
+    		
     	}
     	
     	if (thisTimeInState >= thisTargetStateTransitionTime) {
@@ -185,7 +190,7 @@ public class LandCoverTypeTransDecider {
 
     	} else {
     		thisCurrentState = lastLandCoverState.getCurrentState();
-    		thisTargetState = lastLandCoverState.getTargetState();
+    		thisTargetState = currentTargetState.getTargetState();
     	}
     	
     	if (thisCurrentState == -1 || thisTimeInState == -1 || thisTargetState == -1 
