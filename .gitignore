@@ -33,3 +33,6 @@ data/**/*.tif
 
 # generated initial land_cover files
 data/geographic/**/navarres.zip
+
+# generated database files
+src/test/resources/databases/*

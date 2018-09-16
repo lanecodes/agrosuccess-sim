@@ -6,6 +6,46 @@
 	/>
 	
 	<!-- 
+	Directory which will be searched for Cypher files to be loaded into the 
+	embedded graph database and queried by the simulation. 
+	 -->
+	<parameter 
+	 	name="configCypherFilesDir" 
+		displayName="Directory to serch exhaustively for Cypher files" 
+		type="java.lang.String" 
+		defaultValue="/home/andrew/Dropbox/phd/models/AgroSuccess/views" 
+		isReadOnly="true" 
+	/>	
+	
+	<!-- 
+	Suffix at the end of a Cypher file base name to determine if a cypher file
+	found in configCypherFilesDir should be loaded into the database. This is 
+	included to make it possible to have other Cypher files within the config
+	directory structure which won't be loaded. 
+	 -->
+	<parameter 
+	 	name="cypherFileSuffix" 
+		displayName="File suffix of Cypher file to include" 
+		type="java.lang.String" 
+		defaultValue="_w" 
+		isReadOnly="true" 
+	/>	
+	
+	<!-- 
+	Suffix at the end of a Cypher file base name to determine if a cypher file
+	found in configCypherFilesDir should be loaded into the database. This is 
+	included to make it possible to have other Cypher files within the config
+	directory structure which won't be loaded. 
+	 -->
+	<parameter 
+	 	name="graphDatabaseGloablParamFile" 
+		displayName="JSON file containing global parameters for graph database" 
+		type="java.lang.String" 
+		defaultValue="/home/andrew/Dropbox/phd/models/AgroSuccess/global_parameters.json" 
+		isReadOnly="true" 
+	/>	
+	
+	<!-- 
 	Path to study site data inputs for the model. It is assumed that this 
 	directory will contain a subdirectory with the name of each study site, 
 	with spaces represented with underscores, and any unicode characters 
@@ -31,5 +71,7 @@
 		defaultValue="navarres" 
 		isReadOnly="true" 
 	/>	
+	
+	
 	
 </parameters>
