@@ -89,23 +89,6 @@ public class LandCoverTypeTransDeciderTest {
 		assertEquals(2, envConsequent.getTransitionTime());		
 	}
 	
-	@Test 
-	public void decisionTestCase1() {
-		// Barley	regeneration	north	false	false	false	hydric	Shrubland	3
-		int currentState = 2; // barley
-		int timeInState = 2;
-		int targetState = 5; // shrubland
-		int targetStateTransitionTime = 3;
-		LandCoverStateTransitionMessage currentLandCoverState 
-			= new LandCoverStateTransitionMessage(currentState, timeInState, targetState, targetStateTransitionTime);
-		
-		LandCoverStateTransitionMessage nextLandCoverState 
-			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 0, 0, 0, 1500); // hydric
-		
-		//System.out.println(nextLandCoverState);
-
-	}
-	
 	/**
 	 * Test that if statement 1 from Millington2009 holds
 	 * If C(t) = C(t-1) THEN Tin(t) = 1
@@ -179,5 +162,90 @@ public class LandCoverTypeTransDeciderTest {
 				
 		assertEquals(1, nextLandCoverState.getTimeInState()); // new time in state is 1		
 	}
+	
+	/**
+	 * Test that if statement 4 from Millington2009 holds
+	 * If Delta D(t) != Delta D(t-1) C(t) = C(t-1) AND Delta D()t) != Delta D(t-1) THEN Delta T = [DeltaT(t-1)+Delta T(t)]/2
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Shrubland	secondary	south	true	true	false	hydric	Pine		15
+	 * 5			1			1		1		1		0		2		6			15
+	 * 
+	 * timeInState = 1
+	 * suppose previous target state was Oak (coded 9) and it was going to take 20 years to get there. 
+	 * Now transitioning from shrubland (coded 5) to to Pine and it should take (15+20)/2 = 17.5 -> 18 years.
+	 * 
+	 */
+	@Test 
+	public void statement4TestCase() {
+		LandCoverStateTransitionMessage currentLandCoverState 
+			= new LandCoverStateTransitionMessage(5, 2, 9, 20); // initial time in state =1
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
+		
+				
+		assertEquals(18, nextLandCoverState.getTargetStateTransitionTime()); // new time in state is 1		
+	}
+	
+	/**
+	 * Test that if statement 5 from Millington2009 holds
+	 * If Tin(t) >= Delta T(t) THEN C(t+1) = Delta D
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Shrubland	secondary	south	true	true	false	hydric	Pine		15
+	 * 5			1			1		1		1		0		2		6			15
+	 * 
+	 * timeInState = 14
+	 * Previous target state was Pine (coded 6) and it was going to take 15 years to get there. 
+	 * Current state of model has timeInState being 14 so the next increment will take us us up to 
+	 * the 15 year tipping point. 
+	 * 
+	 * Hence we expect to transition to pine (state 6) in the next timestep
+	 * 
+	 */
+	@Test 
+	public void statement5TestCase() {
+		LandCoverStateTransitionMessage currentLandCoverState 
+			= new LandCoverStateTransitionMessage(5, 14, 6, 15); // initial state = 5
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
+		
+				
+		assertEquals(6, nextLandCoverState.getCurrentState()); // new state = 6		
+	}
+	
+	/**
+	 * Test that if statement 6 from Millington2009 holds
+	 * If Tin(t) < Delta T(t) THEN C(t+1) = C(t)
+	 * 
+	 * Test conditions: 
+	 * start_code	succession	aspect	pine	oak	deciduous	water	end_code	delta_t
+	 * Shrubland	secondary	south	true	true	false	hydric	Pine		15
+	 * 5			1			1		1		1		0		2		6			15
+	 * 
+	 * timeInState = 13
+	 * Previous target state was Pine (coded 6) and it was going to take 15 years to get there. 
+	 * Current state of model has timeInState being 13 so the next increment WON'T take us us up to 
+	 * the 15 year tipping point. 
+	 * 
+	 * Hence we expect to transition to still be shrubland (state 5) in the next timestep
+	 * 
+	 */
+	@Test 
+	public void statement6TestCase() {
+		LandCoverStateTransitionMessage currentLandCoverState 
+			= new LandCoverStateTransitionMessage(5, 13, 6, 15); // initial state = 5
+		
+		LandCoverStateTransitionMessage nextLandCoverState 
+			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
+		
+				
+		assertEquals(5, nextLandCoverState.getCurrentState()); // new state = 5		
+	}
+
 
 }
