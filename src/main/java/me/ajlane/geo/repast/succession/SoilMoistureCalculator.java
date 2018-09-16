@@ -19,21 +19,13 @@ public class SoilMoistureCalculator {
 	//private RealVector runoffVector;
 	private int nX, nY;
 	
-	
-	public SoilMoistureCalculator(GridValueLayer flowDirectionMap,
-			double initialSoilMoisture, Context<Object> context) {
-		this(flowDirectionMap, initialSoilMoisture, 1.0, context);
-	}
-	
 	/**
 	 * @param flowDirectionMap
 	 * @param initialSoilMoisture
-	 * @param saf
-	 * 			Sink Affinity Factor
 	 * @param context
 	 */
 	public SoilMoistureCalculator(GridValueLayer flowDirectionMap,
-			double initialSoilMoisture, double saf, Context<Object> context) {
+			double initialSoilMoisture, Context<Object> context) {
 				
 		soilMoisture = (GridValueLayer) context.getValueLayer("soil moisture");
 		slope = (GridValueLayer) context.getValueLayer("slope");

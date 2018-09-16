@@ -26,6 +26,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 	GridValueLayer landCoverTypeMap; // name = "lct"
 	
 	GridValueLayer slopeMap; // name = "slope"
+	GridValueLayer aspect; // name = "aspect"	
 	
 	GridValueLayer pineSeeds; // name = "pine seeds"
 	GridValueLayer oakSeeds; // name = "oak seeds"
@@ -59,6 +60,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 		
 		slopeMap = studySiteData.getSlopeMap();
 		context.addValueLayer(slopeMap);
+		
+		aspect = studySiteData.getAspectMap(); // "aspect"
+		context.addValueLayer(aspect);
 		
 		pineSeeds = new GridValueLayer("pine seeds", 0, true, new StrictBorders(), 
 				gridDimensions, gridOrigin);

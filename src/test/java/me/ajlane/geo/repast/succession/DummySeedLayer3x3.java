@@ -13,7 +13,8 @@ public class DummySeedLayer3x3 extends DummyLayer3x3 {
 		
 		switch(option) {
 		case "no seeds": setData(noSeeds()); break;
-		default: System.out.println("Dummy seed layer must initially be 'no seeds'");		
+		case "all seeds": setData(allSeeds()); break;
+		default: System.out.println("Dummy seed layer must initially be 'no seeds' or 'all seeds'");		
 		}
 		
 	}
@@ -23,6 +24,15 @@ public class DummySeedLayer3x3 extends DummyLayer3x3 {
 				{0, 0, 0},
 				{0, 0, 0},
 				{0, 0, 0}
+		};
+		return array;		
+	}
+	
+	private double[][] allSeeds() {
+		double array[][] = {
+				{1, 1, 1},
+				{1, 1, 1},
+				{1, 1, 1}
 		};
 		return array;		
 	}
