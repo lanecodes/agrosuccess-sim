@@ -4,10 +4,13 @@
 package me.ajlane.geo.repast.succession;
 
 /**
+ * Container providing all the information needed to determine a simulation cell's next land cover state. Generated
+ * by a LandCoverTypeTransDecider.
+ * 
  * @author andrew
  *
  */
-public class LandCoverStateTransitionMessage {
+class LandCoverStateTransitionMessage {
 	
 	private int currentState;
 	private int timeInState;

@@ -1,5 +1,6 @@
 /**
- * 
+ * Scans over the various value layers in the model and uses a LandCoverTypeTransDecider to decide what land cover type
+ * each simulation cell should be in the next timestep.  
  */
 package me.ajlane.geo.repast.succession;
 
