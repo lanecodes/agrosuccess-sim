@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;

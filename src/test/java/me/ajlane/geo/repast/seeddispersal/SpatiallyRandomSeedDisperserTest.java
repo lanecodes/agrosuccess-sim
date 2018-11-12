@@ -1,7 +1,11 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 import org.junit.Test;
 
+import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
+import me.ajlane.geo.DummySeedLayer3x3;
+import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
+import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;

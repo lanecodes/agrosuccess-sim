@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 /**
  * Generate the probability of finding an acorn (oak seed) given the distance of that 

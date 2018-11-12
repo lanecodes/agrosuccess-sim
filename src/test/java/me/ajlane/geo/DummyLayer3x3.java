@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo;
 
 import repast.simphony.valueLayer.GridValueLayer;
 

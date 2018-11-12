@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo;
 
 /**
  * A dummy layer useful for testing purposes

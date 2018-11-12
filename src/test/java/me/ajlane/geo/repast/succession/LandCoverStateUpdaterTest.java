@@ -11,6 +11,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import me.ajlane.geo.DummyAspectLayer3x3;
+import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
+import me.ajlane.geo.DummySeedLayer3x3;
+import me.ajlane.geo.DummySoilMoistureLayer3x3;
 import me.ajlane.geo.repast.succession.AgroSuccessEnvStateAliasTranslator;
 import me.ajlane.geo.repast.succession.EnvironmentalStateAliasTranslator;
 import me.ajlane.geo.repast.succession.LandCoverStateUpdater;

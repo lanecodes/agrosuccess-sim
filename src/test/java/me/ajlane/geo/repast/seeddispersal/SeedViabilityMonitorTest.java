@@ -1,13 +1,16 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Set;
 
 import org.junit.Test;
+
+import me.ajlane.geo.repast.seeddispersal.Seed;
+import me.ajlane.geo.repast.seeddispersal.SeedViabilityMonitor;
 
 public class SeedViabilityMonitorTest {
 	

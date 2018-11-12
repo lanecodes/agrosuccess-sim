@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 import java.util.Arrays;
 

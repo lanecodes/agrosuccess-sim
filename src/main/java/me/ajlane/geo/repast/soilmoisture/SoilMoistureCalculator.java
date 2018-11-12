@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.soilmoisture;
 
 import me.ajlane.geo.GridCell;
 import repast.simphony.context.Context;

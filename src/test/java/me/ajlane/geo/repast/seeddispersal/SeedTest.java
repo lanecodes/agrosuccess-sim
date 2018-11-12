@@ -1,8 +1,10 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.seeddispersal;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import me.ajlane.geo.repast.seeddispersal.Seed;
 
 public class SeedTest {
 	

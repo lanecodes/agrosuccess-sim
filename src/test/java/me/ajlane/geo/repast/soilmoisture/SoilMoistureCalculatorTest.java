@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.soilmoisture;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,7 +10,11 @@ import org.geotools.data.DataSourceException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
+import me.ajlane.geo.DummySlopeLayer3x3;
+import me.ajlane.geo.DummySoilTypeLayer3x3;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.space.grid.StrictBorders;
