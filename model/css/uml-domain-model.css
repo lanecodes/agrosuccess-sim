@@ -1,0 +1,24 @@
+Class {
+	qualifiedNameDepth:none;
+	elementIcon:false;	
+}
+
+Class > Compartment[kind="nestedclassifiers"] {
+    visible:false;
+}
+
+Class > Compartment[kind="operations"] {
+    visible:false;
+}
+
+Association > Label:sourceRole {
+	maskLabel:none;
+}
+
+Association > Label:targetRole {
+	maskLabel:none;
+}
+
+Property {
+	maskLabel: name derived;
+}

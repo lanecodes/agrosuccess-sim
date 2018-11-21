@@ -8,7 +8,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class LandCoverTypeTransDeciderTest {
@@ -16,6 +17,7 @@ public class LandCoverTypeTransDeciderTest {
 	public static LandCoverTypeTransDecider lctTransDecider;
 	public static EnvironmentalStateAliasTranslator envStateAliasTranslator  = new AgroSuccessEnvStateAliasTranslator();
 	public static EmbeddedGraphInstance graph;
+	public static SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(500, 1000);
 	private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db";
 	
 	public EnvironmentalAntecedent<String, String, String, Boolean, Boolean, Boolean, String> aliasedEnvironmentalAntecedent1;
@@ -30,7 +32,9 @@ public class LandCoverTypeTransDeciderTest {
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		graph = new EmbeddedGraphInstance(testDatabaseDirPath);
-		lctTransDecider = new LandCoverTypeTransDecider(graph, envStateAliasTranslator, "AgroSuccess-dev");
+		
+		lctTransDecider = new LandCoverTypeTransDecider(graph, envStateAliasTranslator, 
+		    smDiscretiser, "AgroSuccess-dev");
 	}
 	
 	/**	 		0 = Water/ Quarry
@@ -78,17 +82,7 @@ public class LandCoverTypeTransDeciderTest {
 		graph.shutdown();
 	}
 
-	@Test
-	public void conditionsOneShouldGoToShrublandInTwoYears() {
-				
-		HashMap<EnvironmentalAntecedent<Integer,Integer,Integer,Integer,Integer,Integer,Integer>, 
-		  EnvironmentalConsequent<Integer>> transLookup = lctTransDecider.getTransLookup();	
-		
-		EnvironmentalConsequent<Integer> envConsequent = transLookup.get(codedEnvironmentalAntecedent1);
-		assertEquals(5, (int)envConsequent.getTargetState()); // shrubland
-		assertEquals(2, envConsequent.getTransitionTime());		
-	}
-	
+
 	/**
 	 * Test that if statement 1 from Millington2009 holds
 	 * If C(t) = C(t-1) THEN Tin(t) = 1

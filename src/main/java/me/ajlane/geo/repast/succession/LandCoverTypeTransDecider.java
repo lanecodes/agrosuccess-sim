@@ -1,17 +1,12 @@
 package me.ajlane.geo.repast.succession;
 
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
-import static java.lang.Math.toIntExact;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class LandCoverTypeTransDecider {
 
-  private HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>> transLookup;
-  private EnvironmentalStateAliasTranslator envStateAliasTranslator;
-  private String modelID;
+  private CodedLandCoverStateTransitionMap transLookup;
 
   /**
    * @param graphDatabase Running connection to a graph database containing the model configuration
@@ -20,80 +15,13 @@ public class LandCoverTypeTransDecider {
    * @param modelID
    */
   public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase,
-      EnvironmentalStateAliasTranslator envStateAliasTranslator, String modelID) {
-    this.modelID = modelID;
-    this.envStateAliasTranslator = envStateAliasTranslator;
-    this.transLookup = getLandCoverTransitionMap(graphDatabase);
-  }
+      EnvironmentalStateAliasTranslator envStateAliasTranslator, 
+      SoilMoistureDiscretiser smDiscretiser, String modelID) {
 
-  /*
-   * public LandCoverTypeTransDecider(LandCoverStateTransitionMap transMap, SoilMoistureDiscretiser
-   * soilMoistureDiscretiser)
-   */
+    this.transLookup = 
+        new CodedLandCoverStateTransitionMap(graphDatabase, envStateAliasTranslator, modelID);
 
-  /**
-   * @param graph An established connection to a running EmbeddedGraphInstance database containing
-   *        succession pathway data. At the time of writing it is assumed that
-   * @return
-   */
-  HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>> getLandCoverTransitionMap(
-      EmbeddedGraphInstance graph) {
-
-    HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>> transLookup;
-
-    transLookup =
-        new HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>>();
-
-    HashMap<String, Object> params = new HashMap<String, Object>();
-    params.put("model_ID", modelID);
-
-    String landCoverTransitionQuery =
-        "MATCH (lct1:LandCoverType)<-[:SOURCE]-(t:SuccessionTrajectory)-[:TARGET]->(lct2:LandCoverType) "
-            + "WHERE lct1.model_ID=$model_ID AND lct1.code<>lct2.code "
-            + "WITH lct1, lct2, t MATCH (e:EnvironCondition)-[:CAUSES]->(t) "
-            + "RETURN lct1.code as start_code, e.succession as succession, e.aspect as aspect,"
-            + "e.pine as pine, e.oak as oak, e.deciduous as deciduous, e.water as water, "
-            + "lct2.code as end_code, e.delta_t as delta_t; ";
-
-    try (Transaction tx = graph.beginTx()) {
-      Result landCoverTransitionResults = graph.execute(landCoverTransitionQuery, params);
-      while (landCoverTransitionResults.hasNext()) {
-        Map<String, Object> transData = landCoverTransitionResults.next();
-
-        EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> envAntecedent =
-            new EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>(
-                this.envStateAliasTranslator.numericalValueFromAlias("landCoverState",
-                    transData.get("start_code").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("succession",
-                    transData.get("succession").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("aspect",
-                    transData.get("aspect").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("pine").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("oak").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("deciduous").toString()),
-                this.envStateAliasTranslator.numericalValueFromAlias("water",
-                    transData.get("water").toString()));
-
-        EnvironmentalConsequent<Integer> envConsequent =
-            new EnvironmentalConsequent<Integer>(
-                this.envStateAliasTranslator.numericalValueFromAlias("landCoverState",
-                    transData.get("end_code").toString()),
-                toIntExact((long) transData.get("delta_t")));
-
-        transLookup.put(envAntecedent, envConsequent);
-        tx.success();
-      }
-
-    }
-    return transLookup;
-  }
-
-  HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>> getTransLookup() {
-    return this.transLookup;
-  }
+  } 
 
   /**
    * Classify soil moisture measured in mm to one of xeric, mesic or hydric using the schema

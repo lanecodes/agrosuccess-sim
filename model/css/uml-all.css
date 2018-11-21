@@ -1,0 +1,9 @@
+* {
+	underline:true;
+	fontName:"Bitstream Vera Sans";
+	fontHeight:10;
+}
+
+Class > Compartment[kind="nestedclassifiers"] {
+    visible:false;
+}
