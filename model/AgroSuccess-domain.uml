@@ -3,9 +3,7 @@
   <packageImport xmi:type="uml:PackageImport" xmi:id="_Vp-7QO13EeiaCOWWgO8T3Q">
     <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
   </packageImport>
-  <packagedElement xmi:type="uml:Class" xmi:id="_5yfagO13EeiaCOWWgO8T3Q" name="Landscape">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_FT9S8O3CEeiaCOWWgO8T3Q" name="numRasterCellsPerHa"/>
-  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_5yfagO13EeiaCOWWgO8T3Q" name="Context"/>
   <packagedElement xmi:type="uml:Class" xmi:id="_JnCRUO14EeiaCOWWgO8T3Q" name="Village">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_IHL5EO2BEeiaCOWWgO8T3Q" name="location"/>
   </packagedElement>
@@ -124,6 +122,19 @@
     <ownedEnd xmi:type="uml:Property" xmi:id="_WPrJ0u2ZEeiaCOWWgO8T3Q" name="subsistenceplan" type="_OXklIO2ZEeiaCOWWgO8T3Q" association="_WPqiwO2ZEeiaCOWWgO8T3Q">
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WPsX8O2ZEeiaCOWWgO8T3Q" value="1"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WPwCUO2ZEeiaCOWWgO8T3Q" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="__jWAIO56EeiMB9yho37DFQ" name="LandscapeKnowledge">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_FT9S8O3CEeiaCOWWgO8T3Q" name="numRasterCellsPerHa"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_KJ-noO57EeiMB9yho37DFQ" name="Is-aware-of" memberEnd="_KKCSAO57EeiMB9yho37DFQ _KKDgIO57EeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KKBD4O57EeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_KKBD4e57EeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KKDgIO57EeiMB9yho37DFQ" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_KJ-noO57EeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KKCSAO57EeiMB9yho37DFQ" name="landscapeknowledge" type="__jWAIO56EeiMB9yho37DFQ" association="_KJ-noO57EeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KKC5EO57EeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_KKC5Ee57EeiMB9yho37DFQ" value="1"/>
     </ownedEnd>
   </packagedElement>
 </uml:Model>

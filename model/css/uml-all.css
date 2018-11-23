@@ -4,6 +4,14 @@
 	fontHeight:10;
 }
 
+Association > Label:sourceRole {
+	maskLabel:none;
+}
+
+Association > Label:targetRole {
+	maskLabel:none;
+}
+
 Class > Compartment[kind="nestedclassifiers"] {
     visible:false;
 }
