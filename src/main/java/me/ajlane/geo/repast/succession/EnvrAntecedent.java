@@ -18,7 +18,7 @@ package me.ajlane.geo.repast.succession;
  * @author Andrew Lane
  *
  */
-class EnvironmentalAntecedent<T1, T2, T3, T4, T5, T6, T7> {
+class EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> {
 
   private T1 startState;
   private T2 successionPathway;
@@ -28,7 +28,7 @@ class EnvironmentalAntecedent<T1, T2, T3, T4, T5, T6, T7> {
   private T6 deciduousSeeds;
   private T7 water;
 
-  public EnvironmentalAntecedent(T1 startState, T2 successionPathway, T3 aspect, T4 pineSeeds,
+  public EnvrAntecedent(T1 startState, T2 successionPathway, T3 aspect, T4 pineSeeds,
       T5 oakSeeds, T6 deciduousSeeds, T7 water) {
 
     this.startState = startState;
@@ -91,8 +91,8 @@ class EnvironmentalAntecedent<T1, T2, T3, T4, T5, T6, T7> {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    EnvironmentalAntecedent<T1, T2, T3, T4, T5, T6, T7> other =
-        (EnvironmentalAntecedent<T1, T2, T3, T4, T5, T6, T7>) obj;
+    EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> other =
+        (EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7>) obj;
     if (aspect == null) {
       if (other.aspect != null)
         return false;

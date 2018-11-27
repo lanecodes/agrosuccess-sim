@@ -282,6 +282,17 @@
               <element xmi:type="uml:Operation" href="AgroSuccess.uml#_UGvxgO8lEeiMB9yho37DFQ"/>
               <layoutConstraint xmi:type="notation:Location" xmi:id="_UG14Ie8lEeiMB9yho37DFQ"/>
             </children>
+            <children xmi:type="notation:Shape" xmi:id="_hC1OYPJPEeiMB9yho37DFQ" type="Operation_ClassOperationLabel">
+              <styles xmi:type="notation:StringListValueStyle" xmi:id="_qr-58PJPEeiMB9yho37DFQ" name="maskLabel">
+                <stringListValue>parametersName</stringListValue>
+                <stringListValue>visibility</stringListValue>
+                <stringListValue>name</stringListValue>
+                <stringListValue>parametersType</stringListValue>
+                <stringListValue>returnType</stringListValue>
+              </styles>
+              <element xmi:type="uml:Operation" href="AgroSuccess.uml#_hB3lEPJPEeiMB9yho37DFQ"/>
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_hC1OYfJPEeiMB9yho37DFQ"/>
+            </children>
             <styles xmi:type="notation:TitleStyle" xmi:id="_Ued38exGEei6Adh3frAlbg"/>
             <styles xmi:type="notation:SortingStyle" xmi:id="_Ued38uxGEei6Adh3frAlbg"/>
             <styles xmi:type="notation:FilteringStyle" xmi:id="_Ued38-xGEei6Adh3frAlbg"/>
@@ -414,6 +425,10 @@
               </styles>
               <element xmi:type="uml:Operation" href="AgroSuccess.uml#_wsF2wO8kEeiMB9yho37DFQ"/>
               <layoutConstraint xmi:type="notation:Location" xmi:id="_wsnbMe8kEeiMB9yho37DFQ"/>
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_yj9i0PJPEeiMB9yho37DFQ" type="Operation_ClassOperationLabel">
+              <element xmi:type="uml:Operation" href="AgroSuccess.uml#_yj21IPJPEeiMB9yho37DFQ"/>
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_yj9i0fJPEeiMB9yho37DFQ"/>
             </children>
             <styles xmi:type="notation:TitleStyle" xmi:id="_QzR_p-xGEei6Adh3frAlbg"/>
             <styles xmi:type="notation:SortingStyle" xmi:id="_QzR_qOxGEei6Adh3frAlbg"/>
