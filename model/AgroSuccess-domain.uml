@@ -3,7 +3,7 @@
   <packageImport xmi:type="uml:PackageImport" xmi:id="_Vp-7QO13EeiaCOWWgO8T3Q">
     <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
   </packageImport>
-  <packagedElement xmi:type="uml:Class" xmi:id="_5yfagO13EeiaCOWWgO8T3Q" name="Context"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_5yfagO13EeiaCOWWgO8T3Q" name="Landscape"/>
   <packagedElement xmi:type="uml:Class" xmi:id="_JnCRUO14EeiaCOWWgO8T3Q" name="Village">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_IHL5EO2BEeiaCOWWgO8T3Q" name="location"/>
   </packagedElement>

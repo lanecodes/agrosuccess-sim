@@ -7,3 +7,8 @@ Class {
 	elementIcon:true;	
 }
 
+Interface {
+    qualifiedNameDepth:none;
+    elementIcon:true;   
+}
+

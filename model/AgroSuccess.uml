@@ -4,31 +4,60 @@
     <importedPackage xmi:type="uml:Profile" href="pathmap://PapyrusJava_PROFILES/PapyrusJava.profile.uml#_j9REUByGEduN1bTiWJ0lyw"/>
   </packageImport>
   <packagedElement xmi:type="uml:Package" xmi:id="_SLqkUOxFEei6Adh3frAlbg" name="geo.repast.succession">
-    <packagedElement xmi:type="uml:Class" xmi:id="_jDRaoOxFEei6Adh3frAlbg" name="CodedEnvrAntecedent"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_EYxmwOxGEei6Adh3frAlbg" name="CodedEnvrConsequent"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_QzHnkOxGEei6Adh3frAlbg" name="CodedLcsTransitionMap"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_UePOcOxGEei6Adh3frAlbg" name="AliasedLcsTransitionMap">
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_tFa_kOxGEei6Adh3frAlbg" name="transMap" visibility="private">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EMap"/>
-      </ownedAttribute>
-    </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_Z8Mr8OxGEei6Adh3frAlbg" name="LcsGraphReader">
       <ownedOperation xmi:type="uml:Operation" xmi:id="_iatMgOxKEei6Adh3frAlbg" name="read" isStatic="true">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_xiMJAOxKEei6Adh3frAlbg" name="graph" type="_pxSYgOxKEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_xiMJAOxKEei6Adh3frAlbg" name="graph" type="_LCT-wO80EeiMB9yho37DFQ"/>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_4APKgOxKEei6Adh3frAlbg" name="transMap" type="_UePOcOxGEei6Adh3frAlbg" direction="return"/>
       </ownedOperation>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_FZzzsOxLEei6Adh3frAlbg" name="read" isStatic="true">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_OkDVsOxLEei6Adh3frAlbg" name="graph" type="_pxSYgOxKEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_OkDVsOxLEei6Adh3frAlbg" name="graph" type="_LCT-wO80EeiMB9yho37DFQ"/>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_XdfbkOxLEei6Adh3frAlbg" name="modelID">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedParameter>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_egkcwOxLEei6Adh3frAlbg" name="transMap" type="_UePOcOxGEei6Adh3frAlbg" direction="return"/>
       </ownedOperation>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_DiFxwOzHEei6Adh3frAlbg" name="LcsTransitionMapConverter"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_-m2UsO8UEeiMB9yho37DFQ" name="AliasedEnvrConsequent"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_8CbQIO8UEeiMB9yho37DFQ" name="AliasedEnvrAntecedent"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_hy6LEO8bEeiMB9yho37DFQ" name="EnvrStateAliasTranslator">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_1a_N0PGgEeiMB9yho37DFQ" name="LcsTransitionMapFactory">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_7VgEcPGgEeiMB9yho37DFQ" name="getCodedLcsTransitionMap"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_cXcIcPGuEeiMB9yho37DFQ" name="getAliasedLcsTransitionMap()"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_CTbf4PGhEeiMB9yho37DFQ" name="GraphBasedLcsTransitionMapFactory">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_J3oXgPGpEeiMB9yho37DFQ" name="graph" visibility="private" type="_LCT-wO80EeiMB9yho37DFQ"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_tloFAPGpEeiMB9yho37DFQ" name="modelID" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <defaultValue xmi:type="uml:LiteralNull" xmi:id="_zacjUPGpEeiMB9yho37DFQ" name="null"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_dUgKcPGqEeiMB9yho37DFQ" name="converter" visibility="private" type="_DiFxwOzHEei6Adh3frAlbg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_QeMUcPGsEeiMB9yho37DFQ" name="aliasedMap" visibility="private" type="_UePOcOxGEei6Adh3frAlbg">
+        <defaultValue xmi:type="uml:LiteralNull" xmi:id="_V14K0PGsEeiMB9yho37DFQ" name="null"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_QrmfUPGhEeiMB9yho37DFQ" name="GraphBasedLcsTransitionMapFactory">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_W5GjYPGhEeiMB9yho37DFQ" name="graph" type="_LCT-wO80EeiMB9yho37DFQ"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_MBTzEPGkEeiMB9yho37DFQ" name="translator" type="_hy6LEO8bEeiMB9yho37DFQ"/>
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_NP1GkPGiEeiMB9yho37DFQ" name="GraphBasedLcsTransitionMapFactory" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_NP1GkfGiEeiMB9yho37DFQ" name="graph" type="_LCT-wO80EeiMB9yho37DFQ"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_QxTCMPGiEeiMB9yho37DFQ" name="modelID">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedParameter>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_SW6DMPGkEeiMB9yho37DFQ" name="translator" type="_hy6LEO8bEeiMB9yho37DFQ"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_NzCWwPGhEeiMB9yho37DFQ" client="_CTbf4PGhEeiMB9yho37DFQ" supplier="_1a_N0PGgEeiMB9yho37DFQ"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_DiFxwOzHEei6Adh3frAlbg" name="LcsTransitionMapConverter">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_jH8qYO8mEeiMB9yho37DFQ" name="LcsTransitionMapConverter" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tTWucO8mEeiMB9yho37DFQ" name="translator" type="_hy6LEO8bEeiMB9yho37DFQ"/>
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_VYgpcO8nEeiMB9yho37DFQ" name="convert" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_iDkm0O8nEeiMB9yho37DFQ" name="aliasedMap" type="_UePOcOxGEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_nJLOsO8nEeiMB9yho37DFQ" name="codedMap" type="_QzHnkOxGEei6Adh3frAlbg" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_ox9xcO8nEeiMB9yho37DFQ" name="convert" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_ox9xce8nEeiMB9yho37DFQ" name="codedMap" type="_QzHnkOxGEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_ox9xcu8nEeiMB9yho37DFQ" name="aliasedMap" type="_UePOcOxGEei6Adh3frAlbg" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_hy6LEO8bEeiMB9yho37DFQ" name="EnvrStateAliasTranslator" isAbstract="true">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_FmkbsO8cEeiMB9yho37DFQ" name="envStateMap" visibility="private">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EMap"/>
       </ownedAttribute>
@@ -49,13 +78,169 @@
         </ownedParameter>
       </ownedOperation>
     </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_UePOcOxGEei6Adh3frAlbg" name="AliasedLcsTransitionMap">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_tFa_kOxGEei6Adh3frAlbg" name="transMap" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EMap"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_UGvxgO8lEeiMB9yho37DFQ" name="getEnvrConsequent" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_UGvxge8lEeiMB9yho37DFQ" name="envrAntecedent" type="_8CbQIO8UEeiMB9yho37DFQ"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_UGvxgu8lEeiMB9yho37DFQ" name="envrConsequent" type="_-m2UsO8UEeiMB9yho37DFQ" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_8CbQIO8UEeiMB9yho37DFQ" name="AliasedEnvrAntecedent">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_UebB8O82EeiMB9yho37DFQ" name="successionPathway" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_UeeFQO82EeiMB9yho37DFQ" name="startState" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_UeghgO82EeiMB9yho37DFQ" name="pineSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_UeiWsO82EeiMB9yho37DFQ" name="aspect" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_UelaAO82EeiMB9yho37DFQ" name="oakSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_Uen2QO82EeiMB9yho37DFQ" name="deciduousSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_Ueq5kO82EeiMB9yho37DFQ" name="water" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_-m2UsO8UEeiMB9yho37DFQ" name="AliasedEnvrConsequent">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_eg8PwO82EeiMB9yho37DFQ" name="targetState" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_eg_TEO82EeiMB9yho37DFQ" name="transitionTime" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_QzHnkOxGEei6Adh3frAlbg" name="CodedLcsTransitionMap">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_r8oeAO8kEeiMB9yho37DFQ" name="transMap" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EMap"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_wsF2wO8kEeiMB9yho37DFQ" name="getEnvrConsequent" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_6tVSMO8kEeiMB9yho37DFQ" name="envrAntecedent" type="_jDRaoOxFEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_HHWi4O8lEeiMB9yho37DFQ" name="envrConsequent" type="_EYxmwOxGEei6Adh3frAlbg" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_jDRaoOxFEei6Adh3frAlbg" name="CodedEnvrAntecedent">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_3b46IO8lEeiMB9yho37DFQ" name="startState" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_73imEO8lEeiMB9yho37DFQ" name="successionPathway" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="__vWlIO8lEeiMB9yho37DFQ" name="aspect" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_C_GeoO8mEeiMB9yho37DFQ" name="pineSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_JIk-UO8mEeiMB9yho37DFQ" name="oakSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_LVNN8O8mEeiMB9yho37DFQ" name="deciduousSeeds" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NlNhsO8mEeiMB9yho37DFQ" name="water" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_EYxmwOxGEei6Adh3frAlbg" name="CodedEnvrConsequent">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_YWG4cO8mEeiMB9yho37DFQ" name="targetState" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_avSWUO8mEeiMB9yho37DFQ" name="transitionTime" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+    </packagedElement>
   </packagedElement>
-  <packagedElement xmi:type="uml:Dependency" xmi:id="_n_gPMOy1Eei6Adh3frAlbg" name="use" client="_iatMgOxKEei6Adh3frAlbg" supplier="_1hrvQOgqEeiin9PAeM17Hw _pxSYgOxKEei6Adh3frAlbg"/>
-  <packagedElement xmi:type="uml:Package" xmi:id="_h6W_cOzBEei6Adh3frAlbg" name="neo4j">
-    <packagedElement xmi:type="uml:Class" xmi:id="_pxSYgOxKEei6Adh3frAlbg" name="EmbeddedGraphInstance" visibility="public"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_n_gPMOy1Eei6Adh3frAlbg" name="use" client="_iatMgOxKEei6Adh3frAlbg" supplier="_1hrvQOgqEeiin9PAeM17Hw"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_h6W_cOzBEei6Adh3frAlbg" name="org.neo4j.graphdb">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_LCT-wO80EeiMB9yho37DFQ" name="GraphDatabaseService"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_k3DFAO5sEeiMB9yho37DFQ" name="geo">
     <packagedElement xmi:type="uml:Interface" xmi:id="_rLuIEO5sEeiMB9yho37DFQ" name="Landscape"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-4buwO8mEeiMB9yho37DFQ" name="Configures" memberEnd="_-4c84u8mEeiMB9yho37DFQ _-4rmYO8mEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-4c84O8mEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-4c84e8mEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_-4rmYO8mEeiMB9yho37DFQ" name="envrstatealiastranslator" type="_hy6LEO8bEeiMB9yho37DFQ" association="_-4buwO8mEeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_-4c84u8mEeiMB9yho37DFQ" name="lcstransitionmapconverter" type="_DiFxwOzHEei6Adh3frAlbg" association="_-4buwO8mEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-4gAMO8mEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-4mG0O8mEeiMB9yho37DFQ" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_obiikO80EeiMB9yho37DFQ" name="me.ajlane.neo4j">
+    <packagedElement xmi:type="uml:Class" xmi:id="_sf6W8O80EeiMB9yho37DFQ" name="EmbeddedGraphInstance">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_wnP_wO80EeiMB9yho37DFQ" name="EmbeddedGraphInstance" visibility="public">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_JphxcO81EeiMB9yho37DFQ" name="databaseDirectory">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedParameter>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_UXJxwO81EeiMB9yho37DFQ" client="_sf6W8O80EeiMB9yho37DFQ" supplier="_LCT-wO80EeiMB9yho37DFQ"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_ALnFgPGmEeiMB9yho37DFQ" memberEnd="_ALo6sPGmEeiMB9yho37DFQ _ALphwfGmEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ALoToPGmEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ALoTofGmEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_ALphwfGmEeiMB9yho37DFQ" name="aliasedlcstransitionmap" type="_UePOcOxGEei6Adh3frAlbg" association="_ALnFgPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_B8sooPGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_B8414PGmEeiMB9yho37DFQ" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_ALo6sPGmEeiMB9yho37DFQ" name="aliasedenvrantecedent" type="_8CbQIO8UEeiMB9yho37DFQ" association="_ALnFgPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ALo6sfGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ALphwPGmEeiMB9yho37DFQ" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_ISP1cPGmEeiMB9yho37DFQ" memberEnd="_ISRDkvGmEeiMB9yho37DFQ _ISSRsPGmEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ISRDkPGmEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ISRDkfGmEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_ISSRsPGmEeiMB9yho37DFQ" name="aliasedlcstransitionmap" type="_UePOcOxGEei6Adh3frAlbg" association="_ISP1cPGmEeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_ISRDkvGmEeiMB9yho37DFQ" name="aliasedenvrconsequent" type="_-m2UsO8UEeiMB9yho37DFQ" association="_ISP1cPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ISRqoPGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ISRqofGmEeiMB9yho37DFQ" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_TiKqgPGmEeiMB9yho37DFQ" memberEnd="_TiL4ofGmEeiMB9yho37DFQ _TiMfsvGmEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_TiLRkPGmEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_TiL4oPGmEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_TiMfsvGmEeiMB9yho37DFQ" name="codedlcstransitionmap" type="_QzHnkOxGEei6Adh3frAlbg" association="_TiKqgPGmEeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_TiL4ofGmEeiMB9yho37DFQ" name="codedenvrantecedent" type="_jDRaoOxFEei6Adh3frAlbg" association="_TiKqgPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_TiMfsPGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_TiMfsfGmEeiMB9yho37DFQ" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_XfQyMPGmEeiMB9yho37DFQ" memberEnd="_XfSnYfGmEeiMB9yho37DFQ _XfTOcvGmEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_XfSAUPGmEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XfSnYPGmEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_XfTOcvGmEeiMB9yho37DFQ" name="codedlcstransitionmap" type="_QzHnkOxGEei6Adh3frAlbg" association="_XfQyMPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_YpABcPGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_YpHWMPGmEeiMB9yho37DFQ" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_XfSnYfGmEeiMB9yho37DFQ" name="codedenvrconsequent" type="_EYxmwOxGEei6Adh3frAlbg" association="_XfQyMPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XfTOcPGmEeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XfTOcfGmEeiMB9yho37DFQ" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_xPICoPGmEeiMB9yho37DFQ" memberEnd="_xPJQwfGmEeiMB9yho37DFQ _xPJ30vGmEeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_xPIpsPGmEeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_xPJQwPGmEeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_xPJ30vGmEeiMB9yho37DFQ" name="graphbasedlcstransitionmapfactory" type="_CTbf4PGhEeiMB9yho37DFQ" association="_xPICoPGmEeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_xPJQwfGmEeiMB9yho37DFQ" name="lcstransitionmapconverter" type="_DiFxwOzHEei6Adh3frAlbg" aggregation="composite" association="_xPICoPGmEeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xPJ30PGmEeiMB9yho37DFQ"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xPJ30fGmEeiMB9yho37DFQ" value="1"/>
+    </ownedEnd>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_-0sIkOxEEei6Adh3frAlbg">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-0xoIOxEEei6Adh3frAlbg" source="http://www.eclipse.org/uml2/2.0.0/UML">

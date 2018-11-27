@@ -22,18 +22,18 @@ public class CodedLandCoverStateTransitionMap extends
     setMapFromGraph(graphDatabase, modelID, envStateAliasTranslator);
 
   }
-  
+
   CodedLandCoverStateTransitionMap() {
-    // Do nothing, assume data provided by some means other than a graph database connection.    
+    // Do nothing, assume data provided by some means other than a graph database connection.
   }
 
   /**
    * @param graph An established connection to a running EmbeddedGraphInstance database containing
-   *    succession pathway data. 
+   *        succession pathway data.
    * @param modelID The identifier for the succession model in the graph database. Only nodes with
-   *    value  "model_ID"=modelID will be included.
+   *        value "model_ID"=modelID will be included.
    * @param envStateAliasTranslator Container holding data for converting between a human readable
-   *    database value for an environmental variable to a coded value for use in simulations.
+   *        database value for an environmental variable to a coded value for use in simulations.
    */
   protected void setMapFromGraph(EmbeddedGraphInstance graph, String modelID,
       EnvironmentalStateAliasTranslator envStateAliasTranslator) {

@@ -15,3 +15,7 @@ Association > Label:targetRole {
 Class > Compartment[kind="nestedclassifiers"] {
     visible:false;
 }
+
+Interface > Compartment[kind="nestedclassifiers"] {
+    visible:false;
+}
