@@ -1,7 +1,7 @@
 package me.ajlane.geo.repast.succession;
 
 public class CodedEnvironmentalAntecedent
-    extends EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> {
+    extends EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> {
 
   public CodedEnvironmentalAntecedent(Integer startState, Integer successionPathway, Integer aspect,
       Integer pineSeeds, Integer oakSeeds, Integer deciduousSeeds, Integer water) {

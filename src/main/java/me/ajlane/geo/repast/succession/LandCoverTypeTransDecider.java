@@ -6,7 +6,7 @@ import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class LandCoverTypeTransDecider {
 
-  private CodedLandCoverStateTransitionMap transLookup;
+  private CodedLcsTransitionMap transLookup;
 
   /**
    * @param graphDatabase Running connection to a graph database containing the model configuration
@@ -19,7 +19,7 @@ public class LandCoverTypeTransDecider {
       SoilMoistureDiscretiser smDiscretiser, String modelID) {
 
     this.transLookup = 
-        new CodedLandCoverStateTransitionMap(graphDatabase, envStateAliasTranslator, modelID);
+        new CodedLcsTransitionMap(graphDatabase, envStateAliasTranslator, modelID);
 
   } 
 
@@ -58,14 +58,14 @@ public class LandCoverTypeTransDecider {
 
     int thisCurrentState, thisTimeInState, thisTargetState, thisTargetStateTransitionTime = -1;
 
-    EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> lastEnvConds =
-        new EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>(
+    EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> lastEnvConds =
+        new EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>(
             lastLandCoverState.getCurrentState(), successionPathway, aspect, pineSeeds, oakSeeds,
             deciduousSeeds, discretiseSoilMoisture(soilMoisture));
 
     // current environmental trajectory given combination of environmental conditions last read from
     // model
-    EnvironmentalConsequent<Integer> currentTargetState = transLookup.get(lastEnvConds);
+    EnvrConsequent<Integer> currentTargetState = transLookup.get(lastEnvConds);
 
     thisTimeInState = lastLandCoverState.getTimeInState() + 1;
 
@@ -93,12 +93,12 @@ public class LandCoverTypeTransDecider {
       thisTimeInState = 1;
 
       // lookup the target state which will result from the change in actual land cover state
-      EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> thisEnvConds =
-          new EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>(
+      EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> thisEnvConds =
+          new EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>(
               thisCurrentState, successionPathway, aspect, pineSeeds, oakSeeds, deciduousSeeds,
               discretiseSoilMoisture(soilMoisture));
 
-      EnvironmentalConsequent<Integer> nextTargetState = transLookup.get(thisEnvConds);
+      EnvrConsequent<Integer> nextTargetState = transLookup.get(thisEnvConds);
 
       if (nextTargetState == null) {
         // handle case for when we implicitly stay in the same state because there is no rule to

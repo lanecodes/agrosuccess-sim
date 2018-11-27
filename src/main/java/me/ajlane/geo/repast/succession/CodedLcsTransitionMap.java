@@ -11,19 +11,19 @@ import me.ajlane.neo4j.EmbeddedGraphInstance;
  * 
  * @author Andrew Lane
  */
-public class CodedLandCoverStateTransitionMap extends
-    HashMap<EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvironmentalConsequent<Integer>> {
+public class CodedLcsTransitionMap extends
+    HashMap<EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvrConsequent<Integer>> {
 
   private static final long serialVersionUID = 4682382255681752353L;
 
-  CodedLandCoverStateTransitionMap(EmbeddedGraphInstance graphDatabase,
+  CodedLcsTransitionMap(EmbeddedGraphInstance graphDatabase,
       EnvironmentalStateAliasTranslator envStateAliasTranslator, String modelID) {
 
     setMapFromGraph(graphDatabase, modelID, envStateAliasTranslator);
 
   }
 
-  CodedLandCoverStateTransitionMap() {
+  CodedLcsTransitionMap() {
     // Do nothing, assume data provided by some means other than a graph database connection.
   }
 
@@ -54,8 +54,8 @@ public class CodedLandCoverStateTransitionMap extends
       while (landCoverTransitionResults.hasNext()) {
         Map<String, Object> transData = landCoverTransitionResults.next();
 
-        EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> envAntecedent =
-            new EnvironmentalAntecedent<>(
+        EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> envAntecedent =
+            new EnvrAntecedent<>(
                 envStateAliasTranslator.numericalValueFromAlias("landCoverState",
                     transData.get("start_code").toString()),
                 envStateAliasTranslator.numericalValueFromAlias("succession",
@@ -71,8 +71,8 @@ public class CodedLandCoverStateTransitionMap extends
                 envStateAliasTranslator.numericalValueFromAlias("water",
                     transData.get("water").toString()));
 
-        EnvironmentalConsequent<Integer> envConsequent =
-            new EnvironmentalConsequent<>(
+        EnvrConsequent<Integer> envConsequent =
+            new EnvrConsequent<>(
                 envStateAliasTranslator.numericalValueFromAlias("landCoverState",
                     transData.get("end_code").toString()),
                 toIntExact((long) transData.get("delta_t")));

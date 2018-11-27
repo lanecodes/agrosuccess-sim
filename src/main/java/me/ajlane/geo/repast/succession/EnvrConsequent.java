@@ -7,12 +7,12 @@ package me.ajlane.geo.repast.succession;
  * @param <T> type of the start state specifier (e.g Integer or String)
  * @author Andrew Lane
  */
-class EnvironmentalConsequent<T> {
+class EnvrConsequent<T> {
 
   private T targetState; // the land cover state this consequent represents
   private int transitionTime; // the number of years taken to transition to targetState
 
-  public EnvironmentalConsequent(T targetState, int transitionTime) {
+  public EnvrConsequent(T targetState, int transitionTime) {
     this.targetState = targetState;
     this.transitionTime = transitionTime;
   }
@@ -43,7 +43,7 @@ class EnvironmentalConsequent<T> {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    EnvironmentalConsequent<T> other = (EnvironmentalConsequent<T>) obj;
+    EnvrConsequent<T> other = (EnvrConsequent<T>) obj;
     if (targetState == null) {
       if (other.targetState != null)
         return false;

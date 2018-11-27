@@ -5,7 +5,7 @@
   </packageImport>
   <packagedElement xmi:type="uml:Package" xmi:id="_SLqkUOxFEei6Adh3frAlbg" name="geo.repast.succession">
     <packagedElement xmi:type="uml:Class" xmi:id="_Z8Mr8OxGEei6Adh3frAlbg" name="LcsGraphReader">
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_iatMgOxKEei6Adh3frAlbg" name="read" isStatic="true">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_iatMgOxKEei6Adh3frAlbg" name="read" visibility="public" isStatic="true">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_xiMJAOxKEei6Adh3frAlbg" name="graph" type="_LCT-wO80EeiMB9yho37DFQ"/>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_4APKgOxKEei6Adh3frAlbg" name="transMap" type="_UePOcOxGEei6Adh3frAlbg" direction="return"/>
       </ownedOperation>
@@ -86,6 +86,10 @@
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_UGvxge8lEeiMB9yho37DFQ" name="envrAntecedent" type="_8CbQIO8UEeiMB9yho37DFQ"/>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_UGvxgu8lEeiMB9yho37DFQ" name="envrConsequent" type="_-m2UsO8UEeiMB9yho37DFQ" direction="return"/>
       </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_hB3lEPJPEeiMB9yho37DFQ" name="put">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_pe8fEPJPEeiMB9yho37DFQ" name="antecedent" type="_8CbQIO8UEeiMB9yho37DFQ"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_vlKPYPJPEeiMB9yho37DFQ" name="consequent" type="_-m2UsO8UEeiMB9yho37DFQ"/>
+      </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_8CbQIO8UEeiMB9yho37DFQ" name="AliasedEnvrAntecedent">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_UebB8O82EeiMB9yho37DFQ" name="successionPathway" visibility="private">
@@ -125,6 +129,10 @@
       <ownedOperation xmi:type="uml:Operation" xmi:id="_wsF2wO8kEeiMB9yho37DFQ" name="getEnvrConsequent" visibility="public">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_6tVSMO8kEeiMB9yho37DFQ" name="envrAntecedent" type="_jDRaoOxFEei6Adh3frAlbg"/>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_HHWi4O8lEeiMB9yho37DFQ" name="envrConsequent" type="_EYxmwOxGEei6Adh3frAlbg" direction="return"/>
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_yj21IPJPEeiMB9yho37DFQ" name="put">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_yj21IfJPEeiMB9yho37DFQ" name="antecedent" type="_jDRaoOxFEei6Adh3frAlbg"/>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_yj21IvJPEeiMB9yho37DFQ" name="consequent" type="_EYxmwOxGEei6Adh3frAlbg"/>
       </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_jDRaoOxFEei6Adh3frAlbg" name="CodedEnvrAntecedent">

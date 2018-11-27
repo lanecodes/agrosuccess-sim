@@ -13,12 +13,12 @@ public class CodedLandCoverStateTransitionMapTest {
 
   @Test
   public void testCodedLandCoverStateTransitionMap() {
-    CodedLandCoverStateTransitionMap transMap = new CodedLandCoverStateTransitionMap(); 
+    CodedLcsTransitionMap transMap = new CodedLcsTransitionMap(); 
     
-    EnvironmentalAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> a1 =
-        new EnvironmentalAntecedent<>(1, 0, 1, 1, 0, 0, 2);
+    EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> a1 =
+        new EnvrAntecedent<>(1, 0, 1, 1, 0, 0, 2);
     
-    EnvironmentalConsequent<Integer> c1 = new EnvironmentalConsequent<>(2, 10);
+    EnvrConsequent<Integer> c1 = new EnvrConsequent<>(2, 10);
     
     transMap.put(a1, c1);
     
