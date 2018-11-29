@@ -15,8 +15,8 @@ import me.ajlane.geo.DummyAspectLayer3x3;
 import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
 import me.ajlane.geo.DummySeedLayer3x3;
 import me.ajlane.geo.DummySoilMoistureLayer3x3;
-import me.ajlane.geo.repast.succession.AgroSuccessEnvStateAliasTranslator;
-import me.ajlane.geo.repast.succession.EnvironmentalStateAliasTranslator;
+import me.ajlane.geo.repast.succession.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.EnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.LandCoverStateUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.simphony.context.Context;
@@ -30,7 +30,7 @@ import repast.simphony.valueLayer.GridValueLayer;
 public class LandCoverStateUpdaterTest {
 	private static Context<Object> context = new DefaultContext<Object>();
 	public LandCoverStateUpdater landCoverStateUpdater;
-	private static EnvironmentalStateAliasTranslator stateAliasTranslator;
+	private static EnvrStateAliasTranslator stateAliasTranslator;
 	public static EmbeddedGraphInstance graph;
 	private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db";
 	
@@ -49,7 +49,7 @@ public class LandCoverStateUpdaterTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		graph = new EmbeddedGraphInstance(testDatabaseDirPath);
-		stateAliasTranslator = new AgroSuccessEnvStateAliasTranslator();
+		stateAliasTranslator = new AgroSuccessEnvrStateAliasTranslator();
 	}
 
 	/**

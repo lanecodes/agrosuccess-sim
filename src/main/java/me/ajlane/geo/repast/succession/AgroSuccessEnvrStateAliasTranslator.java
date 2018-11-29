@@ -55,15 +55,15 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  * </ul>
  * 
  * @author Andrew Lane
- * @see me.ajlane.geo.repast.succession.EnvironmentalStateAliasTranslator#numericalValueFromAlias(String,
+ * @see me.ajlane.geo.repast.succession.EnvrStateAliasTranslator#numericalValueFromAlias(String,
  *      String)
- * @see me.ajlane.geo.repast.succession.EnvironmentalStateAliasTranslator#aliasFromNumericalValue(String,
+ * @see me.ajlane.geo.repast.succession.EnvrStateAliasTranslator#aliasFromNumericalValue(String,
  *      int)
  * 
  */
-public class AgroSuccessEnvStateAliasTranslator extends EnvironmentalStateAliasTranslator {
+public class AgroSuccessEnvrStateAliasTranslator extends EnvrStateAliasTranslator {
 
-   AgroSuccessEnvStateAliasTranslator() {
+   AgroSuccessEnvrStateAliasTranslator() {
     envStateMap.put("landCoverState", landCoverStateMap());
     envStateMap.put("succession", successionMap());
     envStateMap.put("aspect", aspectMap());

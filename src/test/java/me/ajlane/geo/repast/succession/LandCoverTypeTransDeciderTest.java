@@ -15,7 +15,7 @@ import me.ajlane.neo4j.EmbeddedGraphInstance;
 public class LandCoverTypeTransDeciderTest {
 	
 	public static LandCoverTypeTransDecider lctTransDecider;
-	public static EnvironmentalStateAliasTranslator envStateAliasTranslator  = new AgroSuccessEnvStateAliasTranslator();
+	public static EnvrStateAliasTranslator envStateAliasTranslator  = new AgroSuccessEnvrStateAliasTranslator();
 	public static EmbeddedGraphInstance graph;
 	public static SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(500, 1000);
 	private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db";

@@ -6,7 +6,7 @@ import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class LandCoverTypeTransDecider {
 
-  private CodedLcsTransitionMap transLookup;
+  private CodedLcsTransitionMapOld transLookup;
 
   /**
    * @param graphDatabase Running connection to a graph database containing the model configuration
@@ -15,11 +15,11 @@ public class LandCoverTypeTransDecider {
    * @param modelID
    */
   public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase,
-      EnvironmentalStateAliasTranslator envStateAliasTranslator, 
+      EnvrStateAliasTranslator envStateAliasTranslator, 
       SoilMoistureDiscretiser smDiscretiser, String modelID) {
 
     this.transLookup = 
-        new CodedLcsTransitionMap(graphDatabase, envStateAliasTranslator, modelID);
+        new CodedLcsTransitionMapOld(graphDatabase, envStateAliasTranslator, modelID);
 
   } 
 
