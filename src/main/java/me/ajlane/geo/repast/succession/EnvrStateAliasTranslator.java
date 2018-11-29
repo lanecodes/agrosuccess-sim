@@ -14,7 +14,7 @@ import org.apache.commons.collections15.BidiMap;
  * @author andrew
  *
  */
-public abstract class EnvironmentalStateAliasTranslator {
+public abstract class EnvrStateAliasTranslator {
 
   // BidiMap has format <alias, numericalID>
   protected Map<String, BidiMap<String, Integer>> envStateMap =

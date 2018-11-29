@@ -16,7 +16,7 @@ public class AgroSuccessEnvStateAliasTranslatorTest {
 	@Test
 	public void testAliasToNumber() {
 		
-		EnvironmentalStateAliasTranslator translator = new AgroSuccessEnvStateAliasTranslator();
+		EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
 		
 		assertEquals(5, translator.numericalValueFromAlias("landCoverState", "Shrubland"));
 		assertEquals(0, translator.numericalValueFromAlias("succession", "regeneration"));
@@ -28,7 +28,7 @@ public class AgroSuccessEnvStateAliasTranslatorTest {
 	@Test
 	public void testNumberToAlias() {
 		
-		EnvironmentalStateAliasTranslator translator = new AgroSuccessEnvStateAliasTranslator();
+		EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
 		
 		assertEquals("Burnt", translator.aliasFromNumericalValue("landCoverState", 1));
 		assertEquals("secondary", translator.aliasFromNumericalValue("succession", 1));

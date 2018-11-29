@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EnvironmentalConsequentTest {
+public class EnvrConsequentTest {
 	
 		@Test
 		public void similarEnvironmentalConsequentShouldBeEqual() {

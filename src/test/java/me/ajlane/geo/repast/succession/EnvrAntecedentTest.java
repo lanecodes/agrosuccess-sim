@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-public class EnvironmentalAntecedentTest {
+public class EnvrAntecedentTest {
 
 	@Test
 	public void similarEnvironmentalAntecedentsShouldBeEqual() {

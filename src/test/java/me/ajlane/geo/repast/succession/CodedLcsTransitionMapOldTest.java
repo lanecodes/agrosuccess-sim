@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CodedLandCoverStateTransitionMapTest {
+public class CodedLcsTransitionMapOldTest {
   
   @Before
   public void setup() {
@@ -13,7 +13,7 @@ public class CodedLandCoverStateTransitionMapTest {
 
   @Test
   public void testCodedLandCoverStateTransitionMap() {
-    CodedLcsTransitionMap transMap = new CodedLcsTransitionMap(); 
+    CodedLcsTransitionMapOld transMap = new CodedLcsTransitionMapOld(); 
     
     EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> a1 =
         new EnvrAntecedent<>(1, 0, 1, 1, 0, 0, 2);

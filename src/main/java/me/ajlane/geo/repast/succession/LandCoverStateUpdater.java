@@ -20,7 +20,7 @@ public class LandCoverStateUpdater {
 	private LandCoverTypeTransDecider landCoverTypeTransDecider;
 	
 	public LandCoverStateUpdater(EmbeddedGraphInstance graphDatabase, 
-			EnvironmentalStateAliasTranslator envStateAliasTranslator,
+			EnvrStateAliasTranslator envStateAliasTranslator,
 			String modelID, Context<Object> context) {
 		landCoverType = (GridValueLayer) context.getValueLayer("lct");
 		soilMoisture = (GridValueLayer) context.getValueLayer("soil moisture");

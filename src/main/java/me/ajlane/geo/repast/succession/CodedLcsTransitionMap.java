@@ -1,85 +1,31 @@
 package me.ajlane.geo.repast.succession;
 
-import static java.lang.Math.toIntExact;
 import java.util.HashMap;
 import java.util.Map;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
-import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 /**
+ * Simple map between sets of possible environmental conditions, and the succession trajectories
+ * resulting from those sets of conditions.
  * 
  * @author Andrew Lane
  */
-public class CodedLcsTransitionMap extends
-    HashMap<EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvrConsequent<Integer>> {
-
-  private static final long serialVersionUID = 4682382255681752353L;
-
-  CodedLcsTransitionMap(EmbeddedGraphInstance graphDatabase,
-      EnvironmentalStateAliasTranslator envStateAliasTranslator, String modelID) {
-
-    setMapFromGraph(graphDatabase, modelID, envStateAliasTranslator);
-
-  }
+public class CodedLcsTransitionMap {
+  private Map<CodedEnvrAntecedent, CodedEnvrConsequent> transMap;
 
   CodedLcsTransitionMap() {
-    // Do nothing, assume data provided by some means other than a graph database connection.
+    this.transMap = new HashMap<>();
   }
 
-  /**
-   * @param graph An established connection to a running EmbeddedGraphInstance database containing
-   *        succession pathway data.
-   * @param modelID The identifier for the succession model in the graph database. Only nodes with
-   *        value "model_ID"=modelID will be included.
-   * @param envStateAliasTranslator Container holding data for converting between a human readable
-   *        database value for an environmental variable to a coded value for use in simulations.
-   */
-  protected void setMapFromGraph(EmbeddedGraphInstance graph, String modelID,
-      EnvironmentalStateAliasTranslator envStateAliasTranslator) {
-
-    HashMap<String, Object> params = new HashMap<String, Object>();
-    params.put("model_ID", modelID);
-
-    String landCoverTransitionQuery =
-        "MATCH (lct1:LandCoverType)<-[:SOURCE]-(t:SuccessionTrajectory)-[:TARGET]->(lct2:LandCoverType) "
-            + "WHERE lct1. AND lct1.code<>lct2.code "
-            + "WITH lct1, lct2, t MATCH (e:EnvironCondition)-[:CAUSES]->(t) "
-            + "RETURN lct1.code as start_code, e.succession as succession, e.aspect as aspect,"
-            + "e.pine as pine, e.oak as oak, e.deciduous as deciduous, e.water as water, "
-            + "lct2.code as end_code, e.delta_t as delta_t; ";
-
-    try (Transaction tx = graph.beginTx()) {
-      Result landCoverTransitionResults = graph.execute(landCoverTransitionQuery, params);
-      while (landCoverTransitionResults.hasNext()) {
-        Map<String, Object> transData = landCoverTransitionResults.next();
-
-        EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> envAntecedent =
-            new EnvrAntecedent<>(
-                envStateAliasTranslator.numericalValueFromAlias("landCoverState",
-                    transData.get("start_code").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("succession",
-                    transData.get("succession").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("aspect",
-                    transData.get("aspect").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("pine").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("oak").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("seedPresence",
-                    transData.get("deciduous").toString()),
-                envStateAliasTranslator.numericalValueFromAlias("water",
-                    transData.get("water").toString()));
-
-        EnvrConsequent<Integer> envConsequent =
-            new EnvrConsequent<>(
-                envStateAliasTranslator.numericalValueFromAlias("landCoverState",
-                    transData.get("end_code").toString()),
-                toIntExact((long) transData.get("delta_t")));
-
-        put(envAntecedent, envConsequent);
-        tx.success();
-      }
-    }
+  CodedEnvrConsequent getEnvrConsequent(CodedEnvrAntecedent ante) {
+    return transMap.get(ante);
   }
+
+  void put(CodedEnvrAntecedent ante, CodedEnvrConsequent cons) {
+    this.transMap.put(ante, cons);
+  }
+  
+  int size() {
+    return this.transMap.size();
+  }
+
 }
