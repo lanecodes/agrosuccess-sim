@@ -2,6 +2,7 @@ package me.ajlane.geo.repast.succession;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple map between sets of possible environmental conditions, and the succession trajectories
@@ -26,6 +27,10 @@ public class CodedLcsTransitionMap {
   
   int size() {
     return this.transMap.size();
+  }
+  
+  Set<Map.Entry<CodedEnvrAntecedent, CodedEnvrConsequent>> entrySet() {
+    return this.transMap.entrySet();
   }
 
 }
