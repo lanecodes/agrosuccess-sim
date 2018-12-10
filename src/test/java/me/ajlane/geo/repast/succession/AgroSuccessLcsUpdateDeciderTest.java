@@ -541,8 +541,8 @@ public class AgroSuccessLcsUpdateDeciderTest {
 
     assertEquals(6, msg.getCurrentState());
     assertEquals(1, msg.getTimeInState());
-    assertNull(msg.getTargetStateTransitionTime());
-    assertNull(msg.getTargetState());
+    assertNull("target state transition time not correct", msg.getTargetStateTransitionTime());
+    assertNull("target state not correct", msg.getTargetState());
   }
   
   @Test
@@ -658,8 +658,8 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
     
-    assertEquals(6, msg.getCurrentState());
-    assertEquals(1, msg.getTimeInState());
+    assertEquals("current state not correct", 6, msg.getCurrentState());
+    assertEquals("time in state not correct", 1, msg.getTimeInState());
     assertEquals((Integer) 8, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 7, msg.getTargetState());
   }
