@@ -652,8 +652,9 @@ public class AgroSuccessLcsUpdateDeciderTest {
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2);
     int prevTimeInState = 51;
     
-    // target state for pathway 4
-    CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(7, 15);
+    // target state for (anti-)pathway 2, i.e. before this state update finds a new viable target
+    // state
+    CodedEnvrConsequent prevTargetTrans = null;
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);

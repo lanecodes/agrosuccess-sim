@@ -137,6 +137,15 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
 
     Integer thisLcs =
         getThisLcs(timeInState, prevDeltaT, currentEnvrState.getStartState(), prevDeltaD);
+    
+    // update land cover state in the environmental antecedent if it turns out a transition has 
+    // occurred in the last time step
+    if (thisLcs != currentEnvrState.getStartState()) {
+      currentEnvrState = new CodedEnvrAntecedent(thisLcs, currentEnvrState.getSuccessionPathway(), 
+          currentEnvrState.getAspect(), currentEnvrState.getPineSeeds(), 
+          currentEnvrState.getOakSeeds(), currentEnvrState.getDeciduousSeeds(), 
+          currentEnvrState.getWater());
+    }
 
     physAttribTrans = transMap.getEnvrConsequent(currentEnvrState);
     if (physAttribTrans == null) {
