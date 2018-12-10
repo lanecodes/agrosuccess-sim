@@ -52,8 +52,8 @@ public class LandCoverTypeTransDecider {
    * @return Package of data specifying cell's transition state in the next timestep in
    *         consideration of its environmental state
    */
-  public LandCoverStateTransitionMessage nextLandCoverTransitionState(
-      LandCoverStateTransitionMessage lastLandCoverState, int successionPathway, int aspect,
+  public OldLandCoverStateTransitionMessage nextLandCoverTransitionState(
+      OldLandCoverStateTransitionMessage lastLandCoverState, int successionPathway, int aspect,
       int pineSeeds, int oakSeeds, int deciduousSeeds, double soilMoisture) {
 
     int thisCurrentState, thisTimeInState, thisTargetState, thisTargetStateTransitionTime = -1;
@@ -121,7 +121,7 @@ public class LandCoverTypeTransDecider {
       throw new IllegalArgumentException("LandCoverStateTransitionMessage not initialised.");
     }
 
-    return new LandCoverStateTransitionMessage(thisCurrentState, thisTimeInState, thisTargetState,
+    return new OldLandCoverStateTransitionMessage(thisCurrentState, thisTimeInState, thisTargetState,
         thisTargetStateTransitionTime);
   }
 

@@ -84,12 +84,12 @@ public class LandCoverStateUpdater {
 	 * Updates land cover type value layer to reflect changes as a result of succession
 	 */
 	public void updateLandCoverState() {
-		LandCoverStateTransitionMessage thisLandCoverState, nextLandCoverState;
+		OldLandCoverStateTransitionMessage thisLandCoverState, nextLandCoverState;
 		
 		for (int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
 				// parse current state
-				thisLandCoverState = new LandCoverStateTransitionMessage(
+				thisLandCoverState = new OldLandCoverStateTransitionMessage(
 						(int) landCoverType.get(i, j),
 						timeInLandCoverState[i][j],
 						targetLandCoverType[i][j],
