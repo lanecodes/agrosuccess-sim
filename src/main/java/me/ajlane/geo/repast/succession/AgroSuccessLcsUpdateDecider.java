@@ -114,54 +114,59 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
     }
   }
 
+  /**
+   * If a change in land cover state is to take place in this time step, produce a new
+   * {@code CodedEnvrAntecedent} object which reflects this change, otherwise return the old one.
+   * 
+   * @param physicalEnvrState The physical state of the simulation cell as it was in the last time
+   *        step
+   * @param newLcs Numerical code of the new land cover state determined based on the physical state
+   *        of the simulation cell, and whether or not the cell has been in that state long enough
+   *        for a land cover transition to take place.
+   * @return The physical state of the simulation cell correcting for if a land cover transition has
+   *         taken place in this time step.
+   */
+  private CodedEnvrAntecedent refreshPhysicalEnvrState(CodedEnvrAntecedent physicalEnvrState,
+      Integer newLcs) {
+    if (newLcs != physicalEnvrState.getStartState()) {
+      physicalEnvrState = new CodedEnvrAntecedent(newLcs, physicalEnvrState.getSuccessionPathway(),
+          physicalEnvrState.getAspect(), physicalEnvrState.getPineSeeds(),
+          physicalEnvrState.getOakSeeds(), physicalEnvrState.getDeciduousSeeds(),
+          physicalEnvrState.getWater());
+      return physicalEnvrState;
+    } else {
+      return physicalEnvrState;
+    }
+  }
+
 
   @Override
   public LcsUpdateMsg getLcsUpdateMsg(CodedEnvrAntecedent currentEnvrState, Integer timeInState,
       CodedEnvrConsequent targetEnvrTrans) {
-    Integer prevDeltaT;
-    Integer prevDeltaD;
-
-    CodedEnvrConsequent physAttribTrans; // target transition state based on physical attributes
-    Integer physAttribDeltaT;
-    Integer physAttribDeltaD;
-
+    // store relevant details about previous state
+    Integer prevDeltaT = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTransitionTime();
+    Integer prevDeltaD = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTargetState();
     Integer prevLcs = currentEnvrState.getStartState();
 
-    if (targetEnvrTrans == null) {
-      prevDeltaT = null;
-      prevDeltaD = null;
-    } else {
-      prevDeltaT = targetEnvrTrans.getTransitionTime();
-      prevDeltaD = targetEnvrTrans.getTargetState();
-    }
+    // work out land cover state for this timestep and update record of physical state of cell
+    Integer thisLcs = getThisLcs(timeInState, prevDeltaT, prevLcs, prevDeltaD);
+    currentEnvrState = refreshPhysicalEnvrState(currentEnvrState, thisLcs);
 
-    Integer thisLcs =
-        getThisLcs(timeInState, prevDeltaT, currentEnvrState.getStartState(), prevDeltaD);
-    
-    // update land cover state in the environmental antecedent if it turns out a transition has 
-    // occurred in the last time step
-    if (thisLcs != currentEnvrState.getStartState()) {
-      currentEnvrState = new CodedEnvrAntecedent(thisLcs, currentEnvrState.getSuccessionPathway(), 
-          currentEnvrState.getAspect(), currentEnvrState.getPineSeeds(), 
-          currentEnvrState.getOakSeeds(), currentEnvrState.getDeciduousSeeds(), 
-          currentEnvrState.getWater());
-    }
+    // target transition state based on cell's physical attributes
+    CodedEnvrConsequent physAttribTrans = transMap.getEnvrConsequent(currentEnvrState);
+    Integer physAttribDeltaT =
+        (physAttribTrans == null) ? null : physAttribTrans.getTransitionTime();
+    Integer physAttribDeltaD = (physAttribTrans == null) ? null : physAttribTrans.getTargetState();
 
-    physAttribTrans = transMap.getEnvrConsequent(currentEnvrState);
-    if (physAttribTrans == null) {
-      physAttribDeltaT = null;
-      physAttribDeltaD = null;
-    } else {
-      physAttribDeltaT = physAttribTrans.getTransitionTime();
-      physAttribDeltaD = physAttribTrans.getTargetState();
-    }
+    // get updated time in state accounting for if any land cover transitions/ trajectory changes 
+    // have occurred
+    Integer thisTimeInState =
+        getThisTimeInState(timeInState, prevLcs, thisLcs, prevDeltaD, physAttribDeltaD);
 
-    Integer thisTimeInState = getThisTimeInState(timeInState, currentEnvrState.getStartState(),
-        thisLcs, prevDeltaD, physAttribDeltaD);
-
+    // get updated target transition time
     Integer thisDeltaT =
         getThisDeltaT(prevDeltaD, physAttribDeltaD, prevLcs, thisLcs, prevDeltaT, physAttribDeltaT);
-    
+
     return new LcsUpdateMsg((int) thisLcs, (int) thisTimeInState, physAttribDeltaD, thisDeltaT);
   }
 
