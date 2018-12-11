@@ -10,7 +10,7 @@ package me.ajlane.geo.repast.succession;
  * @author andrew
  *
  */
-class LandCoverStateTransitionMessage {
+class OldLandCoverStateTransitionMessage {
 	
 	private int currentState;
 	private int timeInState;
@@ -29,7 +29,7 @@ class LandCoverStateTransitionMessage {
 	 * 		The time such that when timeInState >= targetStateTransitionTime the 
 	 * 		cell will transition from currentState to targetState
 	 */
-	public LandCoverStateTransitionMessage(int currentState, int timeInState,
+	public OldLandCoverStateTransitionMessage(int currentState, int timeInState,
 			int targetState, int targetStateTransitionTime) {
 		
 		this.currentState = currentState;

@@ -98,10 +98,10 @@ public class LandCoverTypeTransDeciderTest {
 	@Test 
 	public void statement1TestCase() {
 		
-		LandCoverStateTransitionMessage currentLandCoverState 
-		= new LandCoverStateTransitionMessage(1, 1, 5, 2);
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+		= new OldLandCoverStateTransitionMessage(1, 1, 5, 2);
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 		= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 1, 0, 0, 1500);
 		
 		assertEquals(1, nextLandCoverState.getTimeInState());		
@@ -122,10 +122,10 @@ public class LandCoverTypeTransDeciderTest {
 	@Test 
 	public void statement2TestCase() {
 		
-		LandCoverStateTransitionMessage currentLandCoverState 
-		= new LandCoverStateTransitionMessage(3, 1, 5, 3); // initial time in state =1
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+		= new OldLandCoverStateTransitionMessage(3, 1, 5, 3); // initial time in state =1
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 		= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 0, 0, 0, 1, 0, 1500);
 		
 		assertEquals(2, nextLandCoverState.getTimeInState()); // new time in state is 2
@@ -147,10 +147,10 @@ public class LandCoverTypeTransDeciderTest {
 	 */
 	@Test 
 	public void statement3TestCase() {
-		LandCoverStateTransitionMessage currentLandCoverState 
-			= new LandCoverStateTransitionMessage(5, 2, 7, 15); // initial time in state =1
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+			= new OldLandCoverStateTransitionMessage(5, 2, 7, 15); // initial time in state =1
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
 		
 				
@@ -173,10 +173,10 @@ public class LandCoverTypeTransDeciderTest {
 	 */
 	@Test 
 	public void statement4TestCase() {
-		LandCoverStateTransitionMessage currentLandCoverState 
-			= new LandCoverStateTransitionMessage(5, 2, 9, 20); // initial time in state =1
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+			= new OldLandCoverStateTransitionMessage(5, 2, 9, 20); // initial time in state =1
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
 		
 				
@@ -202,10 +202,10 @@ public class LandCoverTypeTransDeciderTest {
 	 */
 	@Test 
 	public void statement5TestCase() {
-		LandCoverStateTransitionMessage currentLandCoverState 
-			= new LandCoverStateTransitionMessage(5, 14, 6, 15); // initial state = 5
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+			= new OldLandCoverStateTransitionMessage(5, 14, 6, 15); // initial state = 5
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
 		
 				
@@ -231,10 +231,10 @@ public class LandCoverTypeTransDeciderTest {
 	 */
 	@Test 
 	public void statement6TestCase() {
-		LandCoverStateTransitionMessage currentLandCoverState 
-			= new LandCoverStateTransitionMessage(5, 13, 6, 15); // initial state = 5
+		OldLandCoverStateTransitionMessage currentLandCoverState 
+			= new OldLandCoverStateTransitionMessage(5, 13, 6, 15); // initial state = 5
 		
-		LandCoverStateTransitionMessage nextLandCoverState 
+		OldLandCoverStateTransitionMessage nextLandCoverState 
 			= lctTransDecider.nextLandCoverTransitionState(currentLandCoverState, 1, 1, 1, 1, 0, 1500);
 		
 				
