@@ -17,7 +17,7 @@ public class LandCoverStateUpdater {
 	private int[][] timeInLandCoverState, targetLandCoverType, targetLandCoverStateTransitionTime;
 	
 	private int height, width;
-	private LandCoverTypeTransDecider landCoverTypeTransDecider;
+	private OldLandCoverTypeTransDecider oldLandCoverTypeTransDecider;
 	
 	public LandCoverStateUpdater(EmbeddedGraphInstance graphDatabase, 
 			EnvrStateAliasTranslator envStateAliasTranslator,
@@ -29,8 +29,8 @@ public class LandCoverStateUpdater {
 		deciduousSeeds = (GridValueLayer) context.getValueLayer("deciduous seeds");
 		aspect = (GridValueLayer) context.getValueLayer("deciduous seeds");
 		
-		landCoverTypeTransDecider 
-			= new LandCoverTypeTransDecider(graphDatabase, envStateAliasTranslator, modelID);		
+		oldLandCoverTypeTransDecider 
+			= new OldLandCoverTypeTransDecider(graphDatabase, envStateAliasTranslator, modelID);		
 		
 		height = (int) landCoverType.getDimensions().getHeight();
 		width = (int) landCoverType.getDimensions().getWidth();
@@ -96,7 +96,7 @@ public class LandCoverStateUpdater {
 						targetLandCoverStateTransitionTime[i][j]);				
 						
 				// infer next state based on environmental conditions
-				nextLandCoverState = landCoverTypeTransDecider
+				nextLandCoverState = oldLandCoverTypeTransDecider
 						.nextLandCoverTransitionState(thisLandCoverState, 
 								0, // succession pathway. TODO update to allow for changing succession pathway
 								(int) aspect.get(i, j),

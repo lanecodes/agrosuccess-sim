@@ -13,7 +13,7 @@ import java.util.Set;
 public class CodedLcsTransitionMap {
   private Map<CodedEnvrAntecedent, CodedEnvrConsequent> transMap;
 
-  CodedLcsTransitionMap() {
+  public CodedLcsTransitionMap() {
     this.transMap = new HashMap<>();
   }
 
@@ -21,15 +21,15 @@ public class CodedLcsTransitionMap {
     return transMap.get(ante);
   }
 
-  void put(CodedEnvrAntecedent ante, CodedEnvrConsequent cons) {
+  public void put(CodedEnvrAntecedent ante, CodedEnvrConsequent cons) {
     this.transMap.put(ante, cons);
   }
   
-  int size() {
+  public int size() {
     return this.transMap.size();
   }
   
-  Set<Map.Entry<CodedEnvrAntecedent, CodedEnvrConsequent>> entrySet() {
+  public Set<Map.Entry<CodedEnvrAntecedent, CodedEnvrConsequent>> entrySet() {
     return this.transMap.entrySet();
   }
 

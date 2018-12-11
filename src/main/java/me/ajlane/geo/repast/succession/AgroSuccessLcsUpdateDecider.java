@@ -3,7 +3,7 @@ package me.ajlane.geo.repast.succession;
 public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   CodedLcsTransitionMap transMap;
 
-  AgroSuccessLcsUpdateDecider(CodedLcsTransitionMap transMap) {
+  public AgroSuccessLcsUpdateDecider(CodedLcsTransitionMap transMap) {
     this.transMap = transMap;
   }
 
