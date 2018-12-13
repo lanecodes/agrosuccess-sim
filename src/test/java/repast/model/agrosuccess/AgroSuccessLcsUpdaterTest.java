@@ -16,6 +16,8 @@ import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;
 import static me.ajlane.geo.repast.RepastGridUtils.arrayToGridValueLayer;
+import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToString;
+import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayersAreEqual;;
 
 /**
  * @author Andrew Lane
@@ -76,6 +78,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   /**
    * <b>Time evolution of heteroContext</b></br>
+   * 
    * <pre class="example">
    * t        lct                ΔD                ΔT              T_{in}            pathway
    *    
@@ -138,16 +141,16 @@ public class AgroSuccessLcsUpdaterTest {
 
     context.addValueLayer(arrayToGridValueLayer("lcs transition time",
         new int[][] {{15, 15, 15}, {15, 20, 20}, {20, 20, 20}}));
-    
+
     return context;
   }
-  
+
   @Before
   public void setUp() {
-    smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(500, 1000);   
+    smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(500, 1000);
     updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap());
   }
-  
+
   @After
   public void tearDown() {
     smDiscretiser = null;
@@ -162,7 +165,7 @@ public class AgroSuccessLcsUpdaterTest {
   @Test
   public void testUniformContextAfter1Timestep() {
     Context<Object> context = getUniformContext();
-    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);        
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
 
     lcsUpdater.updateLandscapeLcs();
 
@@ -237,21 +240,131 @@ public class AgroSuccessLcsUpdaterTest {
       }
     }
   }
-  
-  @Test
-  public void testHeteroContextAfter1Timestep() {
-    Context<Object> context = getHeteroContext();
-    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
-    fail("not implmented");
-  }
-  
-  @Test
-  public void testHeteroContextAfter2Timesteps() {
-    Context<Object> context = getHeteroContext();
-    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
-    fail("not implmented");
+
+  private String gvlErrorStr(GridValueLayer expectedGvl, GridValueLayer actualGvl) {
+    return "expected:\n" + gridValueLayerToString(expectedGvl) + "but got:\n"
+        + gridValueLayerToString(actualGvl);
   }
 
+  @Test
+  public void testHeteroContextAfter1TimestepLctUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl =
+        arrayToGridValueLayer("lct", new int[][] {{6, 6, 5}, {5, 5, 5}, {5, 5, 5}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lct");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter1TimestepDeltaDUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl =
+        arrayToGridValueLayer("target lcs", new int[][] {{-1, -1, 6}, {6, 9, 9}, {9, 9, 9}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("target lcs");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter1TimestepDeltaTUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl = arrayToGridValueLayer("lcs transition time",
+        new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lcs transition time");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter1TimestepTimeInStateUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl = arrayToGridValueLayer("time in lcs",
+        new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("time in lcs");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+  
+  @Test
+  public void testHeteroContextAfter2TimestepsLctUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl =
+        arrayToGridValueLayer("lct", new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lct");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter2TimestepsDeltaDUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl =
+        arrayToGridValueLayer("target lcs", new int[][] {{-1, -1, -1}, {-1, -1, 9}, {9, 9, 9}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("target lcs");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter2TimestepsDeltaTUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl = arrayToGridValueLayer("lcs transition time",
+        new int[][] {{-1, -1, -1}, {-1, -1, 20}, {20, 20, 20}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lcs transition time");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
+
+  @Test
+  public void testHeteroContextAfter2TimestepsTimeInStateUpdates() {
+    Context<Object> context = getHeteroContext();
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
+
+    GridValueLayer expectedGvl = arrayToGridValueLayer("time in lcs",
+        new int[][] {{2, 2, 1}, {1, 1, 20}, {20, 20, 20}});
+
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("time in lcs");
+
+    assertTrue(gvlErrorStr(expectedGvl, actualGvl),
+        gridValueLayersAreEqual(expectedGvl, actualGvl));
+  }
 
 }
 

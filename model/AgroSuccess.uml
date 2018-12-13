@@ -259,6 +259,7 @@
   <packagedElement xmi:type="uml:Class" xmi:id="_uvumQP1SEeiZRuO0YCnxBQ" name="AgroSuccessLcsUpdater">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_Ggw9EP1UEeiZRuO0YCnxBQ" name="context" visibility="private"/>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_81EeYP1UEeiZRuO0YCnxBQ" name="lcsUpdateDecider" visibility="private"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_USC5wP5TEeiZRuO0YCnxBQ" name="smDiscretiser" visibility="private"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_1_SkQP1SEeiZRuO0YCnxBQ" name="getCellEnvrState" visibility="private">
       <ownedParameter xmi:type="uml:Parameter" xmi:id="_Q-xCcP1TEeiZRuO0YCnxBQ" name="cellEnvrState" type="_jDRaoOxFEei6Adh3frAlbg" direction="return"/>
       <ownedParameter xmi:type="uml:Parameter" xmi:id="_abgpsP1TEeiZRuO0YCnxBQ" name="i">

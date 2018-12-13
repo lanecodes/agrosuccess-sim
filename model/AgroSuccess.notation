@@ -870,6 +870,10 @@
           <element xmi:type="uml:Property" href="AgroSuccess.uml#_81EeYP1UEeiZRuO0YCnxBQ"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_81QEkf1UEeiZRuO0YCnxBQ"/>
         </children>
+        <children xmi:type="notation:Shape" xmi:id="_USPuEP5TEeiZRuO0YCnxBQ" type="Property_ClassAttributeLabel">
+          <element xmi:type="uml:Property" href="AgroSuccess.uml#_USC5wP5TEeiZRuO0YCnxBQ"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_USPuEf5TEeiZRuO0YCnxBQ"/>
+        </children>
         <styles xmi:type="notation:TitleStyle" xmi:id="_uvy3tP1SEeiZRuO0YCnxBQ"/>
         <styles xmi:type="notation:SortingStyle" xmi:id="_uvy3tf1SEeiZRuO0YCnxBQ"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_uvy3tv1SEeiZRuO0YCnxBQ"/>
