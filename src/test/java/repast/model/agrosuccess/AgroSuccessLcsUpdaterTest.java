@@ -62,16 +62,18 @@ public class AgroSuccessLcsUpdaterTest {
   private Context<Object> getUniformContext() {
     Context<Object> context = new DefaultContext<>();
 
-    context.addValueLayer(new GridValueLayer("lct", 5, true, 3, 3)); // everywhere shrubland
-    context.addValueLayer(new GridValueLayer("oak regeneration", 0, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("aspect", 1, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("pine seeds", 1, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("oak seeds", 0, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("deciduous seeds", 1, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("soil moisture", 200, true, 3, 3)); // xeric
-    context.addValueLayer(new GridValueLayer("time in lcs", 14, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("target lcs", 6, true, 3, 3));
-    context.addValueLayer(new GridValueLayer("lcs transition time", 15, true, 3, 3));
+    // everywhere shrubland
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Lct.name(), 5, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.OakRegen.name(), 0, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Aspect.name(), 1, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Pine.name(), 1, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Oak.name(), 0, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Deciduous.name(), 1, true, 3, 3));
+    // xeric
+    context.addValueLayer(new GridValueLayer(LscapeLayer.SoilMoisture.name(), 200, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.TimeInState.name(), 14, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.DeltaD.name(), 6, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.DeltaT.name(), 15, true, 3, 3));
 
     return context;
   }
@@ -112,34 +114,34 @@ public class AgroSuccessLcsUpdaterTest {
   private Context<Object> getHeteroContext() {
     Context<Object> context = new DefaultContext<>();
 
-    context
-        .addValueLayer(arrayToGridValueLayer("lct", new int[][] {{5, 5, 5}, {5, 5, 5}, {5, 5, 5}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Lct.name(),
+        new int[][] {{5, 5, 5}, {5, 5, 5}, {5, 5, 5}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("oak regeneration", new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.OakRegen.name(),
+        new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("aspect", new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Aspect.name(),
+        new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("pine seeds", new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Pine.name(),
+        new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("oak seeds", new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Oak.name(),
+        new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("deciduous seeds", new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Deciduous.name(),
+        new int[][] {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}));
 
-    context.addValueLayer(arrayToGridValueLayer("soil moisture",
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.SoilMoisture.name(),
         new int[][] {{100, 100, 100}, {100, 2000, 2000}, {2000, 2000, 2000}}));
 
-    context.addValueLayer(arrayToGridValueLayer("time in lcs",
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{15, 15, 14}, {14, 19, 18}, {18, 18, 18}}));
 
-    context.addValueLayer(
-        arrayToGridValueLayer("target lcs", new int[][] {{6, 6, 6}, {6, 9, 9}, {9, 9, 9}}));
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
+        new int[][] {{6, 6, 6}, {6, 9, 9}, {9, 9, 9}}));
 
-    context.addValueLayer(arrayToGridValueLayer("lcs transition time",
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{15, 15, 15}, {15, 20, 20}, {20, 20, 20}}));
 
     return context;
@@ -171,16 +173,17 @@ public class AgroSuccessLcsUpdaterTest {
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 5, "lct"), 5, (int) context.getValueLayer("lct").get(i, j));
+        assertEquals(errorStr(i, j, 5, LscapeLayer.Lct.name()), 5,
+            (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 15, "time in lcs"), 15,
-            (int) context.getValueLayer("time in lcs").get(i, j));
+        assertEquals(errorStr(i, j, 15, LscapeLayer.TimeInState.name()), 15,
+            (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 15, "lcs transition time"), 15,
-            (int) context.getValueLayer("lcs transition time").get(i, j));
+        assertEquals(errorStr(i, j, 15, LscapeLayer.DeltaT.name()), 15,
+            (int) context.getValueLayer(LscapeLayer.DeltaT.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 6, "target lcs"), 6,
-            (int) context.getValueLayer("target lcs").get(i, j));
+        assertEquals(errorStr(i, j, 6, LscapeLayer.DeltaD.name()), 6,
+            (int) context.getValueLayer(LscapeLayer.DeltaD.name()).get(i, j));
       }
     }
 
@@ -202,16 +205,17 @@ public class AgroSuccessLcsUpdaterTest {
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 6, "lct"), 6, (int) context.getValueLayer("lct").get(i, j));
+        assertEquals(errorStr(i, j, 6, LscapeLayer.Lct.name()), 6,
+            (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 1, "time in lcs"), 1,
-            (int) context.getValueLayer("time in lcs").get(i, j));
+        assertEquals(errorStr(i, j, 1, LscapeLayer.TimeInState.name()), 1,
+            (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, -1, "lcs transition time"), -1,
-            (int) context.getValueLayer("lcs transition time").get(i, j));
+        assertEquals(errorStr(i, j, -1, LscapeLayer.DeltaT.name()), -1,
+            (int) context.getValueLayer(LscapeLayer.DeltaT.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, -1, "target lcs"), -1,
-            (int) context.getValueLayer("target lcs").get(i, j));
+        assertEquals(errorStr(i, j, -1, LscapeLayer.DeltaD.name()), -1,
+            (int) context.getValueLayer(LscapeLayer.DeltaD.name()).get(i, j));
       }
     }
   }
@@ -227,16 +231,17 @@ public class AgroSuccessLcsUpdaterTest {
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 6, "lct"), 6, (int) context.getValueLayer("lct").get(i, j));
+        assertEquals(errorStr(i, j, 6, LscapeLayer.Lct.name()), 6,
+            (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 2, "time in lcs"), 2,
-            (int) context.getValueLayer("time in lcs").get(i, j));
+        assertEquals(errorStr(i, j, 2, LscapeLayer.TimeInState.name()), 2,
+            (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, -1, "lcs transition time"), -1,
-            (int) context.getValueLayer("lcs transition time").get(i, j));
+        assertEquals(errorStr(i, j, -1, LscapeLayer.DeltaT.name()), -1,
+            (int) context.getValueLayer(LscapeLayer.DeltaT.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, -1, "target lcs"), -1,
-            (int) context.getValueLayer("target lcs").get(i, j));
+        assertEquals(errorStr(i, j, -1, LscapeLayer.DeltaD.name()), -1,
+            (int) context.getValueLayer(LscapeLayer.DeltaD.name()).get(i, j));
       }
     }
   }
@@ -252,10 +257,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl =
-        arrayToGridValueLayer("lct", new int[][] {{6, 6, 5}, {5, 5, 5}, {5, 5, 5}});
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
+        new int[][] {{6, 6, 5}, {5, 5, 5}, {5, 5, 5}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lct");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -267,10 +272,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl =
-        arrayToGridValueLayer("target lcs", new int[][] {{-1, -1, 6}, {6, 9, 9}, {9, 9, 9}});
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
+        new int[][] {{-1, -1, 6}, {6, 9, 9}, {9, 9, 9}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("target lcs");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -282,10 +287,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer("lcs transition time",
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lcs transition time");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -297,25 +302,26 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer("time in lcs",
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("time in lcs");
+    GridValueLayer actualGvl =
+        (GridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
   }
-  
+
   @Test
   public void testHeteroContextAfter2TimestepsLctUpdates() {
     Context<Object> context = getHeteroContext();
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl =
-        arrayToGridValueLayer("lct", new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
+        new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lct");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -327,10 +333,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl =
-        arrayToGridValueLayer("target lcs", new int[][] {{-1, -1, -1}, {-1, -1, 9}, {9, 9, 9}});
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
+        new int[][] {{-1, -1, -1}, {-1, -1, 9}, {9, 9, 9}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("target lcs");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -342,10 +348,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer("lcs transition time",
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{-1, -1, -1}, {-1, -1, 20}, {20, 20, 20}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("lcs transition time");
+    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -357,10 +363,11 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer("time in lcs",
+    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{2, 2, 1}, {1, 1, 20}, {20, 20, 20}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer("time in lcs");
+    GridValueLayer actualGvl =
+        (GridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
