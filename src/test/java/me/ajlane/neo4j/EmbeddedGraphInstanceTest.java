@@ -5,6 +5,7 @@ import static java.lang.Math.toIntExact;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.graphdb.Result;
@@ -15,18 +16,9 @@ public class EmbeddedGraphInstanceTest {
 	public static EmbeddedGraphInstance graph;
 	private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db"; 
 	
-	//@Rule
-	//public TemporaryFolder tempFolder = new TemporaryFolder();
-	
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		//String cypherRoot = "/home/andrew/Dropbox/phd/models/AgroSuccess/views";
-		//String fnameSuffix = "_w";
-		//String globalParamFile = "/home/andrew/Dropbox/phd/models/AgroSuccess/global_parameters.json";
-		
-		// RELY ON database having been prepared previously
+	@Before
+	public void setUp() {
 		graph = new EmbeddedGraphInstance(testDatabaseDirPath);
-		//graph.insertExternalCypher(cypherRoot, fnameSuffix, globalParamFile);
 	}
 	
 	@After
@@ -34,14 +26,11 @@ public class EmbeddedGraphInstanceTest {
 		try (Transaction tx = graph.beginTx()) {
 			graph.execute("MATCH (n:Test) DETACH DELETE n;");	
 			tx.success();
+			
 		}
-	}
-	
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
 		graph.shutdown();
 	}
-
+	
 	@Test
 	public void threeNodesShouldBeCreated() {
     	try ( Transaction tx = graph.beginTx() ) {
@@ -88,7 +77,4 @@ public class EmbeddedGraphInstanceTest {
 		}
 		assertEquals(18, numEEA);		
 	}
-	
-	
-
 }
