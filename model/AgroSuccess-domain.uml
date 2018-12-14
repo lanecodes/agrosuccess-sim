@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_VWQG8O13EeiaCOWWgO8T3Q" name="AgroSuccess-domain">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_Vp-7QO13EeiaCOWWgO8T3Q">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_5yfagO13EeiaCOWWgO8T3Q" name="Landscape"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_JnCRUO14EeiaCOWWgO8T3Q" name="Village">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_IHL5EO2BEeiaCOWWgO8T3Q" name="location"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_LEd4oO14EeiaCOWWgO8T3Q" name="Household">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_DZwCIO2YEeiaCOWWgO8T3Q" name="population"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_L61f8O14EeiaCOWWgO8T3Q" name="SeedDispersal"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_NRJLkO14EeiaCOWWgO8T3Q" name="Precipitation">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Xavl4O2FEeiaCOWWgO8T3Q" name="annualPrecipitation"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_PWw0QO14EeiaCOWWgO8T3Q" name="EcoSuccession"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_p8c5cO14EeiaCOWWgO8T3Q" name="Is-located-in" visibility="private" memberEnd="_p8iZAO14EeiaCOWWgO8T3Q _p8jAEO14EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_p8gj0O14EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_p8hK4O14EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_p8iZAO14EeiaCOWWgO8T3Q" name="household" type="_JnCRUO14EeiaCOWWgO8T3Q" association="_p8c5cO14EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7nXcAO14EeiaCOWWgO8T3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7nkQUO14EeiaCOWWgO8T3Q" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_p8jAEO14EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="_p8c5cO14EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jY6pEO16EeiaCOWWgO8T3Q" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_jZkJUO16EeiaCOWWgO8T3Q" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_GqOQAO16EeiaCOWWgO8T3Q" name="HouseholdDescription">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_zSJ8YO2rEeiaCOWWgO8T3Q" name="wheatSubsistenceMass" isDerived="true"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_YIIloO2sEeiaCOWWgO8T3Q" name="requiredCaloriesPerPersonPerDay"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_jybCgO2sEeiaCOWWgO8T3Q" name="strategyName"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_CNMi4O2tEeiaCOWWgO8T3Q" name="propSeedReserve"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_J5SE0O2tEeiaCOWWgO8T3Q" name="expectationScalar"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_KEFHwO16EeiaCOWWgO8T3Q" name="Describes" memberEnd="_KEGV4e16EeiaCOWWgO8T3Q _KENqoO16EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KEFu0O16EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_KEGV4O16EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KEGV4e16EeiaCOWWgO8T3Q" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_KEFHwO16EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_rxp1oO16EeiaCOWWgO8T3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_rxzmoO16EeiaCOWWgO8T3Q" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KENqoO16EeiaCOWWgO8T3Q" name="householddescription" type="_GqOQAO16EeiaCOWWgO8T3Q" association="_KEFHwO16EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RN64QO16EeiaCOWWgO8T3Q" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ROFQUO16EeiaCOWWgO8T3Q" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_YxW0gO16EeiaCOWWgO8T3Q" name="Belongs-to" memberEnd="_YxXbku16EeiaCOWWgO8T3Q _YxZ30O16EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_YxXbkO16EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_YxXbke16EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YxXbku16EeiaCOWWgO8T3Q" name="village" type="_JnCRUO14EeiaCOWWgO8T3Q" association="_YxW0gO16EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YxZ30O16EeiaCOWWgO8T3Q" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_YxW0gO16EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2cIbUO16EeiaCOWWgO8T3Q" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2cZhEO16EeiaCOWWgO8T3Q" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="__68fIO16EeiaCOWWgO8T3Q" name="Modifies-landcover-in" memberEnd="__69tQu16EeiaCOWWgO8T3Q __6-7YO16EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__69tQO16EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__69tQe16EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="__69tQu16EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="__68fIO16EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="__6-7YO16EeiaCOWWgO8T3Q" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="__68fIO16EeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_C8NQsO17EeiaCOWWgO8T3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_C8XowO17EeiaCOWWgO8T3Q" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_NFYqsO18EeiaCOWWgO8T3Q" name="Wildfire"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_jk_O0O19EeiaCOWWgO8T3Q" name="Modifies-soil-moisure-in" memberEnd="_jlAc8O19EeiaCOWWgO8T3Q _jlDgQO19EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_jk_14O19EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_jk_14e19EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_jlAc8O19EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="_jk_O0O19EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_jlDgQO19EeiaCOWWgO8T3Q" name="precipitation" type="_NRJLkO14EeiaCOWWgO8T3Q" association="_jk_O0O19EeiaCOWWgO8T3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_hApX4O1_EeiaCOWWgO8T3Q" name="Modifies-landcover-in" memberEnd="_hAqmAO1_EeiaCOWWgO8T3Q _hAtpUO1_EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_hAp-8O1_EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_hAp-8e1_EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_hAqmAO1_EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="_hApX4O1_EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_hAtpUO1_EeiaCOWWgO8T3Q" name="wildfire" type="_NFYqsO18EeiaCOWWgO8T3Q" association="_hApX4O1_EeiaCOWWgO8T3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_kHvrsO1_EeiaCOWWgO8T3Q" name="Modifies-seed-presence-in" memberEnd="_kHwSwu1_EeiaCOWWgO8T3Q _kHzWEO1_EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_kHwSwO1_EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_kHwSwe1_EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_kHwSwu1_EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="_kHvrsO1_EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_kHzWEO1_EeiaCOWWgO8T3Q" name="seeddispersal" type="_L61f8O14EeiaCOWWgO8T3Q" association="_kHvrsO1_EeiaCOWWgO8T3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_tWD1YO1_EeiaCOWWgO8T3Q" name="Modifies-landcover-in" memberEnd="_tWFDge1_EeiaCOWWgO8T3Q _tWGRoO1_EeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_tWEccO1_EeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_tWFDgO1_EeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_tWFDge1_EeiaCOWWgO8T3Q" name="landscape" type="_5yfagO13EeiaCOWWgO8T3Q" association="_tWD1YO1_EeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_tWGRoO1_EeiaCOWWgO8T3Q" name="ecosuccession" type="_PWw0QO14EeiaCOWWgO8T3Q" association="_tWD1YO1_EeiaCOWWgO8T3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_HjOY8O2YEeiaCOWWgO8T3Q" name="CultivatedLandPatch">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Li-MAO2YEeiaCOWWgO8T3Q" name="location"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OnJusO2YEeiaCOWWgO8T3Q" name="Utilises" memberEnd="_OnLj4O2YEeiaCOWWgO8T3Q _OnMyAO2YEeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_OnK80O2YEeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_OnK80e2YEeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_OnMyAO2YEeiaCOWWgO8T3Q" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_OnJusO2YEeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_OnLj4O2YEeiaCOWWgO8T3Q" name="cultivatedlandpatch" type="_HjOY8O2YEeiaCOWWgO8T3Q" association="_OnJusO2YEeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OnMK8O2YEeiaCOWWgO8T3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OnMK8e2YEeiaCOWWgO8T3Q" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OXklIO2ZEeiaCOWWgO8T3Q" name="SubsistencePlan">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_i95v8O2ZEeiaCOWWgO8T3Q" name="numWheatPlots"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_pgU7IO2ZEeiaCOWWgO8T3Q" name="numFireWoodPlots"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_WPqiwO2ZEeiaCOWWgO8T3Q" name="Determines" memberEnd="_WPrJ0u2ZEeiaCOWWgO8T3Q _WPzssO2ZEeiaCOWWgO8T3Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_WPrJ0O2ZEeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_WPrJ0e2ZEeiaCOWWgO8T3Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_WPzssO2ZEeiaCOWWgO8T3Q" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_WPqiwO2ZEeiaCOWWgO8T3Q"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_WPrJ0u2ZEeiaCOWWgO8T3Q" name="subsistenceplan" type="_OXklIO2ZEeiaCOWWgO8T3Q" association="_WPqiwO2ZEeiaCOWWgO8T3Q">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WPsX8O2ZEeiaCOWWgO8T3Q" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WPwCUO2ZEeiaCOWWgO8T3Q" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="__jWAIO56EeiMB9yho37DFQ" name="LandscapeKnowledge">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_FT9S8O3CEeiaCOWWgO8T3Q" name="numRasterCellsPerHa"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_KJ-noO57EeiMB9yho37DFQ" name="Is-aware-of" memberEnd="_KKCSAO57EeiMB9yho37DFQ _KKDgIO57EeiMB9yho37DFQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KKBD4O57EeiMB9yho37DFQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_KKBD4e57EeiMB9yho37DFQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KKDgIO57EeiMB9yho37DFQ" name="household" type="_LEd4oO14EeiaCOWWgO8T3Q" association="_KJ-noO57EeiMB9yho37DFQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_KKCSAO57EeiMB9yho37DFQ" name="landscapeknowledge" type="__jWAIO56EeiMB9yho37DFQ" association="_KJ-noO57EeiMB9yho37DFQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KKC5EO57EeiMB9yho37DFQ" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_KKC5Ee57EeiMB9yho37DFQ" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>

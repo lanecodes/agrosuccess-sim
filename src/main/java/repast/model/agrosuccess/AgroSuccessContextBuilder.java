@@ -2,9 +2,9 @@ package repast.model.agrosuccess;
 
 import java.io.File;
 
-import me.ajlane.geo.repast.succession.SeedDisperser;
-import me.ajlane.geo.repast.succession.SoilMoistureCalculator;
-import me.ajlane.geo.repast.succession.SpatiallyRandomSeedDisperser;
+import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
+import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
 import repast.simphony.context.Context;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;

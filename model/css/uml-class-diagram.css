@@ -1,0 +1,14 @@
+Package {
+	elementIcon:true;	
+}
+
+Class {
+	qualifiedNameDepth:none;
+	elementIcon:true;	
+}
+
+Interface {
+    qualifiedNameDepth:none;
+    elementIcon:true;   
+}
+
