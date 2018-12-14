@@ -288,7 +288,7 @@ public class AgroSuccessLcsUpdaterTest {
     lcsUpdater.updateLandscapeLcs();
 
     GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
-        new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
+        new int[][] {{-1, -1, 15}, {15, 20, 20}, {20, 20, 20}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
 
@@ -317,6 +317,7 @@ public class AgroSuccessLcsUpdaterTest {
     Context<Object> context = getHeteroContext();
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
+    lcsUpdater.updateLandscapeLcs();
 
     GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
         new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
@@ -331,6 +332,7 @@ public class AgroSuccessLcsUpdaterTest {
   public void testHeteroContextAfter2TimestepsDeltaDUpdates() {
     Context<Object> context = getHeteroContext();
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
     GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
@@ -347,6 +349,7 @@ public class AgroSuccessLcsUpdaterTest {
     Context<Object> context = getHeteroContext();
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
+    lcsUpdater.updateLandscapeLcs();
 
     GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{-1, -1, -1}, {-1, -1, 20}, {20, 20, 20}});
@@ -362,6 +365,7 @@ public class AgroSuccessLcsUpdaterTest {
     Context<Object> context = getHeteroContext();
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
+    lcsUpdater.updateLandscapeLcs();
 
     GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{2, 2, 1}, {1, 1, 20}, {20, 20, 20}});
@@ -372,6 +376,8 @@ public class AgroSuccessLcsUpdaterTest {
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
   }
+  
+
 
 }
 

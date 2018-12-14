@@ -7,21 +7,34 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdateMsg;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
+import repast.simphony.valueLayer.IGridValueLayer;
 
 public class AgroSuccessLcsUpdater implements LcsUpdater {
-  Context<Object> context;
   LcsUpdateDecider updateDecider;
   SoilMoistureDiscretiser smDiscretiser;
   int nRows, nCols;
+  IGridValueLayer landCoverType, oakRegen, aspect, pine, oak, deciduous, soilMoisture, timeInState,
+      deltaD, deltaT;
 
   public AgroSuccessLcsUpdater(Context<Object> context, LcsUpdateDecider lcsUpdateDecider,
       SoilMoistureDiscretiser smDiscretiser) {
-    this.context = context;
+
+    this.landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
+    this.oakRegen = (IGridValueLayer) context.getValueLayer(LscapeLayer.OakRegen.name());
+    this.aspect = (IGridValueLayer) context.getValueLayer(LscapeLayer.Aspect.name());
+    this.pine = (IGridValueLayer) context.getValueLayer(LscapeLayer.Pine.name());
+    this.oak = (IGridValueLayer) context.getValueLayer(LscapeLayer.Oak.name());
+    this.deciduous = (IGridValueLayer) context.getValueLayer(LscapeLayer.Deciduous.name());
+    this.soilMoisture = (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
+    this.timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
+    this.deltaD = (IGridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
+    this.deltaT = (IGridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
+
+    this.nRows = (int) landCoverType.getDimensions().getHeight();
+    this.nCols = (int) landCoverType.getDimensions().getWidth();
+
     this.updateDecider = lcsUpdateDecider;
     this.smDiscretiser = smDiscretiser;
-    this.nRows = (int) context.getValueLayer(LscapeLayer.Lct.name()).getDimensions().getHeight();
-    this.nCols = (int) context.getValueLayer(LscapeLayer.Lct.name()).getDimensions().getWidth();
-
   }
 
   /**
@@ -31,17 +44,9 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
    *         location (x,y).
    */
   private CodedEnvrAntecedent getCellEnvrState(int x, int y) {
-    return new CodedEnvrAntecedent((int) context.getValueLayer(LscapeLayer.Lct.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.OakRegen.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.Aspect.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.Pine.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.Oak.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.Deciduous.name()).get(x, y),
-        (int) context.getValueLayer(LscapeLayer.SoilMoisture.name()).get(x, y));
-  }
-
-  private void setCellEnrvState(LcsUpdateMsg updateMsg) {
-    // TODO apply current state from update message to various layers
+    return new CodedEnvrAntecedent((int) landCoverType.get(x, y), (int) oakRegen.get(x, y),
+        (int) aspect.get(x, y), (int) pine.get(x, y), (int) oak.get(x, y),
+        (int) deciduous.get(x, y), smDiscretiser.getSoilMoistureLevel(soilMoisture.get(x, y)));
   }
 
   /**
@@ -51,18 +56,14 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
    *         the state of the value layers before applying any update rules.
    */
   private CodedEnvrConsequent getCellTgtState(int x, int y) {
-    int deltaD = (int) context.getValueLayer(LscapeLayer.DeltaD.name()).get(x, y);
-    int deltaT = (int) context.getValueLayer(LscapeLayer.DeltaT.name()).get(x, y);
+    int cellDeltaD = (int) deltaD.get(x, y);
+    int cellDeltaT = (int) deltaT.get(x, y);
 
-    if (deltaD == -1 || deltaT == -1) {
-      assert deltaD == -1 && deltaT == -1;
+    if (cellDeltaD == -1 || cellDeltaT == -1) {
+      assert cellDeltaD == -1 && cellDeltaT == -1;
       return null;
     }
-    return new CodedEnvrConsequent(deltaD, deltaT);
-  }
-
-  private void setCellTgtState(LcsUpdateMsg updateMsg) {
-    // TODO apply update message to delta T and delta D layers
+    return new CodedEnvrConsequent(cellDeltaD, cellDeltaT);
   }
 
   /**
@@ -71,11 +72,7 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
    * @return the amount of time cell (x, y) has been in its current state.
    */
   private int getCellTimeInState(int x, int y) {
-    return (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(x, y);
-  }
-
-  private void setCellTimeInState(LcsUpdateMsg updateMsg) {
-    // TODO apply update message to time in state layer
+    return (int) timeInState.get(x, y);
   }
 
   @Override
@@ -86,9 +83,17 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
         updateMsg = updateDecider.getLcsUpdateMsg(getCellEnvrState(x, y), getCellTimeInState(x, y),
             getCellTgtState(x, y));
 
-        setCellEnrvState(updateMsg);
-        setCellTimeInState(updateMsg);
-        setCellTgtState(updateMsg);
+        landCoverType.set(updateMsg.getCurrentState(), x, y);
+        timeInState.set(updateMsg.getTimeInState(), x, y);
+
+        if (updateMsg.getTargetState() == null) {
+          assert updateMsg.getTargetStateTransitionTime() == null;
+          deltaD.set(-1, x, y);
+          deltaT.set(-1, x, y);
+        } else {
+          deltaD.set(updateMsg.getTargetState(), x, y);
+          deltaT.set(updateMsg.getTargetStateTransitionTime(), x, y);
+        }
       }
     }
   }

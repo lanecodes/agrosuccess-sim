@@ -103,7 +103,7 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
     if (prevDeltaT == null && thisDeltaT != null) {
       // statement 4.1, not in Millington et al. 2009
       return new Integer((int) Math.round((1 + thisDeltaT) / 2.0));
-    } else if (thisDeltaD != prevDeltaD && thisLcs == prevLcs) {
+    } else if (thisDeltaD != prevDeltaD && thisLcs == prevLcs && thisDeltaT != null) {
       // statement 4'
       return new Integer((int) Math.round((prevDeltaT + thisDeltaT) / 2.0));
     } else if (thisDeltaD == prevDeltaD && thisLcs == prevLcs) {
@@ -158,7 +158,7 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
         (physAttribTrans == null) ? null : physAttribTrans.getTransitionTime();
     Integer physAttribDeltaD = (physAttribTrans == null) ? null : physAttribTrans.getTargetState();
 
-    // get updated time in state accounting for if any land cover transitions/ trajectory changes 
+    // get updated time in state accounting for if any land cover transitions/ trajectory changes
     // have occurred
     Integer thisTimeInState =
         getThisTimeInState(timeInState, prevLcs, thisLcs, prevDeltaD, physAttribDeltaD);

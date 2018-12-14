@@ -101,12 +101,14 @@ import org.junit.Test;
  * in this test suite.
  * </p>
  * 
- * <table id="org4bae411" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+ * <table id="org76c4946" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 1:</span> The example transition
  * pathways considered in these tests. For each variable a meaningful value description is given
  * along with its corresponding numerical value as used in AgroSuccess in brackets.</caption>
  * 
  * <colgroup> <col class="org-left" />
+ * 
+ * <col class="org-left" />
  * 
  * <col class="org-left" />
  * 
@@ -121,6 +123,7 @@ import org.junit.Test;
  * <th scope="col" class="org-left">2</th>
  * <th scope="col" class="org-left">3</th>
  * <th scope="col" class="org-left">4</th>
+ * <th scope="col" class="org-left">5</th>
  * </tr>
  * </thead> <tbody>
  * <tr>
@@ -129,10 +132,12 @@ import org.junit.Test;
  * <td class="org-left">Pine (6)</td>
  * <td class="org-left">Shrubland (5)</td>
  * <td class="org-left">Pine (6)</td>
+ * <td class="org-left">Shrubland (5)</td>
  * </tr>
  * 
  * <tr>
  * <td class="org-left">succession</td>
+ * <td class="org-left">regeneration (0)</td>
  * <td class="org-left">regeneration (0)</td>
  * <td class="org-left">regeneration (0)</td>
  * <td class="org-left">regeneration (0)</td>
@@ -145,10 +150,12 @@ import org.junit.Test;
  * <td class="org-left">south (1)</td>
  * <td class="org-left">south (1)</td>
  * <td class="org-left">south (1)</td>
+ * <td class="org-left">south (1)</td>
  * </tr>
  * 
  * <tr>
  * <td class="org-left">pine</td>
+ * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
@@ -161,10 +168,12 @@ import org.junit.Test;
  * <td class="org-left">false (0)</td>
  * <td class="org-left">false (0)</td>
  * <td class="org-left">false (0)</td>
+ * <td class="org-left">false (0)</td>
  * </tr>
  * 
  * <tr>
  * <td class="org-left">deciduous</td>
+ * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
@@ -177,6 +186,7 @@ import org.junit.Test;
  * <td class="org-left">xeric (0)</td>
  * <td class="org-left">hydric (2)</td>
  * <td class="org-left">hydric (2)</td>
+ * <td class="org-left">mesic (1)</td>
  * </tr>
  * 
  * <tr>
@@ -185,6 +195,7 @@ import org.junit.Test;
  * <td class="org-left"><code>null</code> (∅)</td>
  * <td class="org-left">Oak (9)</td>
  * <td class="org-left">TransForest (7)</td>
+ * <td class="org-left"><code>null</code> (∅)</td>
  * </tr>
  * 
  * <tr>
@@ -193,10 +204,10 @@ import org.junit.Test;
  * <td class="org-left"><code>null</code> (∅)</td>
  * <td class="org-left">20</td>
  * <td class="org-left">15</td>
+ * <td class="org-left"><code>null</code> (∅)</td>
  * </tr>
  * </tbody>
  * </table>
- * 
  * 
  * 
  * <p>
@@ -462,11 +473,94 @@ import org.junit.Test;
  * <br />
  * </p>
  * 
+ * <p>
+ * <b>Scenario 4: no land cover state occurs, but change in physical variables eliminates target
+ * state</b>
+ * </p>
+ * <p>
+ * No state change occurs, but as a result of a slight increase in soil moisture (xeric to mesic) at
+ * time step 0, there is no longer any target state specified
+ * </p>
+ * 
+ * <table id="org2e7b675" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+ * <caption class="t-above"><span class="table-number">Table 5:</span> State update sequence for
+ * Scenario 4</caption>
+ * 
+ * <colgroup> <col class="org-left" />
+ * 
+ * <col class="org-right" />
+ * 
+ * <col class="org-right" />
+ * 
+ * <col class="org-right" />
+ * 
+ * <col class="org-right" />
+ * 
+ * <col class="org-right" /> </colgroup> <thead>
+ * <tr>
+ * <th scope="col" class="org-left">t</th>
+ * <th scope="col" class="org-right">0</th>
+ * <th scope="col" class="org-right">1</th>
+ * <th scope="col" class="org-right">2</th>
+ * <th scope="col" class="org-right">3</th>
+ * <th scope="col" class="org-right">4</th>
+ * </tr>
+ * </thead> <tbody>
+ * <tr>
+ * <td class="org-left">C</td>
+ * <td class="org-right">5</td>
+ * <td class="org-right">5</td>
+ * <td class="org-right">5</td>
+ * <td class="org-right">5</td>
+ * <td class="org-right">5</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td class="org-left">T<sub>in</sub></td>
+ * <td class="org-right">14</td>
+ * <td class="org-right">1</td>
+ * <td class="org-right">2</td>
+ * <td class="org-right">3</td>
+ * <td class="org-right">4</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td class="org-left">ΔT</td>
+ * <td class="org-right">15</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td class="org-left">ΔD</td>
+ * <td class="org-right">6</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * <td class="org-right">∅</td>
+ * </tr>
+ * 
+ * <tr>
+ * <td class="org-left">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * <p>
+ * <br />
+ * </p>
+ * 
  * @author Andrew Lane
  */
 public class AgroSuccessLcsUpdateDeciderTest {
   LcsUpdateDecider updateDecider;
-  
+
   /**
    * 
    * Note that no entry is made for pathway 2, as it has no target state so is not expected to be
@@ -514,7 +608,7 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 6, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario1TimeStep5ShouldBeAsExpected() {
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0);
@@ -529,7 +623,7 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 6, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario1TimeStep6ShouldBeAsExpected() {
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0);
@@ -544,7 +638,7 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertNull("target state transition time not correct", msg.getTargetStateTransitionTime());
     assertNull("target state not correct", msg.getTargetState());
   }
-  
+
   @Test
   public void scenario1TimeStep7ShouldBeAsExpected() {
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 0);
@@ -559,11 +653,11 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertNull(msg.getTargetStateTransitionTime());
     assertNull(msg.getTargetState());
   }
-  
+
   @Test
   public void scenario2TimeStep1ShouldBeAsExpected() {
     // transition pathway 1
-    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0); 
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0);
     int prevTimeInState = 10;
     CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(6, 15);
 
@@ -575,11 +669,11 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 6, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario2TimeStep2ShouldBeAsExpected() {
     // transition pathway 1
-    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0); 
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0);
     int prevTimeInState = 11;
     CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(6, 15);
 
@@ -591,96 +685,115 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 6, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario2TimeStep3ShouldBeAsExpected() {
     // transition pathway 3
-    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 2); 
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 2);
     int prevTimeInState = 12;
-    
+
     // target state corresponding to pathway 1
     CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(6, 15);
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
-    
+
     assertEquals(5, msg.getCurrentState());
     assertEquals(1, msg.getTimeInState());
     assertEquals((Integer) 18, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 9, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario2TimeStep4ShouldBeAsExpected() {
     // transition pathway 3
-    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 2); 
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 2);
     int prevTimeInState = 1;
-    
-    // target state transition time derived from pathway 1 and 3 
+
+    // target state transition time derived from pathway 1 and 3
     CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(9, 18);
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
-    
+
     assertEquals(5, msg.getCurrentState());
     assertEquals(2, msg.getTimeInState());
     assertEquals((Integer) 18, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 9, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario3TimeStep1ShouldBeAsExpected() {
     // transition pathway 2
-    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 0); 
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 0);
     int prevTimeInState = 50;
-    
-    // there is no target state for above environmental conditions    
+
+    // there is no target state for above environmental conditions
     CodedEnvrConsequent prevTargetTrans = null;
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
-    
+
     assertEquals(6, msg.getCurrentState());
     assertEquals(51, msg.getTimeInState());
     assertNull(msg.getTargetStateTransitionTime());
     assertNull(msg.getTargetState());
   }
-  
+
   @Test
   public void scenario3TimeStep2ShouldBeAsExpected() {
     // transition pathway 4
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2);
     int prevTimeInState = 51;
-    
+
     // target state for (anti-)pathway 2, i.e. before this state update finds a new viable target
     // state
     CodedEnvrConsequent prevTargetTrans = null;
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
-    
+
     assertEquals("current state not correct", 6, msg.getCurrentState());
     assertEquals("time in state not correct", 1, msg.getTimeInState());
     assertEquals((Integer) 8, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 7, msg.getTargetState());
   }
-  
+
   @Test
   public void scenario3TimeStep3ShouldBeAsExpected() {
     // transition pathway 4
     CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2);
     int prevTimeInState = 1;
-    
+
     // target state transition time derived from pathway 2 and 4
     CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(7, 8);
 
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
-    
+
     assertEquals(6, msg.getCurrentState());
     assertEquals(2, msg.getTimeInState());
     assertEquals((Integer) 8, msg.getTargetStateTransitionTime());
     assertEquals((Integer) 7, msg.getTargetState());
+  }
+
+  @Test
+  public void scenario4TimeStep1ShouldBeAsExpected() {
+    // transition pathway 5
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 1);
+    int prevTimeInState = 14;
+
+    //
+    CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(6, 15);
+
+    LcsUpdateMsg msg =
+        updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
+
+    assertEquals(5, msg.getCurrentState());
+    assertEquals(1, msg.getTimeInState());
+    assertNull(msg.getTargetStateTransitionTime());
+    assertNull(msg.getTargetState());
+
   }
 
 }
