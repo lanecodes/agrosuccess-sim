@@ -2,6 +2,9 @@
 bin/
 target/
 
+# log files
+debug.log
+
 # repast outputs
 freezedried_data/
 output/
