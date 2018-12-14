@@ -4,7 +4,7 @@ import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 
-public class LandCoverTypeTransDecider {
+public class OldLandCoverTypeTransDecider {
 
   private CodedLcsTransitionMapOld transLookup;
 
@@ -14,7 +14,7 @@ public class LandCoverTypeTransDecider {
    *        combinations of environmental condition
    * @param modelID
    */
-  public LandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase,
+  public OldLandCoverTypeTransDecider(EmbeddedGraphInstance graphDatabase,
       EnvrStateAliasTranslator envStateAliasTranslator, 
       SoilMoistureDiscretiser smDiscretiser, String modelID) {
 

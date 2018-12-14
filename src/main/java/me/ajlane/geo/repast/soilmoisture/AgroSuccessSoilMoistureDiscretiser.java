@@ -42,6 +42,6 @@ public class AgroSuccessSoilMoistureDiscretiser implements SoilMoistureDiscretis
    */
   @Override
   public int getSoilMoistureLevel(double soilMoistureMM) {
-    return getSoilMoistureLevel(Math.round(soilMoistureMM));
+    return getSoilMoistureLevel((int) Math.round(soilMoistureMM));
   }
 }
