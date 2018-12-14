@@ -1,7 +1,8 @@
 package me.ajlane.geo.repast.succession;
 
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
@@ -10,9 +11,14 @@ public class LcsGraphReaderTest {
   private static String correctModelID = "AgroSuccess-dev";
   public static EmbeddedGraphInstance graph;
   
-  @BeforeClass
-  public static void setUpBeforeClass() {
+  @Before
+  public void setUp() {
     graph = new EmbeddedGraphInstance(testDatabaseDirPath);
+  }
+  
+  @After 
+  public void tearDown() {
+    graph.shutdown();
   }
 
   @Test
