@@ -52,9 +52,9 @@ public class SeedViabilityParams {
   
   public String toString() {
     return "SeedViabilityParams[" 
-        + "oakSeedLifetime: " + this.oakSeedLifetime + ", "
-        + "pineSeedLifetime: " + this.pineSeedLifetime + ", "
-        + "deciduousSeedLifetime: " + this.deciduousSeedLifetime + "]";
+        + "oakSeedLifetime=" + this.oakSeedLifetime + ", "
+        + "pineSeedLifetime=" + this.pineSeedLifetime + ", "
+        + "deciduousSeedLifetime=" + this.deciduousSeedLifetime + "]";
   }
 
 }

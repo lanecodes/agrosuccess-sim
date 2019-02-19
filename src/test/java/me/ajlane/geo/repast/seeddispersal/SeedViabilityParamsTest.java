@@ -16,8 +16,8 @@ public class SeedViabilityParamsTest {
   @Test
   public void stringMethodShouldReturnExpectedResult() {
     SeedViabilityParams svp = new SeedViabilityParams(3, 7, 10);
-    assertEquals("SeedViabilityParams[oakSeedLifetime: 3, "
-        + "pineSeedLifetime: 7, deciduousSeedLifetime: 10]", svp.toString());
+    assertEquals("SeedViabilityParams[oakSeedLifetime=3, "
+        + "pineSeedLifetime=7, deciduousSeedLifetime=10]", svp.toString());
   }
 
 }
