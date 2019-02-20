@@ -10,17 +10,18 @@ package me.ajlane.geo.repast.soilmoisture;
  * @author Andrew Lane
  */
 public class AgroSuccessSoilMoistureDiscretiser implements SoilMoistureDiscretiser {
-  int mesicThreshold, hydricThreshold;
+  private int mesicThreshold, hydricThreshold;
 
   /**
-   * @param mesicThreshold The soil moisture threshold separating xeric category from mesic category
-   * @param hydricThreshold The soil moisture threshold separating mesic category from hydric
-   *        category
+   * @param soilMoistureParams Parameters needed to determine how to discretise continuous soil 
+   *    moisture values into discrete states. 
+   * @see me.ajlane.geo.repast.soilmoisture.SoilMoistureParams
    */
-  public AgroSuccessSoilMoistureDiscretiser(int mesicThreshold, int hydricThreshold) {
-    this.mesicThreshold = mesicThreshold;
-    this.hydricThreshold = hydricThreshold;
+  public AgroSuccessSoilMoistureDiscretiser(SoilMoistureParams soilMoistureParams) {
+    this.mesicThreshold = soilMoistureParams.getMesicThreshold();
+    this.hydricThreshold = soilMoistureParams.getHydricThreshold();
   }
+ 
 
   /**
    * @return 0=xeric, 1=mesic, 2=hydric
