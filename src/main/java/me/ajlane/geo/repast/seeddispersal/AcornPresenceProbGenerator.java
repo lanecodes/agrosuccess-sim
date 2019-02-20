@@ -18,8 +18,7 @@ import org.apache.commons.math3.distribution.RealDistribution;
  * \]
  * 
  * Following Pons and Pausas (2007) and Millington et al. (2009) we set $\sigma = 0.851$ and 
- * $\mu = 3.844$. Note that these values are in log-scale. The linear scale equivalents of these
- * are given my exp(mu) = 46.72m and exp(sigma) = 2.34m.
+ * $\mu = 3.844$. Note that these values are in log-scale. 
  * 
  * <strong>References</strong> 
  * Pons, J., & Pausas, J. G. (2007). Acorn dispersal estimated by radio-tracking. 
@@ -36,10 +35,8 @@ import org.apache.commons.math3.distribution.RealDistribution;
 public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
 	
 	// acorn distribution parameters
-	private double acornMean = 3.844;
-	private double acornStd = 0.851;	
-	private double maxLognormalDistance = 550; // maximum distance from seed source for probability to be lognormal
-	private RealDistribution acornLogNormalDistribution = new LogNormalDistribution(acornMean, acornStd);
+	private double maxLognormalDistance;
+	private RealDistribution acornLogNormalDistribution;
 	
 	private double cellSize;
 	private double minProb; // minimum probability for a cell to contain a species' seeds
@@ -50,8 +47,14 @@ public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
 	 * 		probability of finding an acorn in any given cell such that we always
 	 * 		expect to have one acorn cell in the model.	 * 		
 	 */
-	AcornPresenceProbGenerator(int n, double cellSize) {
+	AcornPresenceProbGenerator(int n, double cellSize, SeedDispersalParams seedDispersalParams) {
 		this.cellSize = cellSize;
+		
+		this.acornLogNormalDistribution = 
+		    new LogNormalDistribution(seedDispersalParams.getAcornLocationParam(), 
+		        seedDispersalParams.getAcornScaleParam());
+		
+		this.maxLognormalDistance = seedDispersalParams.getAcornMaxLognormalDist();
 		
 		// minProb always high enough to ensure at least one seed for
 		// each species exists in model (guarantee 0 seeds for a species is 

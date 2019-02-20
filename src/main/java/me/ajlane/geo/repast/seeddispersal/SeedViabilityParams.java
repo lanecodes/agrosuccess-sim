@@ -34,7 +34,7 @@ public class SeedViabilityParams {
    * @param seedLifetime The number of years a seed remains viable in the seed bank. Oak, pine and 
    *        deciduous seeds are assumed to have the same lifetime.
    */
-  SeedViabilityParams(int seedLifetime) {
+  public SeedViabilityParams(int seedLifetime) {
     this(seedLifetime, seedLifetime, seedLifetime);    
   }
 

@@ -3,10 +3,18 @@ package me.ajlane.geo.repast.seeddispersal;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.junit.Before;
 
 import me.ajlane.geo.repast.seeddispersal.AcornPresenceProbGenerator;
 
 public class AcornPresenceProbGeneratorTest {
+  
+  public SeedDispersalParams defaultSeedDispersalParams;
+  
+  @Before
+  public void initSeedDispersalParams() {
+    this.defaultSeedDispersalParams = new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100);
+  }
 	
 	/**
 	 * For distances x<=550m probability of a cell having an acorn in it is given by:
@@ -36,10 +44,12 @@ public class AcornPresenceProbGeneratorTest {
 	 */
 	@Test
 	public void medDistanceShouldFollowExponentialDecayFunction() {
-		ISeedPresenceProbGenerator probGenSmallGrid = new AcornPresenceProbGenerator(9, 25.0);
+		ISeedPresenceProbGenerator probGenSmallGrid = 
+		    new AcornPresenceProbGenerator(9, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.0980639, probGenSmallGrid.getProb(90), 0.000001);
 		
-		ISeedPresenceProbGenerator probGenLargeGrid = new AcornPresenceProbGenerator(1024, 25.0);
+		ISeedPresenceProbGenerator probGenLargeGrid = 
+		    new AcornPresenceProbGenerator(1024, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.0980639, probGenLargeGrid.getProb(90), 0.000001);
 	}
 	
@@ -53,11 +63,11 @@ public class AcornPresenceProbGeneratorTest {
 		int n;
 		
 		n = 9;
-		probGenSmallGrid = new AcornPresenceProbGenerator(n, 25.0);
+		probGenSmallGrid = new AcornPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.111111, probGenSmallGrid.getProb(551), 0.000001);
 		
 		n = 50;
-		probGenSmallGrid = new AcornPresenceProbGenerator(n, 25.0);
+		probGenSmallGrid = new AcornPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.02, probGenSmallGrid.getProb(551), 0.000001);
 			
 	}
@@ -68,11 +78,11 @@ public class AcornPresenceProbGeneratorTest {
 		int n;
 		
 		n = 1024;
-		probGenLargeGrid = new AcornPresenceProbGenerator(n, 25.0);
+		probGenLargeGrid = new AcornPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.001, probGenLargeGrid.getProb(551), 0.000001);
 		
 		n = 262144;
-		probGenLargeGrid = new AcornPresenceProbGenerator(n, 25.0);
+		probGenLargeGrid = new AcornPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.001, probGenLargeGrid.getProb(551), 0.000001);
 	}
 	
