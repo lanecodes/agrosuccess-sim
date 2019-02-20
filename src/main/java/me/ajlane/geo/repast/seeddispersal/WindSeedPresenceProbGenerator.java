@@ -28,9 +28,9 @@ package me.ajlane.geo.repast.seeddispersal;
 public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator {
 	
 	// wind distributed seed parameters
-	private double distanceDecreaseParam = 5;
-	private double minExponentialDistance = 75;
-	private double maxExponentialDistance = 100;
+	private double distanceDecreaseParam;
+	private double minExponentialDistance;
+	private double maxExponentialDistance;
 	
 	private double cellSize;
 	private double minProb; // minimum probability for a cell to contain a species' seeds
@@ -44,8 +44,12 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
 	 * 		The edge length of each simulation cell. Used to consider the area over
 	 * 		which a seed might land within any given simulation cell		
 	 */
-	WindSeedPresenceProbGenerator(int n, double cellSize) {
+	WindSeedPresenceProbGenerator(int n, double cellSize, SeedDispersalParams seedDispersalParams) {
 		this.cellSize = cellSize;
+		
+		this.distanceDecreaseParam = seedDispersalParams.getWindDistDecreaseParam();
+		this.minExponentialDistance = seedDispersalParams.getWindMinExpDist();
+		this.maxExponentialDistance = seedDispersalParams.getWindMaxExpDist();
 		
 		// minProb always high enough to ensure at least one seed for
 		// each species exists in model (guarantee 0 seeds for a species is 
