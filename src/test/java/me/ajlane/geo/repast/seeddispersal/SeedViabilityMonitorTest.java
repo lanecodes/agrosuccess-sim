@@ -21,7 +21,7 @@ public class SeedViabilityMonitorTest {
 		Set<Seed> deadSeeds;
 		
 		// all species have seeds which are viable for 1 year
-		SeedViabilityMonitor svm = new SeedViabilityMonitor(1);
+		SeedViabilityMonitor svm = new SeedViabilityMonitor(new SeedViabilityParams(1));
 		
 		time = 0;
 		// seeds deposited at some point during 0th year
@@ -59,7 +59,7 @@ public class SeedViabilityMonitorTest {
 		Set<Seed> deadSeeds;
 		
 		// Pine seeds survive for one year, oak and deciduous for two
-		SeedViabilityMonitor svm = new SeedViabilityMonitor(1, 2, 2);
+		SeedViabilityMonitor svm = new SeedViabilityMonitor(new SeedViabilityParams(1, 2, 2));
 		
 		time = 0;
 		// seeds deposited at some point during 0th year
@@ -96,7 +96,7 @@ public class SeedViabilityMonitorTest {
 		int time;
 		
 		// All seed species survive for three years
-		SeedViabilityMonitor svm = new SeedViabilityMonitor(2);
+		SeedViabilityMonitor svm = new SeedViabilityMonitor(new SeedViabilityParams(2));
 		
 		time = 0;
 		// seeds deposited at some point during 0th year
