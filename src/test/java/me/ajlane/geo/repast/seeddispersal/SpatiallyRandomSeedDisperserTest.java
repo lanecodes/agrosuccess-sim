@@ -51,8 +51,8 @@ public class SpatiallyRandomSeedDisperserTest {
 		int deciduousSeedLifetime = 2;
 		
 		SeedDisperser disperser = new SpatiallyRandomSeedDisperser(gridCellSizeXDim, 
-				gridCellSizeYDim, pineSeedLifetime, oakSeedLifetime, deciduousSeedLifetime, 
-				context);
+		    gridCellSizeYDim, new SeedViabilityParams(oakSeedLifetime, pineSeedLifetime,  
+		        deciduousSeedLifetime), context);
 		
 		System.out.println("Land cover types:");
 		printGridValueLayer((GridValueLayer)context.getValueLayer("lct"));
