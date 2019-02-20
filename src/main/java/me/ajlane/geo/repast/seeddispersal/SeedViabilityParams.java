@@ -24,7 +24,7 @@ public class SeedViabilityParams {
    * @param deciduousSeedLifetime The number of years an deciduous seed remains viable in the seed 
    *        bank.
    */
-  SeedViabilityParams(int oakSeedLifetime, int pineSeedLifetime, int deciduousSeedLifetime) {
+  public SeedViabilityParams(int oakSeedLifetime, int pineSeedLifetime, int deciduousSeedLifetime) {
     this.oakSeedLifetime = oakSeedLifetime;
     this.pineSeedLifetime = pineSeedLifetime;
     this.deciduousSeedLifetime = deciduousSeedLifetime;    
