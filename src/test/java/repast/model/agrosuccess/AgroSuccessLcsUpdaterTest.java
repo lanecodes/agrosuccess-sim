@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 import me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDecider;
 import me.ajlane.geo.repast.succession.CodedEnvrAntecedent;
 import me.ajlane.geo.repast.succession.CodedEnvrConsequent;
@@ -149,7 +150,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Before
   public void setUp() {
-    smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(500, 1000);
+    smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(new SoilMoistureParams(500, 1000));
     updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap());
   }
 

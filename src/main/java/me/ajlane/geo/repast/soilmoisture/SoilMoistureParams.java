@@ -37,7 +37,7 @@ package me.ajlane.geo.repast.soilmoisture;
  *
  */
 public class SoilMoistureParams {
-  int mesicThreshold, hydricThreshold;
+  private int mesicThreshold, hydricThreshold;
   
   /**
    * @param mesicThreshold Soil moisture threshold below which soil conditions are considered xeric.
