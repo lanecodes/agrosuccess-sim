@@ -30,7 +30,7 @@ import org.apache.commons.math3.distribution.RealDistribution;
  * fire-succession model. Environmental Modelling and Software, 24(10),
  * 1196–1208. https://doi.org/10.1016/j.envsoft.2009.03.013
  * 
- * @author andrew
+ * @author Andrew Lane
  */
 public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
 	
@@ -43,9 +43,14 @@ public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
 	
 	/**
 	 * @param n
-	 * 		Total number of cells in the model grid. Used to determine the minimum 
-	 * 		probability of finding an acorn in any given cell such that we always
-	 * 		expect to have one acorn cell in the model.	 * 		
+	 * 	   Total number of cells in the model grid. Used to determine the minimum 
+	 * 	   probability of finding an acorn in any given cell such that we always
+	 * 	   expect to have one acorn cell in the model.
+	 * @param cellSize
+	 *     Length (in meters) of the edge of each simulation grid cell.
+	 * @param seedDispersalParams 
+	 *     Parameters specifying the probability distributions which control how seeds are dispersed
+	 *     in the model.  		
 	 */
 	AcornPresenceProbGenerator(int n, double cellSize, SeedDispersalParams seedDispersalParams) {
 		this.cellSize = cellSize;
