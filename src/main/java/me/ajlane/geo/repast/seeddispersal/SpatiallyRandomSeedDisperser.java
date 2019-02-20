@@ -68,7 +68,8 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		processGridShape(xCellSize, yCellSize);	
 		
 		// initialise seed presence probability generators
-		acornPresenceProbGenerator = new AcornPresenceProbGenerator(n, cellSize);
+		acornPresenceProbGenerator = 
+		    new AcornPresenceProbGenerator(n, cellSize, seedDispersalParams);
 		windSeedPresenceProbGenerator = 
 		    new WindSeedPresenceProbGenerator(n, cellSize, seedDispersalParams);
 	}
