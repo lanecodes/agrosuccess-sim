@@ -43,7 +43,8 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * 		of seed.
 	 */
 	public SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, 
-	    SeedViabilityParams seedViabilityParams, Context<Object> context){
+	    SeedViabilityParams seedViabilityParams, SeedDispersalParams seedDispersalParams,
+	    Context<Object> context){
 		
 		landCoverType = (GridValueLayer)context.getValueLayer("lct");
 		
