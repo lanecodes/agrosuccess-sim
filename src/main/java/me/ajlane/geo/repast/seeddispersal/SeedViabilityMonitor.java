@@ -26,26 +26,13 @@ public class SeedViabilityMonitor {
 	Queue<Seed> deciduousQueue = new LinkedList<Seed>();
 	
 	/**
-	 * @param seedLifetime
-	 * 		The lifetime (in model time units) of pine, oak and deciduous seeds (all
-	 * 		assumed to be the same).
+	 * @param seedViabilityParams Parameters specifying how long different types of seeds survive
+	 *         in the seed bank after being deposited.
 	 */
-	SeedViabilityMonitor(int seedLifetime) {
-		this(seedLifetime, seedLifetime, seedLifetime);
-	}
-	
-	/**
-	 * @param pineSeedLifetime
-	 * 		The lifetime (in model time units) of pine seeds
-	 * @param oakSeedLifetime
-	 * 		The lifetime (in model time units) of oak seeds
-	 * @param deciduousSeedLifetime
-	 * 		The lifetime (in model time units) of deciduous seeds
-	 */
-	SeedViabilityMonitor(int pineSeedLifetime, int oakSeedLifetime, int deciduousSeedLifetime) {
-		this.pineSeedLifetime = pineSeedLifetime;
-		this.oakSeedLifetime = oakSeedLifetime;
-		this.deciduousSeedLifetime = deciduousSeedLifetime;	
+	SeedViabilityMonitor(SeedViabilityParams seedViabilityParams) {
+		this.pineSeedLifetime = seedViabilityParams.getPineSeedLifetime();
+		this.oakSeedLifetime = seedViabilityParams.getOakSeedLifetime();
+		this.deciduousSeedLifetime = seedViabilityParams.getDeciduousSeedLifetime();	
 	}
 	
 	/**

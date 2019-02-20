@@ -96,7 +96,7 @@ public class SeedDispersalParams {
    * @param windMaxExpDist Maximum distance for which probability of wind dispersed seed presence is 
    *        exponentially distributed.
    */
-  SeedDispersalParams(double acornLocationParam, double acornScaleParam, 
+  public SeedDispersalParams(double acornLocationParam, double acornScaleParam, 
       double acornMaxLognormalDist, double windDistDecreaseParam, double windMinExpDist, 
       double windMaxExpDist) {
     

@@ -1,22 +1,32 @@
 package me.ajlane.geo.repast.seeddispersal;
 
 import static org.junit.Assert.assertEquals;
-
+import org.junit.Before;
 import org.junit.Test;
 
 import me.ajlane.geo.repast.seeddispersal.WindSeedPresenceProbGenerator;
 
 public class WindSeedPresenceProbGeneratorTest {
+  
+  public SeedDispersalParams defaultSeedDispersalParams;
+  
+  @Before
+  public void initSeedDispersalParams() {
+    this.defaultSeedDispersalParams = new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100);
+  }
+  
 	
 	/**
 	 * Hard coded so for distances < 75m prob of seed presence is 0.95
 	 */
 	@Test
 	public void shortDistanceProbShouldBePoint95() {		
-		ISeedPresenceProbGenerator probGenSmallGrid = new WindSeedPresenceProbGenerator(9, 25);
+		ISeedPresenceProbGenerator probGenSmallGrid = 
+		    new WindSeedPresenceProbGenerator(9, 25, this.defaultSeedDispersalParams);
 		assertEquals(0.95, probGenSmallGrid.getProb(50), 0.000001);
 		
-		ISeedPresenceProbGenerator probGenLargeGrid = new WindSeedPresenceProbGenerator(1024, 25);
+		ISeedPresenceProbGenerator probGenLargeGrid = 
+		    new WindSeedPresenceProbGenerator(1024, 25, this.defaultSeedDispersalParams);
 		assertEquals(0.95, probGenLargeGrid.getProb(50), 0.000001);
 	}
 	
@@ -36,10 +46,12 @@ public class WindSeedPresenceProbGeneratorTest {
 	 */
 	@Test
 	public void medDistanceShouldFollowExponentialDecayFunction() {
-		ISeedPresenceProbGenerator probGenSmallGrid = new WindSeedPresenceProbGenerator(9, 25);
+		ISeedPresenceProbGenerator probGenSmallGrid = 
+		    new WindSeedPresenceProbGenerator(9, 25, this.defaultSeedDispersalParams);
 		assertEquals(0.014808, probGenSmallGrid.getProb(90), 0.000001);
 		
-		ISeedPresenceProbGenerator probGenLargeGrid = new WindSeedPresenceProbGenerator(1024, 25);
+		ISeedPresenceProbGenerator probGenLargeGrid = 
+		    new WindSeedPresenceProbGenerator(1024, 25, this.defaultSeedDispersalParams);
 		assertEquals(0.014808, probGenLargeGrid.getProb(90), 0.000001);
 	}
 	
@@ -53,11 +65,13 @@ public class WindSeedPresenceProbGeneratorTest {
 		int n;
 		
 		n = 9;
-		probGenSmallGrid = new WindSeedPresenceProbGenerator(n, 25.0);
+		probGenSmallGrid = 
+		    new WindSeedPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.111111, probGenSmallGrid.getProb(101), 0.000001);
 		
 		n = 50;
-		probGenSmallGrid = new WindSeedPresenceProbGenerator(n, 25.0);
+		probGenSmallGrid = 
+		    new WindSeedPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.02, probGenSmallGrid.getProb(101), 0.000001);
 			
 	}
@@ -68,11 +82,13 @@ public class WindSeedPresenceProbGeneratorTest {
 		int n;
 		
 		n = 1024;
-		probGenLargeGrid = new WindSeedPresenceProbGenerator(n, 25.0);
+		probGenLargeGrid = 
+		    new WindSeedPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.001, probGenLargeGrid.getProb(101), 0.000001);
 		
 		n = 262144;
-		probGenLargeGrid = new WindSeedPresenceProbGenerator(n, 25.0);
+		probGenLargeGrid = 
+		    new WindSeedPresenceProbGenerator(n, 25.0, this.defaultSeedDispersalParams);
 		assertEquals(0.001, probGenLargeGrid.getProb(101), 0.000001);
 	}
 	

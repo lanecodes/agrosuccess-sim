@@ -1,8 +1,9 @@
 package repast.model.agrosuccess;
 
 import java.io.File;
-
+import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
+import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
 import repast.simphony.context.Context;
@@ -79,9 +80,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 		// initialise pseudo agents
 		//soilMoistureCalculator = new SoilMoistureCalculator(
 		//		studySiteData.getFlowConnectivityNetwork(), 0, context);
+		SeedViabilityParams seedViabilityParams = new SeedViabilityParams(7); // read from config 
+		SeedDispersalParams seedDispersalParams = 
+		    new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100); // read from config
 		
-		seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0], 
-				gridPixelSize[1], 9, 9, 9, context);	
+		seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0], gridPixelSize[1], 
+		    seedViabilityParams, seedDispersalParams, context);	
 		
 		// TODO still need LCTTransDecider/ LandCoverUpdater
 

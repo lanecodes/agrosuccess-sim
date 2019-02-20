@@ -42,8 +42,9 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * 		GridValueLayer-s storing the spatial configuration of each type
 	 * 		of seed.
 	 */
-	public SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, int pineSeedLifetime, 
-			int oakSeedLifetime, int deciduousSeedLifetime, Context<Object> context){
+	public SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, 
+	    SeedViabilityParams seedViabilityParams, SeedDispersalParams seedDispersalParams,
+	    Context<Object> context){
 		
 		landCoverType = (GridValueLayer)context.getValueLayer("lct");
 		
@@ -59,7 +60,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		
 		// seed state monitoring
 		time = 0;
-		svm = new SeedViabilityMonitor(pineSeedLifetime, oakSeedLifetime, deciduousSeedLifetime);
+		svm = new SeedViabilityMonitor(seedViabilityParams);
 		
 		// check GridValueLayer-s are valid and extract grid dimensions
 		checkValueLayersAccessible();
@@ -67,8 +68,10 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 		processGridShape(xCellSize, yCellSize);	
 		
 		// initialise seed presence probability generators
-		acornPresenceProbGenerator = new AcornPresenceProbGenerator(n, cellSize);
-		windSeedPresenceProbGenerator = new WindSeedPresenceProbGenerator(n, cellSize);
+		acornPresenceProbGenerator = 
+		    new AcornPresenceProbGenerator(n, cellSize, seedDispersalParams);
+		windSeedPresenceProbGenerator = 
+		    new WindSeedPresenceProbGenerator(n, cellSize, seedDispersalParams);
 	}
 	
 	
