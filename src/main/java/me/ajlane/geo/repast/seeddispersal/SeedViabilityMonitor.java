@@ -12,7 +12,7 @@ import java.util.Set;
  * Keeps track of how long seeds have existed for and provides lists of dead 
  * seeds at a given time. 
  * 
- * @author andrew
+ * @author Andrew Lane
  *
  */
 public class SeedViabilityMonitor {

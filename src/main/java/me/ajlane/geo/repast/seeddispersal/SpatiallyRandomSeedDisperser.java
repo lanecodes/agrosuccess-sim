@@ -19,7 +19,7 @@ import repast.simphony.valueLayer.GridValueLayer;
  * occupied by seeds of this species. 
  * 
  * 
- * @author andrew
+ * @author Andrew Lane
  *
  */
 public class SpatiallyRandomSeedDisperser extends SeedDisperser {
@@ -30,17 +30,16 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	 * 		Horizontal length of raster grid cells
 	 * @param yCellSize 
 	 * 		Vertical length of raster grid cells
-	 * @param pineSeedLifetime
-	 * 		The lifetime (in model time units) of pine seeds
-	 * @param oakSeedLifetime
-	 * 		The lifetime (in model time units) of oak seeds
-	 * @param deciduousSeedLifetime
-	 * 		The lifetime (in model time units) of deciduous seeds
+     * @param seedViabilityParams 
+     *      Parameters specifying how long different types of seeds survive in the seed bank after 
+     *      being deposited.
+     * @param seedDispersalParams 
+     *      Parameters specifying the probability distributions which control how seeds are 
+     *      dispersed in the model.
 	 * @param context
-	 * 		Repast Context the SpatiallyRandomSeedDisperser belongs to.
-	 * 		This is used in the constructor to retrieve references to the 
-	 * 		GridValueLayer-s storing the spatial configuration of each type
-	 * 		of seed.
+	 * 	   Repast Context the SpatiallyRandomSeedDisperser belongs to. This is used in the 
+	 *     constructor to retrieve references to the GridValueLayer-s storing the spatial 
+	 *     configuration of each type seed.
 	 */
 	public SpatiallyRandomSeedDisperser(double xCellSize, double yCellSize, 
 	    SeedViabilityParams seedViabilityParams, SeedDispersalParams seedDispersalParams,

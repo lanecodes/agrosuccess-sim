@@ -22,7 +22,8 @@ package me.ajlane.geo.repast.seeddispersal;
  * Mediterranean landscape succession-disturbance dynamics: A landscape
  * fire-succession model. Environmental Modelling and Software, 24(10),
  * 1196–1208. https://doi.org/10.1016/j.envsoft.2009.03.013
- * @author andrew
+ * 
+ * @author Andrew Lane
  *
  */
 public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator {
@@ -37,12 +38,15 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
 	
 	/**
 	 * @param n
-	 * 		Total number of cells in the model grid. Used to determine the minimum 
-	 * 		probability of finding a wind dispersed seed in any given cell such that 
-	 * 		we always expect to have one such seed in the model. 
+	 * 	   Total number of cells in the model grid. Used to determine the minimum probability of 
+	 *     finding a wind dispersed seed in any given cell such that we always expect to have one 
+	 *     such seed in the model. 
 	 * @param cellSize
-	 * 		The edge length of each simulation cell. Used to consider the area over
-	 * 		which a seed might land within any given simulation cell		
+	 * 	   The edge length of each simulation cell. Used to consider the area over which a seed 
+	 *     might land within any given simulation cell.
+     * @param seedDispersalParams 
+     *     Parameters specifying the probability distributions which control how seeds are dispersed
+     *     in the model.
 	 */
 	WindSeedPresenceProbGenerator(int n, double cellSize, SeedDispersalParams seedDispersalParams) {
 		this.cellSize = cellSize;
