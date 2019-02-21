@@ -10,7 +10,7 @@ import repast.simphony.parameter.DefaultParameters;
 
 public class ModelParamsRepastParserTest {
   
-  private Parameters buildCorrectParameters(DefaultParameters params) {
+  private DefaultParameters buildCorrectParameters(DefaultParameters params) {
     // seed lifetime parameters
     params.addParameter("oakSeedLifetime", "Oak seed lifetime", java.lang.Integer.class, 3, true);
     params.addParameter("pineSeedLifetime", "Pine seed lifetime", java.lang.Integer.class, 7, true);
@@ -54,9 +54,12 @@ public class ModelParamsRepastParserTest {
     assertEquals(modelParams.getSoilMoistureParams(), new SoilMoistureParams(500, 1000));    
   }
   
-  @Test 
+  @Test(expected = IllegalStateException.class)
   public void shouldThrowAnExceptionIfAnExpectedParameterNotSpecified() {
-    fail("test not implemented");
+    DefaultParameters tmpRepastParams = buildCorrectParameters(new DefaultParameters());
+    tmpRepastParams.removeParameter("acornScaleParam");
+    Parameters repastParams = (Parameters) tmpRepastParams; tmpRepastParams = null;
+    ModelParams modelParams = new ModelParamsRepastParser(repastParams);
   }
 
 }
