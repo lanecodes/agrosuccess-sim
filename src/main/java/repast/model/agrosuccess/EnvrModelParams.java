@@ -11,7 +11,7 @@ import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
  * @author Andrew Lane
  *
  */
-public interface ModelParams {
+public interface EnvrModelParams {
   
   /**
    * @return Parameters specifying the probability distributions which control how seeds are 

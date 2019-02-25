@@ -46,12 +46,12 @@ public class ModelParamsRepastParserTest {
   @Test
   public void correctRepastParamsShouldYieldCorrectParamObjects() {
     Parameters repastParams = buildCorrectParameters(new DefaultParameters());
-    ModelParams modelParams = new ModelParamsRepastParser(repastParams);
+    EnvrModelParams envrModelParams = new ModelParamsRepastParser(repastParams);
     
-    assertEquals(modelParams.getSeedViabilityParams(), new SeedViabilityParams(3, 7, 5));
-    assertEquals(modelParams.getSeedDispersalParams(), 
-        new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100));
-    assertEquals(modelParams.getSoilMoistureParams(), new SoilMoistureParams(500, 1000));    
+    assertEquals(new SeedViabilityParams(3, 7, 5), envrModelParams.getSeedViabilityParams());
+    assertEquals(new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100), 
+        envrModelParams.getSeedDispersalParams());
+    assertEquals(new SoilMoistureParams(500, 1000), envrModelParams.getSoilMoistureParams());    
   }
   
   @Test(expected = IllegalStateException.class)
@@ -59,7 +59,8 @@ public class ModelParamsRepastParserTest {
     DefaultParameters tmpRepastParams = buildCorrectParameters(new DefaultParameters());
     tmpRepastParams.removeParameter("acornScaleParam");
     Parameters repastParams = (Parameters) tmpRepastParams; tmpRepastParams = null;
-    ModelParams modelParams = new ModelParamsRepastParser(repastParams);
+    EnvrModelParams envrModelParams = new ModelParamsRepastParser(repastParams);
+    envrModelParams.getSeedDispersalParams();
   }
 
 }
