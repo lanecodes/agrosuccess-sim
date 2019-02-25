@@ -54,7 +54,7 @@ public class ModelParamsRepastParserTest {
     assertEquals(new SoilMoistureParams(500, 1000), envrModelParams.getSoilMoistureParams());    
   }
   
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = UnspecifiedParameterException.class)
   public void shouldThrowAnExceptionIfAnExpectedParameterNotSpecified() {
     DefaultParameters tmpRepastParams = buildCorrectParameters(new DefaultParameters());
     tmpRepastParams.removeParameter("acornScaleParam");

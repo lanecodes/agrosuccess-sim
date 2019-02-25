@@ -3,11 +3,10 @@
  */
 package repast.model.agrosuccess;
 
-import java.util.Arrays;
-import java.util.List;
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
+import repast.simphony.parameter.IllegalParameterException;
 import repast.simphony.parameter.Parameters;
 
 /**
@@ -56,50 +55,78 @@ import repast.simphony.parameter.Parameters;
  */
 public class ModelParamsRepastParser implements EnvrModelParams {
   
-  private static List<String> expectedParams = Arrays.asList("oakSeedLifetime", "pineSeedLifetime", 
-      "deciduousSeedLifetime", "acornLocationParam", "acornScaleParam", "acornMaxLognormalDist", 
-      "windDistDecreaseParam", "windMinExpDist", "windMaxExpDist", "mesicThreshold", 
-      "hydricThreshold");
-  
-  private Parameters repastParams;
+  private Parameters rp;
     
   ModelParamsRepastParser(Parameters repastParams) {
-    // if not checkAllExpectedParamsAvailable(Parameters repastParams) raise IllegalStateException
-    
-    this.repastParams = repastParams;
-    
+    this.rp = repastParams;   
   }
   
-  private boolean checkAllExpectedParamsAvailable(Parameters repastParams) {
-    return false;
-    
+  /**
+   * @param paramName The name of a parameter expected to be in this class's
+   * {@code this.rp} object.
+   * 
+   * @return Value corresponding to the given parameter name cast as a {@code double}.
+   */
+  private double getDoubleParamValue(String paramName) {
+    try {
+      return this.rp.getDouble(paramName);
+    } catch (IllegalParameterException e) {
+      throw new UnspecifiedParameterException(
+          "The parameter " + paramName + " could not be found.", e);
+    }
   }
   
-  /* (non-Javadoc)
-   * @see repast.model.agrosuccess.ModelParams#getSeedDispersalParams()
+  /**
+   * @param paramName The name of a parameter expected to be in this class's
+   * {@code this.rp} object.
+   * 
+   * @return Value corresponding to the given parameter name cast as a {@code double}.
+   */
+  private int getIntParamValue(String paramName) {
+    try {
+      return this.rp.getInteger(paramName);
+    } catch (IllegalParameterException e) {
+      throw new UnspecifiedParameterException(
+          "The parameter " + paramName + " could not be found.", e);
+    }
+  }
+  
+  /**
+   * @return All parameters necessary for modelling seed dispersal.
+   * @see repast.model.agrosuccess.EnvrModelParams#getSeedDispersalParams()
    */
   @Override
   public SeedDispersalParams getSeedDispersalParams() {
-    // TODO Auto-generated method stub
-    return null;
+    return new SeedDispersalParams(
+        getDoubleParamValue("acornLocationParam"), 
+        getDoubleParamValue("acornScaleParam"), 
+        getDoubleParamValue("acornMaxLognormalDist"), 
+        getDoubleParamValue("windDistDecreaseParam"), 
+        getDoubleParamValue("windMinExpDist"),
+        getDoubleParamValue("windMaxExpDist"));
   }
 
-  /* (non-Javadoc)
-   * @see repast.model.agrosuccess.ModelParams#getSeedViabilityParams()
+  /** 
+   * @return All parameters necessary for modelling seed survivorship in the seed bank
+   * @see repast.model.agrosuccess.EnvrModelParams#getSeedViabilityParams()
    */
   @Override
   public SeedViabilityParams getSeedViabilityParams() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    return new SeedViabilityParams(
+        getIntParamValue("oakSeedLifetime"),
+        getIntParamValue("pineSeedLifetime"),
+        getIntParamValue("deciduousSeedLifetime"));
+  }  
 
-  /* (non-Javadoc)
-   * @see repast.model.agrosuccess.ModelParams#getSoilMoistureParams()
+  /**
+   * @return All parameters necessary for discretising soil moisture
+   * @see repast.model.agrosuccess.EnvrModelParams#getSoilMoistureParams()
    */
   @Override
   public SoilMoistureParams getSoilMoistureParams() {
-    // TODO Auto-generated method stub
-    return null;
+    return new SoilMoistureParams(
+        getIntParamValue("mesicThreshold"), 
+        getIntParamValue("hydricThreshold"));
   }
 
 }
