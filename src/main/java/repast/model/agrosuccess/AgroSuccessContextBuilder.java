@@ -144,7 +144,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   private LcsUpdater initialiseLcsUpdater(Context<Object> context, File databaseDir, String modelID, 
       SoilMoistureParams soilMoistureParams) {
     
-    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getName()); 
+    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath()); 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator(); 
     LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapFactory(graph, modelID,
         translator); 
@@ -172,7 +172,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     
     // TODO add databaseDir parameter to paramaters.xml
     // File databaseDir = new File((String)params.getValue("databaseDir"));
-    File databaseDir = new File("~/graphs/databases/prod.db");
+    File databaseDir = new File("/home/andrew/graphs/databases/prod.db");
 
     StudySiteDataContainer studySiteData = new StudySiteDataContainer(siteGeoDataDir);      
     
