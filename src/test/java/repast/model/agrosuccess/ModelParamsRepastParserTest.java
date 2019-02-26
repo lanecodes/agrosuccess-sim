@@ -23,15 +23,15 @@ public class ModelParamsRepastParserTest {
     params.addParameter("acornScaleParam", "Acorn scale parameter", java.lang.Double.class, 
         0.851, true);
     params.addParameter("acornMaxLognormalDist", "Max lognormal acorn dispersal distance", 
-        java.lang.Double.class, 550, true);
+        java.lang.Double.class, 550.0, true);
     
     // Wind dispersal parameters
     params.addParameter("windDistDecreaseParam", "Wind distance decrease parameter", 
-        java.lang.Integer.class, 5, true);
+        java.lang.Double.class, 5.0, true);
     params.addParameter("windMinExpDist", "Wind minimum exponential dispersal probability distance",
-        java.lang.Integer.class, 75, true);
+        java.lang.Double.class, 75.0, true);
     params.addParameter("windMaxExpDist", "Wind maximum exponential dispersal probability distance",
-        java.lang.Integer.class, 100, true);
+        java.lang.Double.class, 100.0, true);
     
     // Soil moisture parameters
     params.addParameter("mesicThreshold", "Mesic soil moisture threshold", 
