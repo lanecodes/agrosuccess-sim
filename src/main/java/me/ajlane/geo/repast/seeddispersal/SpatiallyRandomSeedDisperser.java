@@ -11,6 +11,7 @@ import java.util.Set;
 
 import me.ajlane.geo.GridUtils;
 import me.ajlane.random.ArrayUtils;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.valueLayer.GridValueLayer;
 
@@ -45,13 +46,13 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 	    SeedViabilityParams seedViabilityParams, SeedDispersalParams seedDispersalParams,
 	    Context<Object> context){
 		
-		landCoverType = (GridValueLayer)context.getValueLayer("lct");
+		landCoverType = (GridValueLayer)context.getValueLayer(LscapeLayer.Lct.name());
 		
 		
 		// move these into seedLayersMap, referring to individual names get confusing
-		pineSeeds = (GridValueLayer)context.getValueLayer("pine seeds");
-		oakSeeds = (GridValueLayer)context.getValueLayer("oak seeds");
-		deciduousSeeds = (GridValueLayer)context.getValueLayer("deciduous seeds");		
+		pineSeeds = (GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name());
+		oakSeeds = (GridValueLayer)context.getValueLayer(LscapeLayer.Oak.name());
+		deciduousSeeds = (GridValueLayer)context.getValueLayer(LscapeLayer.Deciduous.name());		
 		
 		seedLayersMap.put("pine", pineSeeds);
 		seedLayersMap.put("oak", oakSeeds);

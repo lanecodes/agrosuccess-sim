@@ -8,7 +8,7 @@ public class GraphBasedLcsTransitionMapFactory implements LcsTransitionMapFactor
   LcsTransitionMapConverter converter;
   AliasedLcsTransitionMap aliasedMap;
   
-  GraphBasedLcsTransitionMapFactory (GraphDatabaseService graph, String modelID,
+  public GraphBasedLcsTransitionMapFactory (GraphDatabaseService graph, String modelID,
       EnvrStateAliasTranslator translator) {
     this.graph = graph;
     this.modelID = modelID;

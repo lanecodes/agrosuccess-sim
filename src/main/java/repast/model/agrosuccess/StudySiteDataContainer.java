@@ -82,7 +82,7 @@ public class StudySiteDataContainer {
 	public GridValueLayer getSlopeMap() {
 		File file = getGeoTiffFile("slope");
 		GeoRasterValueLayer grvl = 
-				new GeoRasterValueLayer(file.getAbsolutePath(), "slope");
+				new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Slope.name());
 		
 		return grvl.getValueLayer();
 	}
@@ -90,7 +90,7 @@ public class StudySiteDataContainer {
 	public GridValueLayer getAspectMap() {
 		File file = getGeoTiffFile("binaryAspect");
 		GeoRasterValueLayer grvl = 
-				new GeoRasterValueLayer(file.getAbsolutePath(), "aspect");
+				new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Aspect.name());
 		
 		return grvl.getValueLayer();
 	}
@@ -98,7 +98,7 @@ public class StudySiteDataContainer {
 	public GridValueLayer getFlowDirectionMap(){
 		File file = getGeoTiffFile("flowDirection");
 		GeoRasterValueLayer grvl = 
-				new GeoRasterValueLayer(file.getAbsolutePath(), "flow direction");
+				new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.FlowDir.name());
 		
 		return grvl.getValueLayer();
 	}
@@ -106,7 +106,7 @@ public class StudySiteDataContainer {
 	public GridValueLayer getSoilTypeMap() {
 		File file = getGeoTiffFile("soilType");
 		GeoRasterValueLayer grvl = 
-				new GeoRasterValueLayer(file.getAbsolutePath(), "soil");
+				new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.SoilType.name());
 		
 		return grvl.getValueLayer();
 	}
@@ -114,7 +114,7 @@ public class StudySiteDataContainer {
 	public GridValueLayer getLandcoverTypeMap(){
 		File file = getGeoTiffFile("initialLandcover");
 		GeoRasterValueLayer grvl = 
-				new GeoRasterValueLayer(file.getAbsolutePath(), "lct");
+				new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Lct.name());
 		
 		return grvl.getValueLayer();
 	}		

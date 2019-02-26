@@ -1,9 +1,20 @@
 package repast.model.agrosuccess;
 
+/**
+ * An enumeration of all the landscape layers involved in the model.
+ * 
+ * See Millington et al. 2009 for details of soil type classifications.
+ * 
+ * @author Andrew Lane
+ *
+ */
 public enum LscapeLayer {
   Lct ("current land cover type"),
   OakRegen ("presence of regenerative oak vegetation"),
-  Aspect ("indication of whether slope faces north or south"),
+  Aspect ("indication of whether slope faces north (1) or south (1)"),
+  Slope ("slope expressed as percent slope"),
+  FlowDir ("flow direction out of cell. 1=E, 2=NE, 3=N,..., 8=SE"),
+  SoilType ("soil type. 0=Type A, 1=Type B, 2=Type C, 3=Type D"),
   Pine ("presence of pine seeds"),
   Oak ("presence of oak seeds"),
   Deciduous ("presence of deciduous seeds"),
