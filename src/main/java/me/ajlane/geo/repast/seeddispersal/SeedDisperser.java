@@ -49,28 +49,28 @@ public abstract class SeedDisperser {
 			pineSeeds.getName();
 		} catch (NullPointerException e) {
 			System.out.println(
-					"SeedDisperser could not find 'pine seeds' layer in context");
+					"SeedDisperser could not find 'Pine' layer in context");
 		}
 
 		try {
 			oakSeeds.getName();
 		} catch (NullPointerException e) {
 			System.out.println(
-					"SeedDisperser could not find 'oak seeds' layer in context");
+					"SeedDisperser could not find 'Oak' layer in context");
 		}
 
 		try {
 			deciduousSeeds.getName();
 		} catch (NullPointerException e) {
 			System.out.println(
-					"SeedDisperser could not find 'deciduous seeds' layer in context");
+					"SeedDisperser could not find 'Deciduous' layer in context");
 		}
 
 		try {
 			landCoverType.getName();
 		} catch (NullPointerException e) {
 			System.out.println(
-					"SeedDisperser could not find 'lct' layer in context");
+					"SeedDisperser could not find 'Lct' layer in context");
 		}
 
 	}

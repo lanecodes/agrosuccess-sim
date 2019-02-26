@@ -6,6 +6,7 @@ import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
 import me.ajlane.geo.DummySeedLayer3x3;
 import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
 import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -36,11 +37,14 @@ public class SpatiallyRandomSeedDisperserTest {
 		
 		Context<Object> context = new DefaultContext<Object>();
 		
-		context.addValueLayer((GridValueLayer)(new DummyLandCoverTypeLayer3x3("lct", "pine, oak and burnt")));
-		
-		context.addValueLayer((GridValueLayer)(new DummySeedLayer3x3("pine seeds", "no seeds")));
-		context.addValueLayer((GridValueLayer)(new DummySeedLayer3x3("oak seeds", "no seeds")));
-		context.addValueLayer((GridValueLayer)(new DummySeedLayer3x3("deciduous seeds", "no seeds")));
+		context.addValueLayer((GridValueLayer)(
+		    new DummyLandCoverTypeLayer3x3(LscapeLayer.Lct.name(), "pine, oak and burnt")));		
+		context.addValueLayer((GridValueLayer)(
+		    new DummySeedLayer3x3(LscapeLayer.Pine.name(), "no seeds")));
+		context.addValueLayer((GridValueLayer)(
+		    new DummySeedLayer3x3(LscapeLayer.Oak.name(), "no seeds")));
+		context.addValueLayer((GridValueLayer)(
+		    new DummySeedLayer3x3(LscapeLayer.Deciduous.name(), "no seeds")));
 	
 		
 		double gridCellSizeXDim = 25.0;
@@ -57,28 +61,28 @@ public class SpatiallyRandomSeedDisperserTest {
 		    context);
 		
 		System.out.println("Land cover types:");
-		printGridValueLayer((GridValueLayer)context.getValueLayer("lct"));
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Lct.name()));
 		
 		
 		System.out.println("t=0");
 		System.out.println("pine seeds");
-		printGridValueLayer((GridValueLayer)context.getValueLayer("pine seeds"));
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 		
 		disperser.updateSeedLayers();
 		System.out.println("t=1");
 		System.out.println("pine seeds");
-		printGridValueLayer((GridValueLayer)context.getValueLayer("pine seeds"));
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 		
 		disperser.updateSeedLayers();
 		System.out.println("t=2");
 		System.out.println("pine seeds");
-		printGridValueLayer((GridValueLayer)context.getValueLayer("pine seeds"));
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 		
 		disperser.updateSeedLayers();
 		System.out.println("t=3");
 		System.out.println("pine seeds");
 
-		printGridValueLayer((GridValueLayer)context.getValueLayer("pine seeds"));
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 			
 	}
 	

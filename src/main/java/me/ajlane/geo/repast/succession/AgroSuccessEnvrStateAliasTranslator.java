@@ -63,7 +63,7 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  */
 public class AgroSuccessEnvrStateAliasTranslator extends EnvrStateAliasTranslator {
 
-   AgroSuccessEnvrStateAliasTranslator() {
+   public AgroSuccessEnvrStateAliasTranslator() {
     envStateMap.put("landCoverState", landCoverStateMap());
     envStateMap.put("succession", successionMap());
     envStateMap.put("aspect", aspectMap());
