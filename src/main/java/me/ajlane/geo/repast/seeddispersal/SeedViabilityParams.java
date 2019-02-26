@@ -56,5 +56,19 @@ public class SeedViabilityParams {
         + "pineSeedLifetime=" + this.pineSeedLifetime + ", "
         + "deciduousSeedLifetime=" + this.deciduousSeedLifetime + "]";
   }
-
+  
+  @Override
+  public boolean equals(Object other){
+    if (other == null) return false;
+    if (other == this) return true;
+    if (!(other instanceof SeedViabilityParams)) return false;
+    SeedViabilityParams otherSvp = (SeedViabilityParams)other;
+    if (otherSvp.getOakSeedLifetime() == this.getOakSeedLifetime() 
+        && otherSvp.getPineSeedLifetime() == this.getPineSeedLifetime()
+        && otherSvp.getDeciduousSeedLifetime() == this.getDeciduousSeedLifetime()) {
+      return true;
+    } else return false;
+    }
+  
 }
+

@@ -143,5 +143,21 @@ public class SeedDispersalParams {
         + "windMinExpDist=" + String.format("%.3f", this.windMinExpDist) + ", "
         + "windMaxExpDist=" + String.format("%.3f", this.windMaxExpDist) + "]";    
   }  
+  
+  @Override
+  public boolean equals(Object other){
+    if (other == null) return false;
+    if (other == this) return true;
+    if (!(other instanceof SeedDispersalParams)) return false;
+    SeedDispersalParams otherSdp = (SeedDispersalParams)other;
+    if (otherSdp.getAcornLocationParam() == this.getAcornLocationParam() 
+        && otherSdp.getAcornScaleParam() == this.getAcornScaleParam()
+        && otherSdp.getAcornMaxLognormalDist() == this.getAcornMaxLognormalDist()
+        && otherSdp.getWindDistDecreaseParam() == this.getWindDistDecreaseParam()
+        && otherSdp.getWindMinExpDist() == this.getWindMinExpDist()
+        && otherSdp.getWindMaxExpDist() == this.getWindMaxExpDist()) {
+      return true;
+    } else return false;
+    }
 
 }

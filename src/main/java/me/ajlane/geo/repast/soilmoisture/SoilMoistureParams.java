@@ -63,9 +63,16 @@ public class SoilMoistureParams {
         + hydricThreshold + "]";
   }
   
-
-  
-  
-  
+  @Override
+  public boolean equals(Object other){
+    if (other == null) return false;
+    if (other == this) return true;
+    if (!(other instanceof SoilMoistureParams)) return false;
+    SoilMoistureParams otherSmp = (SoilMoistureParams)other;
+    if (otherSmp.getMesicThreshold() == this.getMesicThreshold()
+        && otherSmp.getHydricThreshold() == this.getHydricThreshold()) {
+      return true;
+    } else return false;
+    }  
 
 }

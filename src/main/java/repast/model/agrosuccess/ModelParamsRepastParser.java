@@ -101,9 +101,9 @@ public class ModelParamsRepastParser implements EnvrModelParams {
         getDoubleParamValue("acornLocationParam"), 
         getDoubleParamValue("acornScaleParam"), 
         getDoubleParamValue("acornMaxLognormalDist"), 
-        getDoubleParamValue("windDistDecreaseParam"), 
-        getDoubleParamValue("windMinExpDist"),
-        getDoubleParamValue("windMaxExpDist"));
+        getIntParamValue("windDistDecreaseParam"), 
+        getIntParamValue("windMinExpDist"),
+        getIntParamValue("windMaxExpDist"));
   }
 
   /** 
