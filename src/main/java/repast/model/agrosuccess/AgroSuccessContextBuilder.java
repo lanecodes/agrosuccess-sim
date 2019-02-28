@@ -184,7 +184,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     
     initialiseSoilMoistureCalculator(context, studySiteData);
     
-    // TODO update soilMoistureParams so it's read from config file
+    // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
     initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
         new SoilMoistureParams(500, 1000));
 
