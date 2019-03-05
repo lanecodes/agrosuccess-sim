@@ -32,6 +32,12 @@ gtiff_from_array("dummy_3x3_lct_oak_pine_burnt.tif",
 # write soil type map, all type A soil
 gtiff_from_array("dummy_3x3_soil_type_uniform_A.tif", np.zeros((3, 3)))
 
+# ----------------------------- 3x4 Test Grid ---------------------------------
+# Used to test error is thrown if a grid within unexpected dimensions is loaded
+# into AgroSuccess
+gtiff_from_array("dummy_3x4_lct_oak_pine_burnt.tif",
+    np.array([[6, 6, 1, 1], [1, 1, 1, 1], [9, 9, 9, 9]]))
+
 
                             
                                 
