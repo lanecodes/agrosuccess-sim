@@ -53,6 +53,7 @@ public abstract class SiteBoundaryConds {
     return this.gridPixelSize;
   }
   
+  
   /**
    * @return Land cover types used at the start of the simulation.
    */
@@ -86,6 +87,16 @@ public abstract class SiteBoundaryConds {
    */
   public GridValueLayer getFlowDirMap() {
     return rasterLayerMap.get(LscapeLayer.FlowDir);
+  }
+  
+  /**
+   * @return Grid dimensions. First element is dimension in x direction, second in y direction.
+   * @see repast.simphony.space.grid.GridDimensions.GridDimensions
+   */
+  public int[] getGridDimensions() {
+    Dimensions dims = this.getInitialLandCoverMap().getDimensions();
+    int [] arr =  {(int)dims.getWidth(), (int)dims.getHeight()};
+    return arr;
   }
 
 }

@@ -58,7 +58,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param studySiteData
    */
   private Context<Object> initialiseGridValueLayers(Context<Object> context, 
-      StudySiteDataContainer studySiteData) {
+      SiteBoundaryConds studySiteData) {
     
     int[] gridDimensions = studySiteData.getGridDimensions();
 
@@ -66,10 +66,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         new StrictBorders(), gridDimensions, gridOrigin);
     context.addValueLayer(soilMoisture);
 
-    soilTypeMap = studySiteData.getSoilTypeMap(); // "soil"
+    soilTypeMap = studySiteData.getSoilMap(); // "soil"
     context.addValueLayer(soilTypeMap);
 
-    landCoverTypeMap = studySiteData.getLandcoverTypeMap(); // "lct"
+    landCoverTypeMap = studySiteData.getInitialLandCoverMap(); // "lct"
     context.addValueLayer(landCoverTypeMap);
 
     slopeMap = studySiteData.getSlopeMap();
@@ -104,10 +104,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return
    */
   private SeedDisperser initialiseSeedDisperser(Context<Object> context, 
-      StudySiteDataContainer studySiteData, SeedViabilityParams seedViabilityParams, 
+      SiteBoundaryConds studySiteData, SeedViabilityParams seedViabilityParams, 
       SeedDispersalParams seedDispersalParams) {
     
-    double[] gridPixelSize = studySiteData.getGridCellPixelSize();       
+    double[] gridPixelSize = {(double)studySiteData.getGridPixelSize(), 
+        (double)studySiteData.getGridPixelSize()};       
       
     seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0], gridPixelSize[1], 
         seedViabilityParams, seedDispersalParams, context); 
@@ -123,12 +124,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return
    */
   private SoilMoistureCalculator initialiseSoilMoistureCalculator(Context<Object> context, 
-      StudySiteDataContainer studySiteData) {
-    // TODO Implement SiteBoundaryConds.getFlowDirMap() 
-    //soilMoistureCalculator = 
-    //    new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 0, context);  
-    return null;
-    
+      SiteBoundaryConds studySiteData) {
+    return new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 
+        studySiteData.getMeanAnnualPrecipitation(), context);    
   }
   
   /**
@@ -158,6 +156,17 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return lcsUpdater;
   }
   
+  private SiteBoundaryConds getSiteBoundaryConds() {
+    File testDataDir = new File("/AgroSuccess/src/test/resources");
+    SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
+        new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
+        new File(testDataDir, "dummy_3x3_soil_type_uniform_A.tif" ),
+        new File(testDataDir, "dummy_51x51_slope.tif"),
+        new File(testDataDir, "dummy_51x51_binary_aspect.tif"),
+        new File(testDataDir, "dummy_51x51_flowdir.tif"));
+    return sbcs;
+  }
+  
 
   public Context<Object> build(Context<Object> context) {
 
@@ -167,14 +176,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
 
     // directory containing study site-specific data needed to run simulations
-    File siteGeoDataDir = new File((String)params.getValue("geoDataDirRootString"), 
-        (String)params.getValue("studySite"));
+    //File siteGeoDataDir = new File((String)params.getValue("geoDataDirRootString"), 
+    //    (String)params.getValue("studySite"));
     
     // TODO add databaseDir parameter to paramaters.xml
     // File databaseDir = new File((String)params.getValue("databaseDir"));
     File databaseDir = new File("/home/andrew/graphs/databases/prod.db");
 
-    StudySiteDataContainer studySiteData = new StudySiteDataContainer(siteGeoDataDir);      
+    SiteBoundaryConds studySiteData = getSiteBoundaryConds();      
     
     context = initialiseGridValueLayers(context, studySiteData);
     
