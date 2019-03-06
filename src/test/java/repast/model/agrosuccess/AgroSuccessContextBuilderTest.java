@@ -23,7 +23,7 @@ import repast.simphony.parameter.ParametersParser;
 import repast.simphony.scenario.ScenarioUtils;
 
 /**
- * @author andrew
+ * @author Andrew Lane
  *
  */
 public class AgroSuccessContextBuilderTest {

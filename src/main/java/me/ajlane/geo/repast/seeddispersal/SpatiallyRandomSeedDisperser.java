@@ -12,6 +12,7 @@ import me.ajlane.geo.GridUtils;
 import me.ajlane.random.ArrayUtils;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
+import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.GridValueLayer;
 
 /**
@@ -248,6 +249,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
    * @see me.ajlane.geo.repast.seeddispersal.SeedDisperser#updateSeedLayers()
    */
   @Override
+  @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void updateSeedLayers() {
     time++;
     removeDeadSeeds();

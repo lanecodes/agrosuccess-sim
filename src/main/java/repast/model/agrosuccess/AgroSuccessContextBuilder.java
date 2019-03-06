@@ -57,7 +57,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param context
    * @param studySiteData
    */
-  private Context<Object> initialiseGridValueLayers(Context<Object> context, 
+  private void initialiseGridValueLayers(Context<Object> context, 
       SiteBoundaryConds studySiteData) {
     
     int[] gridDimensions = studySiteData.getGridDimensions();
@@ -90,7 +90,6 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         new StrictBorders(), gridDimensions, gridOrigin);
     context.addValueLayer(deciduousSeeds);
     
-    return context;
   }
   
   /**
@@ -157,10 +156,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
   
   private SiteBoundaryConds getSiteBoundaryConds() {
-    File testDataDir = new File("/AgroSuccess/src/test/resources");
+    File testDataDir = new File("src/test/resources");
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
-        new File(testDataDir, "dummy_3x3_soil_type_uniform_A.tif" ),
+        new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif" ),
         new File(testDataDir, "dummy_51x51_slope.tif"),
         new File(testDataDir, "dummy_51x51_binary_aspect.tif"),
         new File(testDataDir, "dummy_51x51_flowdir.tif"));
@@ -185,7 +184,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     SiteBoundaryConds studySiteData = getSiteBoundaryConds();      
     
-    context = initialiseGridValueLayers(context, studySiteData);
+    initialiseGridValueLayers(context, studySiteData);
     
     // TODO Update seedDispersalParams and seedViabilityParams so they're read from config file
     initialiseSeedDisperser(context, studySiteData, new SeedViabilityParams(7), 
