@@ -28,10 +28,12 @@ mv $DEMBASENAME.tif $DEMBASENAME-old.tif
 mv $DEMBASENAME-hydrocorrect.tif $DEMBASENAME.tif
 
 # Get flow direction
+# Note that cells adjacent to the edge of the DEM will be given a 'no data'
+# flow direction. 
 printf "\nCalculating flow directions...\n\n"
 mpiexec -n 2 d8flowdir -fel $DEMBASENAME.tif -sd8 tmp.tif \
 	-p $DEMBASENAME-flowdir.tif
-rm tmp.tif # remove d8 slope direction map we don't need
+rm tmp.tif # remove grid showing slope in flow direction which we don't need
 
 # Get slope
 printf "\nCalculating slope...\n\n"
