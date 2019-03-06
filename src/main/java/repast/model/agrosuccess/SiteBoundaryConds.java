@@ -50,7 +50,7 @@ public abstract class SiteBoundaryConds {
    * @return Length of grid pixel's edge
    */
   public double getGridPixelSize() {
-    return this.meanAnnualPrecipitation;
+    return this.gridPixelSize;
   }
   
   /**

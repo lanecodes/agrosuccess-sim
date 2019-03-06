@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
+import repast.simphony.valueLayer.GridValueLayer;
 
 /**
  * Given file names of GeoTiff files containing boundary condition raster grids, a grid pixel size
@@ -33,13 +34,15 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
     this.meanAnnualPrecipitation = meanAnnualPrecipitation;
     this.gridPixelSize = gridPixelSize;
     
+    this.rasterLayerMap = new HashMap<LscapeLayer, GridValueLayer>();
+    
     this.lscapeLayerFiles = new HashMap<>();
     this.lscapeLayerFiles.put(LscapeLayer.Lct, initialLandCoverMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.SoilType, soilMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.Slope, slopeMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.Aspect, aspectMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.FlowDir, flowDirMapFile);
-    
+        
     try {
       initRasterLayerMapAndGridDimensions();
     } catch (IndexOutOfBoundsException e) {
@@ -53,7 +56,7 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
     boolean firstElement = true;
     for (Map.Entry<LscapeLayer, File> entry : this.lscapeLayerFiles.entrySet()) { 
       GeoRasterValueLayer grvl = 
-          new GeoRasterValueLayer(entry.getValue().getAbsolutePath(), entry.getKey().name());
+          new GeoRasterValueLayer(entry.getValue().getPath(), entry.getKey().name());
       
       if (firstElement) {
         this.gridDimensions = grvl.getDimensions();
@@ -67,7 +70,6 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
               + "\nThis grid: " + grvl.getDimensions() + "\nOther grids: " + this.gridDimensions);
         }
       }
-      
       this.rasterLayerMap.put(entry.getKey(), grvl.getValueLayer());
     }  
   }
@@ -83,3 +85,4 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
   }
 
 }
+

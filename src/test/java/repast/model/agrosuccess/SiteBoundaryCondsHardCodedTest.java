@@ -14,11 +14,11 @@ public class SiteBoundaryCondsHardCodedTest {
 
   @Before
   public void setUp() {
-    this.initialLandCoverMapFile = new File(testDataDir, "lct_dummy.tif");
-    this.soilMapFile = new File(testDataDir, "soil_map_dummy.tif");
-    this.slopeMapFile = new File(testDataDir, "slope_dummy.tif");
-    this.aspectMapFile = new File(testDataDir, "aspect_dummy.tif");
-    this.flowDirMapFile = new File(testDataDir, "flow_dir_dummy.tif");
+    this.initialLandCoverMapFile = new File(testDataDir, "dummy_3x3_lct_oak_pine_burnt.tif");
+    this.soilMapFile = new File(testDataDir, "dummy_3x3_soil_type_uniform_A.tif");
+    this.slopeMapFile = new File(testDataDir, "dummy_3x3_slope.tif");
+    this.aspectMapFile = new File(testDataDir, "dummy_3x3_binary_aspect.tif");
+    this.flowDirMapFile = new File(testDataDir, "dummy_3x3_flowdir.tif");
   }
 
   @After
