@@ -13,14 +13,27 @@ Combines the functionality of two older scripts, obsoleting them. These were:
 """
 import sys
 import os
-sys.path.insert(0, "/home/andrew/Documents/codes/python/gis/demproc")
 import numpy as np
 
 import demproc
 from demproc.dummy import make_dummy_hydro_incorrect_dem
 from demproc.dummy import create_dummy_geotiff_from_array as gtiff_from_array
 
+# ----------- 3x3 DEMs used to test flow direction network classes ------------
+# These classes are likely to be depreciated, but tests maintained in case a 
+# use is found for them.
+gtiff_from_array("hydro_correct_dummy.tif",
+    np.array([[1, 1, 3], 
+              [3, 3, 3], 
+              [3, 4, 4]]))
+
+gtiff_from_array("hydro_incorrect_dummy.tif",
+    np.array([[1, 1, 5], 
+              [3, 3, 3], 
+              [3, 4, 4]]))
+
 # ----------------------------- 3x3 Test Grids --------------------------------
+# Used to test SiteBoundaryConds and inheriting classes
 # DEM derived data
 make_dummy_hydro_incorrect_dem("dummy_3x3_hydro_incorrect_dem.tif")
 demproc.derive_all("dummy_3x3_hydro_incorrect_dem.tif", "dummy_3x3")
