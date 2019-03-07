@@ -20,9 +20,12 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.simphony.context.Context;
+import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.GridValueLayer;
 
@@ -182,7 +185,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // File databaseDir = new File((String)params.getValue("databaseDir"));
     File databaseDir = new File("/home/andrew/graphs/databases/prod.db");
 
-    SiteBoundaryConds studySiteData = getSiteBoundaryConds();      
+    SiteBoundaryConds studySiteData = getSiteBoundaryConds();    
+    
+    GridBuilderParameters<Object> gridParams = new GridBuilderParameters<>(new StrictBorders(),
+        new SimpleGridAdder<Object>(), false, studySiteData.getGridDimensions(), new int[] {0, 0});
+    GridFactoryFinder.createGridFactory(null).createGrid("Agent Grid", context, gridParams);
     
     initialiseGridValueLayers(context, studySiteData);
     

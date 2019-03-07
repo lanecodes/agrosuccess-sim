@@ -15,6 +15,7 @@ import me.ajlane.geo.DummySlopeLayer3x3;
 import me.ajlane.geo.DummySoilTypeLayer3x3;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.space.grid.StrictBorders;
@@ -61,13 +62,14 @@ public class SoilMoistureCalculatorTest {
 	@Test
 	public void updatedSoilMoistureValueLayerShouldBeThis() {
 		//add empty soil moisture layer
-		soilMoistureLayer = new GridValueLayer("soil moisture", 0, true, new StrictBorders(), new int[]{3, 3}, new int[]{0, 0});
+		soilMoistureLayer = new GridValueLayer(LscapeLayer.SoilMoisture.name(), 0, true, 
+		    new StrictBorders(), new int[]{3, 3}, new int[]{0, 0});
 		context.addValueLayer(soilMoistureLayer);
 			
 		// add required ValueLayer-s with dummy data to context
-		context.addValueLayer(new DummySlopeLayer3x3("slope", "medium")); // all cells have slope = 5%
-		context.addValueLayer(new DummySoilTypeLayer3x3("soil", "B")); //  all cells have soil type B
-		context.addValueLayer(new DummyLandCoverTypeLayer3x3("lct", "pine forest")); // all cells occupied by pine forest
+		context.addValueLayer(new DummySlopeLayer3x3(LscapeLayer.Slope.name(), "medium")); // all cells have slope = 5%
+		context.addValueLayer(new DummySoilTypeLayer3x3(LscapeLayer.SoilType.name(), "B")); //  all cells have soil type B
+		context.addValueLayer(new DummyLandCoverTypeLayer3x3(LscapeLayer.Lct.name(), "pine forest")); // all cells occupied by pine forest
 		
 		soilMoistureCalc = new SoilMoistureCalculator(flowDirectionGrid, 50.0, context);
 		
@@ -81,7 +83,7 @@ public class SoilMoistureCalculatorTest {
 		};
 		
 		System.out.println("soilMoistureLayer:");
-		printGridValueLayer((GridValueLayer)context.getValueLayer("soil moisture"));		
+		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.SoilMoisture.name()));		
 		
 		for (int i=0; i<soilMoistureLayer.getDimensions().getHeight(); i++) {
 			for (int j=0; j<soilMoistureLayer.getDimensions().getWidth(); j++){
