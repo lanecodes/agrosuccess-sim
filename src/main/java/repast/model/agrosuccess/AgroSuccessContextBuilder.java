@@ -56,7 +56,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   /**
    * Generate required {@code repast.simphony.valueLayer.GridValueLayer} objects representing
    * landscape variables and make the Repast context aware of them.
-   * 
+   *   @Override
    * @param context
    * @param studySiteData
    */
@@ -142,9 +142,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return
    */
   private LcsUpdater initialiseLcsUpdater(Context<Object> context, File databaseDir, String modelID, 
-      SoilMoistureParams soilMoistureParams) {
-    
-    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath()); 
+      SoilMoistureParams soilMoistureParams, GraphDatabaseService graph) {
+   
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator(); 
     LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapFactory(graph, modelID,
         translator); 
@@ -169,7 +168,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return sbcs;
   }
   
-
+  @Override
   public Context<Object> build(Context<Object> context) {
 
     Parameters params = RunEnvironment.getInstance().getParameters();
@@ -184,6 +183,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO add databaseDir parameter to paramaters.xml
     // File databaseDir = new File((String)params.getValue("databaseDir"));
     File databaseDir = new File("/home/andrew/graphs/databases/prod.db");
+    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath()); 
+    // make the context aware of the graph database service
+    context.add(graph);
 
     SiteBoundaryConds studySiteData = getSiteBoundaryConds();    
     
@@ -201,11 +203,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     
     // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
     initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
-        new SoilMoistureParams(500, 1000));
+        new SoilMoistureParams(500, 1000), graph);
 
     return context;
   }
   
-
-
 }
