@@ -1,10 +1,11 @@
 package repast.model.agrosuccess;
 
 import static org.junit.Assert.*;
-import java.util.logging.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNot;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,10 +18,13 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.valueLayer.GridValueLayer;
+import static me.ajlane.geo.repast.RepastGridUtils.hashGridValueLayerValues;
+import static me.ajlane.geo.repast.RepastGridUtils.totalGridValueLayerValues;
+import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToArray;
 import me.ajlane.geo.repast.RepastGridUtils;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
-public class AgroSuccessIntegrationTest {
+public class AgroSuccessEnvrIntegrationTest {
   
   public Context<Object> context;
   public Schedule schedule;
@@ -66,20 +70,51 @@ public class AgroSuccessIntegrationTest {
   }
   
   @Test
-  public void spatialVariationInSoilMoistureShouldEmerge() {
-    GridValueLayer sm = (GridValueLayer)context.getValueLayer(LscapeLayer.SoilMoisture.name());
-    System.out.println(RepastGridUtils.gridValueLayerToString(sm));
+  public void soilMoistureValuesShouldDepartFromInitialConditions() {
+    GridValueLayer sm = (GridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
+    int startHash = hashGridValueLayerValues(sm);
+    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));
     for (int i=0; i<5; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
-    System.out.println(RepastGridUtils.gridValueLayerToString(sm));
-    fail("not implemented");
+    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));
+    assertNotEquals("Soil moisture values haven't changed from initial consitions, indicating "
+        + "grid is not updating.", startHash, hashGridValueLayerValues(sm));
   }
   
   @Test
   public void seedsSouldBeDepositedOverTime() {
     // initially there are no seeds in the model, but these should be distributed by seed sources
-    fail("not implemented");
+    GridValueLayer pSeeds = (GridValueLayer) context.getValueLayer(LscapeLayer.Pine.name());
+    GridValueLayer oSeeds = (GridValueLayer) context.getValueLayer(LscapeLayer.Oak.name());
+    GridValueLayer dSeeds = (GridValueLayer) context.getValueLayer(LscapeLayer.Deciduous.name());
+    
+    for (int i=0; i<5; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
+      schedule.execute();
+    }
+    
+    assertTrue("There are no pine seeds in model after 5 steps", 
+        totalGridValueLayerValues(pSeeds) > 0);
+    assertTrue("There are no oak seeds in model after 5 steps", 
+        totalGridValueLayerValues(oSeeds) > 0);
+    assertTrue("There are no deciduous seeds in model after 5 steps",
+        totalGridValueLayerValues(dSeeds) > 0);
+  }
+  
+  @Test
+  public void landCoverStateShouldEvolveOverTime() {
+    GridValueLayer lct = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
+    int[][] initialValues = gridValueLayerToArray(lct);
+    
+    for (int i=0; i<50; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
+      schedule.execute();
+    }
+       
+    assertThat("Lct grid should evolve over time, but was unchanged after 50 time steps", 
+        initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(lct))));
   }
 
 }

@@ -35,6 +35,19 @@ public class RepastGridUtils extends GridUtils {
     }
     return gvl;
   }
+  
+  public static int[][] gridValueLayerToArray(GridValueLayer gvl) {
+    int nRows = (int) gvl.getDimensions().getHeight();
+    int nCols = (int) gvl.getDimensions().getWidth();
+    int[][] array = new int[nRows][nCols];
+    for (int i=0; i<nRows; i++) {
+      for (int j=0; j<nCols; j++) {
+        // By convention, Java array indexed top to bottom, Repast GridValueLayer bottom to top
+        array[i][j] = (int) gvl.get(j, (nRows-1)-i);
+      }
+    }    
+    return array;
+  }
 
   /**
    * Helper function which determines correct delimeter between numbers in printed representation of
@@ -88,7 +101,44 @@ public class RepastGridUtils extends GridUtils {
     }
     return true;
   }
-
-
+  
+  /**
+   * Generates an integer hash value useful for determining whether two Repast GridValueLayer-s 
+   * have the same values.
+   * 
+   * @param gvl
+   * @return Hash value
+   */
+  public static int hashGridValueLayerValues(GridValueLayer gvl) {
+    double runningTotal = 0;
+    int w = (int)gvl.getDimensions().getWidth();
+    int h = (int)gvl.getDimensions().getHeight();
+    // prevent numbers from getting too large when working with large grids
+    int constDivisor =  w*h;
+    for (int x=0; x<w; x++) {
+      for (int y=0; y<h; y++) {
+        runningTotal += gvl.get(x, y)/ constDivisor;
+      }    
+    }
+    return (new Double(runningTotal)).hashCode();    
+  }
+  
+  /**
+   * Get a simple total of all values in a GridValueLayer.
+   * 
+   * @param gvl
+   * @return
+   */
+  public static double totalGridValueLayerValues(GridValueLayer gvl) {
+    double runningTotal = 0;
+    int w = (int)gvl.getDimensions().getWidth();
+    int h = (int)gvl.getDimensions().getHeight();
+    for (int x=0; x<w; x++) {
+      for (int y=0; y<h; y++) {
+        runningTotal += gvl.get(x, y);
+      }    
+    }
+    return runningTotal;
+  }
 
 }

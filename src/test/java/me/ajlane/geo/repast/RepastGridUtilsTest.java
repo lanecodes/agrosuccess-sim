@@ -59,5 +59,21 @@ public class RepastGridUtilsTest {
 
     assertFalse(RepastGridUtils.gridValueLayersAreEqual(g1, g2));
   }
+  
+  @Test
+  public void arrayShouldCorrespondCorrectlyToGridValueLayer() {
+    GridValueLayer g = new GridValueLayer("test layer", 0, true, 2, 2);
+    g.set(3, 0, 0); // bottom left
+    g.set(4, 1, 0); // bottom right
+    g.set(1, 0, 1); // top left
+    g.set(2, 1, 1); // top right
+    
+    int[][] expectedArray = new int[][]{
+      { 1, 2 },
+      { 3, 4 }
+    }; 
+    
+    assertArrayEquals(expectedArray, RepastGridUtils.gridValueLayerToArray(g));
+  }
 
 }
