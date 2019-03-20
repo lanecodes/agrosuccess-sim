@@ -21,7 +21,6 @@ import repast.simphony.valueLayer.GridValueLayer;
 import static me.ajlane.geo.repast.RepastGridUtils.hashGridValueLayerValues;
 import static me.ajlane.geo.repast.RepastGridUtils.totalGridValueLayerValues;
 import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToArray;
-import me.ajlane.geo.repast.RepastGridUtils;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class AgroSuccessEnvrIntegrationTest {
