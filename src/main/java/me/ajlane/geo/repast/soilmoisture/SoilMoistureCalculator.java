@@ -390,7 +390,7 @@ public class SoilMoistureCalculator {
 		return j;
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1, priority = 1)
+	//@ScheduledMethod(start = 1, interval = 1, priority = 1)
 	public void updateSoilMoistureLayer(double precip) {
 		double[][] newSoilMoistureVals = new double[nY][nX];
 		for (int i=0; i<nY; i++) {
@@ -423,5 +423,11 @@ public class SoilMoistureCalculator {
 				soilMoisture.set(newSoilMoistureVals[i][j], getX(j), getY(i));
 			}
 		} 
-	}	
+	}
+	
+	@ScheduledMethod(start = 1, interval = 1, priority = 0)
+	public void step() {
+	  System.out.println("Called soil moisture calc");
+	  updateSoilMoistureLayer(50);
+	}
 }

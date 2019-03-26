@@ -127,8 +127,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   private SoilMoistureCalculator initialiseSoilMoistureCalculator(Context<Object> context, 
       SiteBoundaryConds studySiteData) {
-    return new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 
-        studySiteData.getMeanAnnualPrecipitation(), context);    
+    SoilMoistureCalculator smCalc =  new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 
+        studySiteData.getMeanAnnualPrecipitation(), context);  
+    return smCalc;
   }
   
   /**
@@ -196,10 +197,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     initialiseGridValueLayers(context, studySiteData);
     
     // TODO Update seedDispersalParams and seedViabilityParams so they're read from config file
-    initialiseSeedDisperser(context, studySiteData, new SeedViabilityParams(7), 
-        new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100));
+    context.add(initialiseSeedDisperser(context, studySiteData, new SeedViabilityParams(7), 
+        new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100)));
     
-    initialiseSoilMoistureCalculator(context, studySiteData);
+    context.add(initialiseSoilMoistureCalculator(context, studySiteData));
     
     // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
     initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 

@@ -22,7 +22,9 @@ public class AgroSuccessCodeAliases {
     private int code;    
     Succession(int code) { this.code = code; }    
     int getCode() { return this.code; }
+    String getAlias() { return this.toString().toLowerCase(); }
   }
+  
   
   /**
    * Binary aspect, which way slope of land faces.
@@ -32,6 +34,7 @@ public class AgroSuccessCodeAliases {
     private int code;    
     Aspect(int code) { this.code = code; }    
     int getCode() { return this.code; }
+    String getAlias() { return this.toString().toLowerCase(); }
   }
   
   /**
@@ -42,6 +45,7 @@ public class AgroSuccessCodeAliases {
     private int code;    
     SeedPresence(int code) { this.code = code; }    
     int getCode() { return this.code; }
+    String getAlias() { return this.toString().toLowerCase(); }
   }
   
   /**
@@ -52,6 +56,7 @@ public class AgroSuccessCodeAliases {
     private int code;    
     Water(int code) { this.code = code; }    
     int getCode() { return this.code; }
+    String getAlias() { return this.toString().toLowerCase(); }
   }
   
   /**
@@ -87,5 +92,12 @@ public class AgroSuccessCodeAliases {
      */
     String getAlias() { return this.alias; }
   }
+  
+  public enum SoilType {
+    A(0), B(1), C(2), D(3);
+    private int code;
+    SoilType(int code) { this.code = code; }
+    int getCode() { return this.code; }
+  }   
 
 }

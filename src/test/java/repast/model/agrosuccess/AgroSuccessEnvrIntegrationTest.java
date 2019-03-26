@@ -15,7 +15,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.environment.RunState;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.valueLayer.GridValueLayer;
 import static me.ajlane.geo.repast.RepastGridUtils.hashGridValueLayerValues;
@@ -44,9 +44,14 @@ public class AgroSuccessEnvrIntegrationTest {
     ContextBuilder<Object> builder = new AgroSuccessContextBuilder();
     context = builder.build(context);
     
-    RunState.init().setMasterContext(context);    
+    // trigger the Heatbug's @ScheduledMethods to be added to the scheduler
+    System.out.println("Scheduling methods...");
+    for (Object agent: context.getObjects(Object.class)) {
+      System.out.println(schedule.schedule(agent));
+    }
+    System.out.println("Finished scheduling methods");
   }
-
+    
   @After
   public void tearDown() throws Exception {
     for (Object graph: context.getObjects(EmbeddedGraphInstance.class)) {      
@@ -70,9 +75,11 @@ public class AgroSuccessEnvrIntegrationTest {
   
   @Test
   public void soilMoistureValuesShouldDepartFromInitialConditions() {
+    ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
     GridValueLayer sm = (GridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
     int startHash = hashGridValueLayerValues(sm);
-    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));
+    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));    
+    
     for (int i=0; i<5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
