@@ -43,6 +43,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   GridValueLayer soilMoisture; // name = "soil moisture"
   GridValueLayer soilTypeMap; // see SoilMoistureCalculator, name = "soil"
   GridValueLayer landCoverTypeMap; // name = "lct"
+  GridValueLayer succession;
 
   GridValueLayer slopeMap; // name = "slope"
   GridValueLayer aspect; // name = "aspect"
@@ -50,6 +51,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   GridValueLayer pineSeeds; // name = "pine seeds"
   GridValueLayer oakSeeds; // name = "oak seeds"
   GridValueLayer deciduousSeeds; // name = "deciduous seeds"
+  
+  GridValueLayer timeInState;
+  GridValueLayer deltaD;
+  GridValueLayer deltaT;
+  
 
   int[] gridOrigin = new int[] {0, 0}; // vector space origin for all spatial grids
   
@@ -74,6 +80,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     landCoverTypeMap = studySiteData.getInitialLandCoverMap(); // "lct"
     context.addValueLayer(landCoverTypeMap);
+    
+    succession = studySiteData.getOakRegenMap(); 
+    context.addValueLayer(succession);
 
     slopeMap = studySiteData.getSlopeMap();
     context.addValueLayer(slopeMap);
@@ -92,6 +101,19 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     deciduousSeeds = new GridValueLayer(LscapeLayer.Deciduous.name(), 0, true, 
         new StrictBorders(), gridDimensions, gridOrigin);
     context.addValueLayer(deciduousSeeds);
+    
+    // TODO Consider whether these initial conditions layers should be specified more granularly
+    deltaD = new GridValueLayer(LscapeLayer.DeltaD.name(), -1, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(deltaD);
+    
+    deltaT = new GridValueLayer(LscapeLayer.DeltaT.name(), -1, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(deltaT);
+    
+    timeInState = new GridValueLayer(LscapeLayer.TimeInState.name(), 0, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(timeInState);
     
   }
   
@@ -163,6 +185,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
         new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif" ),
+        new File(testDataDir, "dummy_51x51_succession_state_mix.tif" ),
         new File(testDataDir, "dummy_51x51_slope.tif"),
         new File(testDataDir, "dummy_51x51_binary_aspect.tif"),
         new File(testDataDir, "dummy_51x51_flowdir.tif"));
@@ -203,8 +226,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     context.add(initialiseSoilMoistureCalculator(context, studySiteData));
     
     // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
-    initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
-        new SoilMoistureParams(500, 1000), graph);
+    context.add(initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
+        new SoilMoistureParams(500, 1000), graph));
 
     return context;
   }

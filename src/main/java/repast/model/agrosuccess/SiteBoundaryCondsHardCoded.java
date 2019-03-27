@@ -28,8 +28,8 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
    * @param flowDirMapFile
    */
   public SiteBoundaryCondsHardCoded(int meanAnnualPrecipitation, double gridPixelSize, 
-      File initialLandCoverMapFile, File soilMapFile, File slopeMapFile, File aspectMapFile, 
-      File flowDirMapFile) {
+      File initialLandCoverMapFile, File soilMapFile, File successionMapFile, File slopeMapFile, 
+      File aspectMapFile, File flowDirMapFile) {
     
     this.meanAnnualPrecipitation = meanAnnualPrecipitation;
     this.gridPixelSize = gridPixelSize;
@@ -39,9 +39,11 @@ public class SiteBoundaryCondsHardCoded extends SiteBoundaryConds {
     this.lscapeLayerFiles = new HashMap<>();
     this.lscapeLayerFiles.put(LscapeLayer.Lct, initialLandCoverMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.SoilType, soilMapFile);
+    this.lscapeLayerFiles.put(LscapeLayer.OakRegen, successionMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.Slope, slopeMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.Aspect, aspectMapFile);
     this.lscapeLayerFiles.put(LscapeLayer.FlowDir, flowDirMapFile);
+    
         
     try {
       initRasterLayerMapAndGridDimensions();

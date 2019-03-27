@@ -53,3 +53,4 @@ src/test/resources/dbms/auth
 
 # model logs
 velocity.log
+/testbin/
