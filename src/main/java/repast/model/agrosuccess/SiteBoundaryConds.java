@@ -67,6 +67,13 @@ public abstract class SiteBoundaryConds {
   public GridValueLayer getSoilMap() {
     return rasterLayerMap.get(LscapeLayer.SoilType);
   }
+  
+  /**
+   * @return Succession state of the cell. 0=regeneration, 1=secondary.
+   */
+  public GridValueLayer getOakRegenMap() {
+    return rasterLayerMap.get(LscapeLayer.OakRegen);
+  }  
     
   /**
    * @return Slope, expressed as percent slope.

@@ -4,7 +4,9 @@
 package me.ajlane.geo.repast.soilmoisture;
 
 import me.ajlane.geo.GridCell;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
+import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.GridValueLayer;
 
 
@@ -27,11 +29,11 @@ public class SoilMoistureCalculator {
 	public SoilMoistureCalculator(GridValueLayer flowDirectionMap,
 			double initialSoilMoisture, Context<Object> context) {
 				
-		soilMoisture = (GridValueLayer) context.getValueLayer("soil moisture");
-		slope = (GridValueLayer) context.getValueLayer("slope");
-		soilMap = (GridValueLayer) context.getValueLayer("soil");
+		soilMoisture = (GridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
+		slope = (GridValueLayer) context.getValueLayer(LscapeLayer.Slope.name());
+		soilMap = (GridValueLayer) context.getValueLayer(LscapeLayer.SoilType.name());
 		flowDirMap = (GridValueLayer) flowDirectionMap;		
-		landCoverType = (GridValueLayer) context.getValueLayer("lct");
+		landCoverType = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 		
 		nY = (int)soilMoisture.getDimensions().getHeight();
 		nX = (int)soilMoisture.getDimensions().getWidth();
@@ -388,6 +390,7 @@ public class SoilMoistureCalculator {
 		return j;
 	}
 	
+	//@ScheduledMethod(start = 1, interval = 1, priority = 1)
 	public void updateSoilMoistureLayer(double precip) {
 		double[][] newSoilMoistureVals = new double[nY][nX];
 		for (int i=0; i<nY; i++) {
@@ -420,5 +423,11 @@ public class SoilMoistureCalculator {
 				soilMoisture.set(newSoilMoistureVals[i][j], getX(j), getY(i));
 			}
 		} 
-	}	
+	}
+	
+	@ScheduledMethod(start = 1, interval = 1, priority = 0)
+	public void step() {
+	  System.out.println("Called soil moisture calc");
+	  updateSoilMoistureLayer(50);
+	}
 }

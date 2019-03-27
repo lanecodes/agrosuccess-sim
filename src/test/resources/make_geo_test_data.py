@@ -47,6 +47,10 @@ gtiff_from_array("dummy_3x3_lct_oak_pine_burnt.tif",
 # write soil type map, all type A soil
 gtiff_from_array("dummy_3x3_soil_type_uniform_A.tif", np.zeros((3, 3)))
 
+# Write succession state map, uniform  soil type map,
+gtiff_from_array("dummy_3x3_succession_state_mix.tif", 
+    np.array([[0, 0, 0,], [0, 1, 1], [1, 1, 1]]))
+
 # ----------------------------- 3x4 Test Grid ---------------------------------
 # Used to test error is thrown if a grid within unexpected dimensions is loaded
 # into AgroSuccess
@@ -67,6 +71,7 @@ SRC_FILES = [
     "dummy_3x3_lct_oak_pine_burnt.tif",
     "dummy_3x3_slope.tif",
     "dummy_3x3_soil_type_uniform_A.tif",
+    "dummy_3x3_succession_state_mix.tif",
     "dummy_3x4_lct_oak_pine_burnt.tif",
 ]
 

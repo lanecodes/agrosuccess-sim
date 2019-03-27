@@ -2,5 +2,9 @@
 
 <attribute id="geoDataDir" display_name="Geographic Data Directory" value="/AgroSuccess/data/geographic" type="string" />
 <attribute id="studySite" display_name="Study Site" value="navarres" type="string"/>
+
+<projection id="Agent Grid" type="grid" />
+<projection id="Lct" type="value layer" />
+<projection id="SoilMoisture" type="value layer" />
   	
 </context>

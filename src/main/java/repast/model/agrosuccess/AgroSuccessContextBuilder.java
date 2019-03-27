@@ -20,9 +20,12 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.simphony.context.Context;
+import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.GridValueLayer;
 
@@ -40,6 +43,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   GridValueLayer soilMoisture; // name = "soil moisture"
   GridValueLayer soilTypeMap; // see SoilMoistureCalculator, name = "soil"
   GridValueLayer landCoverTypeMap; // name = "lct"
+  GridValueLayer succession;
 
   GridValueLayer slopeMap; // name = "slope"
   GridValueLayer aspect; // name = "aspect"
@@ -47,17 +51,22 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   GridValueLayer pineSeeds; // name = "pine seeds"
   GridValueLayer oakSeeds; // name = "oak seeds"
   GridValueLayer deciduousSeeds; // name = "deciduous seeds"
+  
+  GridValueLayer timeInState;
+  GridValueLayer deltaD;
+  GridValueLayer deltaT;
+  
 
   int[] gridOrigin = new int[] {0, 0}; // vector space origin for all spatial grids
   
   /**
    * Generate required {@code repast.simphony.valueLayer.GridValueLayer} objects representing
    * landscape variables and make the Repast context aware of them.
-   * 
+   *   @Override
    * @param context
    * @param studySiteData
    */
-  private Context<Object> initialiseGridValueLayers(Context<Object> context, 
+  private void initialiseGridValueLayers(Context<Object> context, 
       SiteBoundaryConds studySiteData) {
     
     int[] gridDimensions = studySiteData.getGridDimensions();
@@ -71,6 +80,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     landCoverTypeMap = studySiteData.getInitialLandCoverMap(); // "lct"
     context.addValueLayer(landCoverTypeMap);
+    
+    succession = studySiteData.getOakRegenMap(); 
+    context.addValueLayer(succession);
 
     slopeMap = studySiteData.getSlopeMap();
     context.addValueLayer(slopeMap);
@@ -90,7 +102,19 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         new StrictBorders(), gridDimensions, gridOrigin);
     context.addValueLayer(deciduousSeeds);
     
-    return context;
+    // TODO Consider whether these initial conditions layers should be specified more granularly
+    deltaD = new GridValueLayer(LscapeLayer.DeltaD.name(), -1, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(deltaD);
+    
+    deltaT = new GridValueLayer(LscapeLayer.DeltaT.name(), -1, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(deltaT);
+    
+    timeInState = new GridValueLayer(LscapeLayer.TimeInState.name(), 0, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
+    context.addValueLayer(timeInState);
+    
   }
   
   /**
@@ -125,8 +149,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   private SoilMoistureCalculator initialiseSoilMoistureCalculator(Context<Object> context, 
       SiteBoundaryConds studySiteData) {
-    return new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 
-        studySiteData.getMeanAnnualPrecipitation(), context);    
+    SoilMoistureCalculator smCalc =  new SoilMoistureCalculator(studySiteData.getFlowDirMap(), 
+        studySiteData.getMeanAnnualPrecipitation(), context);  
+    return smCalc;
   }
   
   /**
@@ -140,9 +165,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return
    */
   private LcsUpdater initialiseLcsUpdater(Context<Object> context, File databaseDir, String modelID, 
-      SoilMoistureParams soilMoistureParams) {
-    
-    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath()); 
+      SoilMoistureParams soilMoistureParams, GraphDatabaseService graph) {
+   
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator(); 
     LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapFactory(graph, modelID,
         translator); 
@@ -157,17 +181,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
   
   private SiteBoundaryConds getSiteBoundaryConds() {
-    File testDataDir = new File("/AgroSuccess/src/test/resources");
+    File testDataDir = new File("src/test/resources");
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
-        new File(testDataDir, "dummy_3x3_soil_type_uniform_A.tif" ),
+        new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif" ),
+        new File(testDataDir, "dummy_51x51_succession_state_mix.tif" ),
         new File(testDataDir, "dummy_51x51_slope.tif"),
         new File(testDataDir, "dummy_51x51_binary_aspect.tif"),
         new File(testDataDir, "dummy_51x51_flowdir.tif"));
     return sbcs;
   }
   
-
+  @Override
   public Context<Object> build(Context<Object> context) {
 
     Parameters params = RunEnvironment.getInstance().getParameters();
@@ -182,24 +207,29 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO add databaseDir parameter to paramaters.xml
     // File databaseDir = new File((String)params.getValue("databaseDir"));
     File databaseDir = new File("/home/andrew/graphs/databases/prod.db");
+    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath()); 
+    // make the context aware of the graph database service
+    context.add(graph);
 
-    SiteBoundaryConds studySiteData = getSiteBoundaryConds();      
+    SiteBoundaryConds studySiteData = getSiteBoundaryConds();    
     
-    context = initialiseGridValueLayers(context, studySiteData);
+    GridBuilderParameters<Object> gridParams = new GridBuilderParameters<>(new StrictBorders(),
+        new SimpleGridAdder<Object>(), false, studySiteData.getGridDimensions(), new int[] {0, 0});
+    GridFactoryFinder.createGridFactory(null).createGrid("Agent Grid", context, gridParams);
+    
+    initialiseGridValueLayers(context, studySiteData);
     
     // TODO Update seedDispersalParams and seedViabilityParams so they're read from config file
-    initialiseSeedDisperser(context, studySiteData, new SeedViabilityParams(7), 
-        new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100));
+    context.add(initialiseSeedDisperser(context, studySiteData, new SeedViabilityParams(7), 
+        new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100)));
     
-    initialiseSoilMoistureCalculator(context, studySiteData);
+    context.add(initialiseSoilMoistureCalculator(context, studySiteData));
     
     // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
-    initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
-        new SoilMoistureParams(500, 1000));
+    context.add(initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
+        new SoilMoistureParams(500, 1000), graph));
 
     return context;
   }
   
-
-
 }

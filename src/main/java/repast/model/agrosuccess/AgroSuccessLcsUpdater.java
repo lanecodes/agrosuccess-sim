@@ -7,7 +7,9 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdateMsg;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
+import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
+import repast.simphony.valueLayer.ValueLayer;
 
 public class AgroSuccessLcsUpdater implements LcsUpdater {
   LcsUpdateDecider updateDecider;
@@ -76,6 +78,7 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
   }
 
   @Override
+  @ScheduledMethod(start = 1, interval = 1, priority = 0)
   public void updateLandscapeLcs() {
     LcsUpdateMsg updateMsg;
     for (int x = 0; x < nCols; x++) {

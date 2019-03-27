@@ -10,7 +10,8 @@ package repast.model.agrosuccess;
  */
 public enum LscapeLayer {
   Lct ("current land cover type"),
-  OakRegen ("presence of regenerative oak vegetation"),
+  OakRegen ("presence of regenerative oak vegetation (succession pathway). "
+      + "0=Regeneration, 1=Secondary."),
   Aspect ("indication of whether slope faces north (0) or south (1)"),
   Slope ("slope expressed as percent slope"),
   FlowDir ("flow direction out of cell. 1=E, 2=NE, 3=N,..., 8=SE"),
