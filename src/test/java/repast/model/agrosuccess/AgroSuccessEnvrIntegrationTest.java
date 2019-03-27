@@ -114,7 +114,7 @@ public class AgroSuccessEnvrIntegrationTest {
     GridValueLayer lct = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
     int[][] initialValues = gridValueLayerToArray(lct);
     
-    for (int i=0; i<50; i++) {
+    for (int i=0; i<5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
@@ -122,5 +122,10 @@ public class AgroSuccessEnvrIntegrationTest {
     assertThat("Lct grid should evolve over time, but was unchanged after 50 time steps", 
         initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(lct))));
   }
-
+  
+  @Test
+  public void modelShouldRunSuccessfullyFor200TimeSteps() {
+    for (int i=0; i<200; i++) { schedule.execute(); }
+  }
 }
+

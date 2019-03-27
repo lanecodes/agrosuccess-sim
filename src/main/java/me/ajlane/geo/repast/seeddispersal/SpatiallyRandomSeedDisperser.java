@@ -4,6 +4,7 @@
 package me.ajlane.geo.repast.seeddispersal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
     int seedSourceCount = 0;
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        if (seedSourceMap.get(speciesName).contains((int) landCoverType.get(i, j))) {
+        if (seedSourceMap.get(speciesName).contains((int) landCoverType.get(j, i))) {
           seedSourceCount++;
         }
       }
@@ -179,9 +180,9 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
     int row = seed.getRow();
     int col = seed.getCol();
     // check GridValueLayer agrees that there is a seed to remove
-    int currentValue = (int) gvl.get((double) row, (double) col);
+    int currentValue = (int) gvl.get((double) col, (double) row);
     if (currentValue == 1) {
-      gvl.set(0.0, row, col);
+      gvl.set(0.0, col, row);
     } else {
       throw new IllegalArgumentException("Tried to remove the following seed from GridValueLayer "
           + "containing no seed. Programming error.\n" + seed.toString());
@@ -198,7 +199,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
     List<Integer> cellIndices = new ArrayList<Integer>();
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        if ((int) seedLayersMap.get(speciesName).get((double) i, (double) j) == 0) {
+        if ((int) seedLayersMap.get(speciesName).get((double) j, (double) i) == 0) {
           cellIndices.add(GridUtils.spatialCoordsToIndex(i, j, width));
         }
       }
@@ -223,7 +224,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
       int col = coords[1];
 
       // add to GridValueLayer
-      seedLayersMap.get(speciesName).set(1.0, row, col);
+      seedLayersMap.get(speciesName).set(1.0, col, row);
 
       // add to SeedViabilityMonitor
       svm.addSeed(new Seed(speciesName, time, row, col));
@@ -233,11 +234,10 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
   void removeDeadSeeds() {
     Set<Seed> deadSeeds = svm.deadSeeds(time);
     for (Seed seed : deadSeeds) {
-      if (seed.getType() == "pine") {
-        removeSeedFromGridValueLayer(seed, pineSeeds);
-      } else if (seed.getType() == "oak") {
-        removeSeedFromGridValueLayer(seed, oakSeeds);
-        removeSeedFromGridValueLayer(seed, deciduousSeeds);
+      for (Map.Entry<String, GridValueLayer> speciesEntry: seedLayersMap.entrySet()) {
+        if (seed.getType() == speciesEntry.getKey()) {
+          removeSeedFromGridValueLayer(seed, speciesEntry.getValue());
+        }
       }
     }
   }
