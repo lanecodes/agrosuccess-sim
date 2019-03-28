@@ -19,6 +19,7 @@ import me.ajlane.geo.repast.succession.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
+import repast.model.agrosuccess.reporting.LctProportionAggregator;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -202,6 +203,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     }    
   }
   
+  public void printLctProportion(LctProportionAggregator lctPropAgg) {
+    System.out.println(lctPropAgg.getLctProportions());
+  }
+  
   @Override
   public Context<Object> build(Context<Object> context) {
 
@@ -239,12 +244,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     context.add(initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
         new SoilMoistureParams(500, 1000), graph));
     
+    ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
+
     // call method at the end of the simulation run. See
     // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
-    ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
-    ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
+    ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);    
     sche.schedule(stop, this, "endMethod", context);
-
+    
+    // print aggregated land cover proportions to console
+    LctProportionAggregator lctPropAgg = new LctProportionAggregator(context);
+    ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
+    sche.schedule(printProps, this, "printLctProportion", lctPropAgg);
+    
     return context;
   }
   

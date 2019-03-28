@@ -96,17 +96,17 @@ public class AgroSuccessCodeAliases {
     /**
      * @return Numerical code identifying land cover type
      */
-    int getCode() { return this.code; }
+    public int getCode() { return this.code; }
     
     /**
      * @return Human readable alias for land cover type used for readability in databases etc.
      */
-    String getAlias() { return this.alias; }
+    public String getAlias() { return this.alias; }
     
     /**
      * @return Hex string representing the lct's representative colour
      */
-    Color getColor() { return this.color; }
+    public Color getColor() { return this.color; }
   }
   
   public enum SoilType {
