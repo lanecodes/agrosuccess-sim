@@ -13,7 +13,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1205533122</hashCode>
+    <hashCode>-1739559599</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Agent Grid</layoutProjection>
@@ -48,7 +48,7 @@
               </entry>
               <entry>
                 <string>SHOW</string>
-                <boolean>true</boolean>
+                <boolean>false</boolean>
               </entry>
             </map>
           </entry>
@@ -63,8 +63,7 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayerStyleName>repast.simphony.visualization.editedStyle.EditedValueLayerStyle2D</valueLayerStyleName>
-  <valueLayerEditedStyleName>Lct.style_0.xml</valueLayerEditedStyleName>
+  <valueLayerStyleName>repast.model.agrosuccess.LctLayerStyle</valueLayerStyleName>
   <valueLayers>
     <string>Lct</string>
   </valueLayers>

@@ -20,6 +20,9 @@ MessageCenter.log4j.properties
 *\$py.class
 *.pyc
 
+# Modelling notes
+model/lct-colours.pdf
+
 # Derived images of software design model
 model/AgroSuccess-domain-20190205.png
 model/AgroSuccess-domain-2019-02-05\.pdf
@@ -53,4 +56,4 @@ src/test/resources/dbms/auth
 
 # model logs
 velocity.log
-/testbin/
+debug.log*

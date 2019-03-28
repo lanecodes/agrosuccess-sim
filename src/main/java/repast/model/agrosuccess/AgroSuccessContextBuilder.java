@@ -23,7 +23,9 @@ import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.parameter.Parameters;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
+// import repast.simphony.parameter.Parameters;
 import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.StrictBorders;
@@ -182,6 +184,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   
   private SiteBoundaryConds getSiteBoundaryConds() {
     File testDataDir = new File("src/test/resources");
+    // specify precipitation, grid pixel size
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
         new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif" ),
@@ -192,10 +195,17 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return sbcs;
   }
   
+  public void endMethod(Context<Object> context){ 
+    System.out.println("End of the simulation");
+    for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
+      ((GraphDatabaseService) graph).shutdown();
+    }    
+  }
+  
   @Override
   public Context<Object> build(Context<Object> context) {
 
-    Parameters params = RunEnvironment.getInstance().getParameters();
+    // Parameters params = RunEnvironment.getInstance().getParameters();
     
     // TODO Add parameters required by ModelParamsRepastParser to parameters.xml
     // EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
@@ -228,6 +238,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO update soilMoistureParams so it's read from config file (via the Parameters object)
     context.add(initialiseLcsUpdater(context, databaseDir, "AgroSuccess-dev", 
         new SoilMoistureParams(500, 1000), graph));
+    
+    // call method at the end of the simulation run. See
+    // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
+    ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
+    ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
+    sche.schedule(stop, this, "endMethod", context);
 
     return context;
   }

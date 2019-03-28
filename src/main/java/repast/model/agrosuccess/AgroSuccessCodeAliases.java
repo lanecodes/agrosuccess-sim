@@ -1,5 +1,7 @@
 package repast.model.agrosuccess;
 
+import java.awt.Color;
+
 /**
  * Enumerations used to convert between numerical codes used in the model and the human readable
  * names corresponding to those values. This allows human readable names to be used in the source
@@ -63,24 +65,33 @@ public class AgroSuccessCodeAliases {
    * Land cover types and corresponding codes used in AgroSuccess.
    */
   public enum Lct {
-    WaterQuarry(0, "WaterQuarry"), 
-    Burnt(1, "Burnt"), 
-    Barley(2, "Barley"), 
-    Wheat(3, "Wheat"),
-    Dal(4, "DAL"),
-    Shrubland(5, "Shrubland"),
-    Pine(6, "Pine"),
-    TransForest(7, "TransForest"),
-    Deciduous(8, "Deciduous"),
-    Oak(9, "Oak");
+    WaterQuarry(0, "WaterQuarry", "#0074d9"), // blue
+    Burnt(1, "Burnt", "#ff4136"), //red
+    Barley(2, "Barley", "#333333"), 
+    Wheat(3, "Wheat", "#bfbfff"),
+    Dal(4, "DAL", "#ffdc00"),
+    Shrubland(5, "Shrubland", "#7fdbff"),
+    Pine(6, "Pine", "#2ecc40"), // green
+    TransForest(7, "TransForest", "#b10dc9"),
+    Deciduous(8, "Deciduous", "#ff851b"),
+    Oak(9, "Oak", "#85144b");
     
     private int code;
     private String alias;
+    private Color color;
+  
+    public static Color hex2Rgb(String colorStr) {
+      return new Color(
+              Integer.valueOf(colorStr.substring( 1, 3 ), 16),
+              Integer.valueOf(colorStr.substring( 3, 5 ), 16),
+              Integer.valueOf(colorStr.substring( 5, 7 ), 16));
+    }
     
-    Lct(int code, String alias) { 
+    Lct(int code, String alias, String color) { 
       this.code = code; 
       this.alias = alias; 
-      }    
+      this.color = hex2Rgb(color);
+    }    
     
     /**
      * @return Numerical code identifying land cover type
@@ -91,6 +102,11 @@ public class AgroSuccessCodeAliases {
      * @return Human readable alias for land cover type used for readability in databases etc.
      */
     String getAlias() { return this.alias; }
+    
+    /**
+     * @return Hex string representing the lct's representative colour
+     */
+    Color getColor() { return this.color; }
   }
   
   public enum SoilType {
