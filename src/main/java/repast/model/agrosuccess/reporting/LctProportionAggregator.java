@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import me.ajlane.math.IntegerCounter;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
-import repast.model.agrosuccess.LscapeLayer;
-import repast.simphony.context.Context;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 public class LctProportionAggregator {
@@ -15,8 +13,8 @@ public class LctProportionAggregator {
   IGridValueLayer lcts;  
   int height, width, totalNoCells; 
 
-  public LctProportionAggregator(Context<Object> context) {
-    lcts = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
+  public LctProportionAggregator(IGridValueLayer lctGridValueLayer) {
+    lcts = lctGridValueLayer;
     width = (int) lcts.getDimensions().getWidth();
     height = (int) lcts.getDimensions().getHeight();
     totalNoCells = width * height;    
