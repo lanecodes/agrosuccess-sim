@@ -19,29 +19,33 @@
    	for packaging , as suggested in this SorceForge post:
    	https://sourceforge.net/p/repast/mailman/message/35615878/
    	-->
-   	
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-			<source>1.8</source> 
-			<target>1.8</target> 
-        </configuration>
-           <executions>
-     			<execution>
-       				<id>default-compile</id>
-       				<phase>compile</phase>
-       				<goals>
-          				<goal>compile</goal>
-       				</goals>
-       				<configuration>
-         				<skipMain>true</skipMain> <!-- Skip -->
-       				</configuration>
-     			</execution>
-   			</executions>
-      </plugin>
-		
-    </plugins>
+	<plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+          <configuration>
+	    <source>1.8</source>
+	    <target>1.8</target>
+          </configuration>
+          <executions>
+     	    <execution>
+       	      <id>default-compile</id>
+       	      <phase>compile</phase>
+       	      <goals>
+          	<goal>compile</goal>
+       	      </goals>
+       	      <configuration>
+         	<skipMain>true</skipMain> <!-- Skip -->
+       	      </configuration>
+     	    </execution>
+   	  </executions>
+
+	</plugin>
+	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7</version>
+	</plugin>
+	</plugins>
   </build>
   
   <dependencies>
@@ -61,9 +65,9 @@
   	
   	<dependency>
   	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-math3</artifactId>
-    <version>3.6.1</version>
+	<groupId>org.apache.commons</groupId>
+	<artifactId>commons-math3</artifactId>
+	<version>3.6.1</version>
 	</dependency>
 	
 	
