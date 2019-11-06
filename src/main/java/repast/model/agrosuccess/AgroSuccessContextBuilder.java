@@ -252,7 +252,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     sche.schedule(stop, this, "endMethod", context);
     
     // print aggregated land cover proportions to console
-    LctProportionAggregator lctPropAgg = new LctProportionAggregator(context);
+    LctProportionAggregator lctPropAgg = new LctProportionAggregator(landCoverTypeMap);
     ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
     sche.schedule(printProps, this, "printLctProportion", lctPropAgg);
     
