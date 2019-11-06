@@ -22,6 +22,7 @@ MessageCenter.log4j.properties
 
 # Modelling notes
 model/lct-colours.pdf
+model/lct-colours.svg
 
 # Derived images of software design model
 model/AgroSuccess-domain-20190205.png
