@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>me.ajlane</groupId>
+  <artifactId>agrosuccess</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>AgroSuccess</name>
+  <description>Agent-based model of land-cover change</description>
+  <build>
+   	<plugins>
+   	<!-- 
+   	I've had great difficulty getting maven to compile the project as it seems to be 
+   	unable to pull in the Repast Simphony Development Libraries. This appears to be
+   	related to its reluctance to recognise Eclipse classpath containers. This is the 
+   	same issue as is faced in this SO
+   	https://stackoverflow.com/questions/43822745/add-dependencies-to-maven-from-custom-eclipse-version-repast
+   	
+   	compilation plugin currently commented out. The intention is that maven should be 
+   	able to portably install non-Repast dependencies, and Repast itself can be used 
+   	for packaging , as suggested in this SorceForge post:
+   	https://sourceforge.net/p/repast/mailman/message/35615878/
+   	-->
+	<plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+          <configuration>
+	    <source>1.8</source>
+	    <target>1.8</target>
+          </configuration>
+          <executions>
+     	    <execution>
+       	      <id>default-compile</id>
+       	      <phase>compile</phase>
+       	      <goals>
+          	<goal>compile</goal>
+       	      </goals>
+       	      <configuration>
+         	<skipMain>true</skipMain> <!-- Skip -->
+       	      </configuration>
+     	    </execution>
+   	  </executions>
+
+	</plugin>
+	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7</version>
+	</plugin>
+	</plugins>
+  </build>
+  
+  <dependencies>
+  	<dependency>
+  	<!-- for applications using neo4j server -->
+  		<groupId>org.neo4j.driver</groupId>
+  		<artifactId>neo4j-java-driver</artifactId>
+  		<version>1.4.4</version>
+  	</dependency>
+  	
+  	<dependency>
+  	<!-- for embedded applications -->
+  		<groupId>org.neo4j</groupId>
+  		<artifactId>neo4j</artifactId>
+  		<version>3.4.4</version>
+  	</dependency>
+  	
+  	<dependency>
+  	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+	<groupId>org.apache.commons</groupId>
+	<artifactId>commons-math3</artifactId>
+	<version>3.6.1</version>
+	</dependency>
+	
+	
+	<dependency>
+	<!-- https://mvnrepository.com/artifact/junit/junit -->
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	    <version>4.12</version>
+	    <scope>test</scope>
+	</dependency>
+  	
+  </dependencies>
+</project>

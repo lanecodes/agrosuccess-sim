@@ -1,0 +1,16 @@
+Class {
+	qualifiedNameDepth:none;
+	elementIcon:false;	
+}
+
+Class > Compartment[kind="nestedclassifiers"] {
+    visible:false;
+}
+
+Class > Compartment[kind="operations"] {
+    visible:false;
+}
+
+Property {
+	maskLabel: name derived;
+}

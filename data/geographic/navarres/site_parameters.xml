@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+
+	<siteName>navarres</siteName>
+	<meanMonthlyPrecipitation>41</meanMonthlyPrecipitation>
+	<gridCellPixelSizeX>26.582</gridCellPixelSizeX>
+	<gridCellPixelSizeY>26.582</gridCellPixelSizeY>
+	
+	<geotiffFilenames>
+	<!-- Names of geographic input files -->
+		<digitalElevationModel>dem.tif</digitalElevationModel>
+		<flowDirection>flowdir.tif</flowDirection>
+		<slope>slope.tif</slope>
+		<!--  specifying cell aspects (0 for northerly, 1 for southerly) -->
+		<binaryAspect>binaryaspect.tif</binaryAspect>
+		<soilType>dummy_soil_map_A.tif</soilType>
+		<!-- initial land cover configuration. This may be developed to allow different configs -->
+		<initialLandcover>init-landcover1.tif</initialLandcover>		
+	</geotiffFilenames>
+	
+</parameters>
