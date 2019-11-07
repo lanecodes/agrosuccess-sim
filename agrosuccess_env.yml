@@ -1,0 +1,12 @@
+name: agrosuccess
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - numpy
+  - pandas
+  - gdal
+  - pip:
+    - nlmpy
+    - git+https://github.com/lanecodes/demproc.git
+    - beautifulsoup4

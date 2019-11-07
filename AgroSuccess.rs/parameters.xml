@@ -53,7 +53,7 @@
 		name="geoDataDirRootString"
 		displayName="Geographic Data Root Directory"
 		type="java.lang.String"
-		defaultValue="data/geographic"
+		defaultValue="data/study-sites"
 		isReadOnly="true"
 	/>
 

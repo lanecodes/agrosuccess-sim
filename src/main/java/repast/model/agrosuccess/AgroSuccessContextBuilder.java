@@ -184,7 +184,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
   
   private SiteBoundaryConds getSiteBoundaryConds() {
-    File testDataDir = new File("src/test/resources");
+    File testDataDir = new File("data/test");
     // specify precipitation, grid pixel size
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10, 
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
