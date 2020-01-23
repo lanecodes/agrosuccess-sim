@@ -18,13 +18,15 @@ generated site can be found in `site`.
 
 ## Dependencies
 - Dependencies are managed using Maven following [instructions][maven integration]
-  found on the Repast mailing list.
+  found on the Repast mailing list. See also original discussion on repast-interest
+   [mailing list]
 - See `</dependencies>` within `pom.xml` for details of which dependencies are
   installed.
 - Note that while we use Maven to install dependencies which Repase can subsequently
   link to, we don't use Maven to build. For that we rely on Repast.
 
 [maven integration]: https://sourceforge.net/p/repast/mailman/message/35615878/#msg35615878
+[mailing list]: http://repast.10935.n7.nabble.com/Building-a-Mavenized-Repast-model-td11831.html
 
 ## Build
 Setup Python environment
@@ -38,6 +40,33 @@ conda env create -f agrosuccess_env.yml
 
 [mvn dependencies]: https://stackoverflow.com/questions/34203179
 [export the Repast model]: https://stackoverflow.com/questions/45871020/
+
+## Generate empirical data
+
+Use the [AgroSuccess data][agrosuccess-data-repo] project to prepare empirical
+data.
+
+Assuming the below file paths for the `agrosuccess-data` and `AgroSuccess`
+projects, the simulation input data can be transferred with the following
+commands:
+
+```bash
+AS_ROOT=/home/andrew/Documents/codes/java/AgroSuccessWS/AgroSuccess
+AS_DATA_ROOT=/home/andrew/Documents/codes/agrosuccess-data
+
+rsync \
+	-av --progress \
+	$AS_DATA_ROOT/outputs/ \
+	$AS_ROOT/data/study-sites \
+	--exclude test_data
+
+rsync \
+	-av --progress \
+	$AS_DATA_ROOT/outputs/test_data/ \
+	$AS_ROOT/data/test
+```
+
+[agrosuccess-data-repo]: https://bitbucket.org/ajlane50/agrosuccess-data
 
 ## Repository layout
 
@@ -53,7 +82,6 @@ conda env create -f agrosuccess_env.yml
 │  ├── graph-store            <- Neo4j graph store files [2]
 │  ├── study-sites            <- Bio-geographic/ morphological study site data
 │  └── test                   <- Data for test cases
-├── data_src                   <- Scripts used to obtain and prepare data for simulation
 ├── docs                       <- Defunct, see `target/site` instead
 ├── freezedried_data           <- Used for storing intermediate model results (???)
 ├── icons                      <- Model icon files
