@@ -9,7 +9,7 @@ import repast.simphony.valueLayer.GridValueLayer;
 
 public class SiteBoundaryCondsHardCodedTest {
   
-  File testDataDir = new File("src/test/resources");
+  File testDataDir = new File("data/test");
   File initialLandCoverMapFile, soilMapFile, successionMapFile, 
     slopeMapFile, aspectMapFile, flowDirMapFile;
 
