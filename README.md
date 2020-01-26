@@ -68,6 +68,33 @@ rsync \
 
 [agrosuccess-data-repo]: https://bitbucket.org/ajlane50/agrosuccess-data
 
+## Generate graph database
+
+Use the project [AgroSuccess Graph][agrosuccess-graph] to generate a Neo4j
+graph store holding all the socio-ecological transition rules needed for the
+simulation model. Follow the instructions in the 'Setup' and 'Loading a model
+into the database' sections of that project's `README.md`. This should have
+created a Docker volume on your machine called `as-neo4j-data` which contains
+the graph store holding our model.
+
+The below commands:
+
+1. Identify the file system location where Docker has placed our graph store
+2. Copy the graph store into the AgroSuccess project
+3. Set file permissions to my user account, so the agrosuccess program running
+   under my username can access the graph store
+
+```bash
+AS_ROOT=/home/andrew/Documents/codes/java/AgroSuccessWS/AgroSuccess
+AS_GRAPH_STORE=$(docker volume inspect as-neo4j-data | \
+   grep "Mountpoint" | \
+   sed 's/.*": "\(.*\)",.*/\1/')
+sudo rsync -av $AS_GRAPH_STORE/databases $AS_ROOT/data/graph
+sudo chown -R andrew:andrew $AS_ROOT/data/graph/databases
+```
+
+[agrosuccess-graph]: https://ajlane50@bitbucket.org/ajlane50/agrosuccess-graph
+
 ## Repository layout
 
 ```
@@ -174,21 +201,6 @@ To help with this, see the embedded Neo4j database [tutorial](https://neo4j.com/
 - Add `data-src` directory to model to hold source data. This differs from
   `data` which holds data ready to be consumed by the simulation.
 
-
-### Data
-
-- Move logic from 
-  `~/Documents/codes/python/notebooks/download_site_elevation_data/get_elev/download_site_elevation_data.py`
-  (and corresponding `__main__.py`) to `data_src/raster`
-- Use `demproc` to generate other land cover maps (slope, aspect etc) using
-  DEMs obtained with `download_site_elevation_data.py`.
-- Generate `site_parameters.xml` (precipitation etc) by script in `data_src` and
-  strip out of git repo.
-- Obtain target initial land cover proportions for each study site from
-  `~/Documents/codes/python/notebooks/modified_random_clusters/implement_modified_random_clusters.ipynb`,
-  and combine with `data_src/lct_nlm/generate_landcover_maps.py` to generate caches of nlms for each
-  study site.
-
 ### Minor
 
 - Replace DOS style line endings in `installation/installation_coordinator.xml`
@@ -197,7 +209,5 @@ To help with this, see the embedded Neo4j database [tutorial](https://neo4j.com/
 - Update `model_description.txt` so that it directs users to look in
   `target/site` OR investigate how to configure `mvn site` to output generated
   site files in `docs`.
-- Delete commit ff1b9b7 | * Add test data to resources. This added `.tif.aux.xml`
-  files to the repo needlessly.
 
 [Dos To Unix]: https://www.emacswiki.org/emacs/DosToUnix

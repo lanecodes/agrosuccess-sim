@@ -1,13 +1,16 @@
 # CHANGELOG.md
 
-## 2 - Generate empirical data externally - 2020-01-23
+## 2 - Generate input data externally - 2020-01-26
 
 - Remove scripts used to prepare empirical data for simulation
   to separate repository.
 - See [AgroSuccess data][agrosuccess-data-repo] project to prepare empirical
   data.
+- See [AgroSuccess graph][[agrosuccess-graph-repo] project to prepare model
+  configuration graph store.
 
 [agrosuccess-data-repo]: https://bitbucket.org/ajlane50/agrosuccess-data
+[agrosuccess-graph-repo]: https://bitbucket.org/ajlane50/agrosuccess
 
 ## 1 - Upgrade AgroSuccess to Repast 2.7 - 2019-11-06
 Move all code specific to AgroSuccess directly into the appropriate
