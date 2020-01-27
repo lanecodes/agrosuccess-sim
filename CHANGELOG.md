@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 2 - Run environmental model with study site data - 2020-01-27
+
+AgroSuccess environmental model now runs with full resolution data for my
+study sites.
+
+#### Changed
+
+- Repast model runs with empirical data from study sites instead of test data.
+- Sundry changes to `.classpath`, `.settings/`, and `Repast.settings` which
+  Repast and Maven have made along the way. These all seem to be compatible
+  with both JUnit and Repast, so I will incorporate them into version control
+  at this stage.
+
+#### Added
+
+- `SiteBoundaryCondsFromData` class used to provide study site boundary
+  condition data to the context with an interface consistent with
+  `SiteBoundaryCondsHardCoded` to support easy switching between test and
+  production scale simulations.
+- New dependency on `commons-collections`. This was done to prevent a
+  `ClassNotFound` exception on
+  `org.apache.commons.configuration.XMLConfiguration` which occurred when
+  running Repast Simphony but not unit tests.
+
 ### 1 - Generate input data externally - 2020-01-27
 
 #### Changed

@@ -1,73 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-
-	<parameter name="randomSeed" displayName="Default Random Seed" type="int" defaultValue="__NULL__" />
-
-	<!--
-	Directory which will be searched for Cypher files to be loaded into the
-	embedded graph database and queried by the simulation.
-	 -->
-	<parameter
-	 	name="configCypherFilesDir"
-		displayName="Directory to serch exhaustively for Cypher files"
-		type="java.lang.String"
-		defaultValue="/home/andrew/Dropbox/phd/models/AgroSuccess/views"
-		isReadOnly="true"
-	/>
-
-	<!--
-	Suffix at the end of a Cypher file base name to determine if a cypher file
-	found in configCypherFilesDir should be loaded into the database. This is
-	included to make it possible to have other Cypher files within the config
-	directory structure which won't be loaded.
-	 -->
-	<parameter
-	 	name="cypherFileSuffix"
-		displayName="File suffix of Cypher file to include"
-		type="java.lang.String"
-		defaultValue="_w"
-		isReadOnly="true"
-	/>
-
-	<!--
-	Suffix at the end of a Cypher file base name to determine if a cypher file
-	found in configCypherFilesDir should be loaded into the database. This is
-	included to make it possible to have other Cypher files within the config
-	directory structure which won't be loaded.
-	 -->
-	<parameter
-	 	name="graphDatabaseGloablParamFile"
-		displayName="JSON file containing global parameters for graph database"
-		type="java.lang.String"
-		defaultValue="/home/andrew/Dropbox/phd/models/AgroSuccess/global_parameters.json"
-		isReadOnly="true"
-	/>
-
-	<!--
-	Path to study site data inputs for the model. It is assumed that this
-	directory will contain a subdirectory with the name of each study site,
-	with spaces represented with underscores, and any unicode characters
-	replaced with a representative ASCII alternative.
-	 -->
-	<parameter
-		name="geoDataDirRootString"
-		displayName="Geographic Data Root Directory"
-		type="java.lang.String"
-		defaultValue="data/study-sites"
-		isReadOnly="true"
-	/>
-
-	<!--
-	Name of study site used for model run. This parameter is read/write to
-	allow a model sweep to load data for different study sites as needed.
-	For simple cases however, one can simply set a default value below.
-	 -->
-	<parameter
-	 	name="studySite"
-		displayName="Study site for simulation"
-		type="java.lang.String"
-		defaultValue="navarres"
-		isReadOnly="true"
-	/>
-
+				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+						defaultValue="__NULL__"
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String" 
+						defaultValue="data/study-sites" 
+						isReadOnly="true" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+				<parameter name="studySite" displayName="Study Site" type="java.lang.String" 
+						defaultValue="navarres" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+				<parameter name="graphPath" displayName="Path to graph data store" type="java.lang.String" 
+						defaultValue="data/graph/databases" 
+						isReadOnly="true" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
 </parameters>
