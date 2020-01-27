@@ -7,7 +7,7 @@ import org.junit.Test;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class LcsGraphReaderTest {
-  private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db";
+  private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess-test.db";
   private static String correctModelID = "AgroSuccess-dev";
   public static EmbeddedGraphInstance graph;
   

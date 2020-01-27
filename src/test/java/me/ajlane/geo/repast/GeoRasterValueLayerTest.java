@@ -7,7 +7,7 @@ import repast.simphony.valueLayer.GridValueLayer;
 
 public class GeoRasterValueLayerTest {
   
-  File testDataDir = new File("src/test/resources");
+  File testDataDir = new File("data/test");
   
   @Test
   public void shouldBeAbleToLoadDem() {

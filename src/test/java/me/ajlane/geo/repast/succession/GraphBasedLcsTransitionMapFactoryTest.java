@@ -12,7 +12,7 @@ public class GraphBasedLcsTransitionMapFactoryTest {
   private GraphDatabaseService graph;  
   
   // TODO Depends on version of model. Should definitely be improved with proper test database  
-  private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess.db";
+  private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess-test.db";
   private static String correctModelID = "AgroSuccess-dev";
   private static int numTransRulesInGraph = 537;   
 
