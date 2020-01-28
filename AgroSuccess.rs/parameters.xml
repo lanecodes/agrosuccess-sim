@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+					<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
 						defaultValue="__NULL__"
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String" 
-						defaultValue="data/study-sites" 
-						isReadOnly="true" 
-						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 				<parameter name="studySite" displayName="Study Site" type="java.lang.String" 
@@ -24,4 +18,24 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
-</parameters>
+				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String" 
+						defaultValue="data/study-sites" 
+						isReadOnly="true" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+				<parameter name="nTicks" displayName="Simulation length" type="java.lang.Integer" 
+						defaultValue="50" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String" 
+						defaultValue="/AgroSuccess/data/geographic" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+		</parameters>
+
+

@@ -22,6 +22,7 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
+import repast.model.agrosuccess.reporting.LctProportionWriter;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -239,11 +240,22 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
 
-  public void endMethod(Context<Object> context){
+  public void endMethod(Context<Object> context, LctProportionWriter lctWriter){
     System.out.println("End of the simulation");
     for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
       ((GraphDatabaseService) graph).shutdown();
     }
+
+    try {
+      lctWriter.writeFile();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  public void updateLctWriter(LctProportionAggregator aggregator, LctProportionWriter lctWriter) {
+    lctWriter.add(aggregator.getLctProportions());
   }
 
   public void printLctProportion(LctProportionAggregator lctPropAgg) {
@@ -253,14 +265,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   @Override
   public Context<Object> build(Context<Object> context) {
 
-    Parameters params = RunEnvironment.getInstance().getParameters();
+    RunEnvironment modelCore = RunEnvironment.getInstance();
+    Parameters params = modelCore.getParameters();
+    modelCore.endAt(params.getInteger("nTicks"));
 
     // TODO Add parameters required by ModelParamsRepastParser to parameters.xml
     // EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
-
-    // directory containing study site-specific data needed to run simulations
-    //File siteGeoDataDir = new File((String)params.getValue("geoDataDirRootString"),
-    //    (String)params.getValue("studySite"));
 
     File databaseDir = new File((String) params.getValue("graphPath"), "graph.db");
     GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath());
@@ -288,15 +298,22 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
 
-    // call method at the end of the simulation run. See
-    // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
-    ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
-    sche.schedule(stop, this, "endMethod", context);
+    try {
+      // print aggregated land cover proportions to console
+      String siteName = params.getValueAsString("studySite");
+      LctProportionAggregator lctPropAgg = new LctProportionAggregator(landCoverTypeMap);
+      LctProportionWriter lctWriter = new LctProportionWriter(new File("output", siteName + "_lct_props.csv"));
+      ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
+      sche.schedule(printProps, this, "updateLctWriter",  lctPropAgg, lctWriter);
 
-    // print aggregated land cover proportions to console
-    LctProportionAggregator lctPropAgg = new LctProportionAggregator(landCoverTypeMap);
-    ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
-    sche.schedule(printProps, this, "printLctProportion", lctPropAgg);
+      // call method at the end of the simulation run. See
+      // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
+      ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
+      sche.schedule(stop, this, "endMethod", context, lctWriter);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     return context;
   }
