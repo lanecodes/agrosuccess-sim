@@ -21,8 +21,10 @@ import me.ajlane.geo.repast.succession.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
+import repast.model.agrosuccess.reporting.EnumRecordCsvWriter;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
-import repast.model.agrosuccess.reporting.LctProportionWriter;
+import repast.model.agrosuccess.reporting.RecordWriter;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -72,12 +74,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   /**
    * Generate required {@code repast.simphony.valueLayer.GridValueLayer} objects representing
    * landscape variables and make the Repast context aware of them.
-   *   @Override
+   *
+   * @Override
    * @param context
    * @param studySiteData
    */
-  private void initialiseGridValueLayers(Context<Object> context,
-      SiteBoundaryConds studySiteData) {
+  private void initialiseGridValueLayers(Context<Object> context, SiteBoundaryConds studySiteData) {
 
     int[] gridDimensions = studySiteData.getGridDimensions();
 
@@ -97,8 +99,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     } catch (NullPointerException e) {
       System.out.println("WARNING: Could not load succession state from file. "
           + "Defaulting to homogenous secondary succession state.");
-      succession = new GridValueLayer(LscapeLayer.OakRegen.name(), 0, true,
-          new StrictBorders(), gridDimensions, gridOrigin);
+      succession = new GridValueLayer(LscapeLayer.OakRegen.name(), 0, true, new StrictBorders(),
+          gridDimensions, gridOrigin);
       context.addValueLayer(succession);
     }
 
@@ -116,8 +118,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         gridDimensions, gridOrigin);
     context.addValueLayer(oakSeeds);
 
-    deciduousSeeds = new GridValueLayer(LscapeLayer.Deciduous.name(), 0, true,
-        new StrictBorders(), gridDimensions, gridOrigin);
+    deciduousSeeds = new GridValueLayer(LscapeLayer.Deciduous.name(), 0, true, new StrictBorders(),
+        gridDimensions, gridOrigin);
     context.addValueLayer(deciduousSeeds);
 
     // TODO Consider whether these initial conditions layers should be specified more granularly
@@ -149,8 +151,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       SiteBoundaryConds studySiteData, SeedViabilityParams seedViabilityParams,
       SeedDispersalParams seedDispersalParams) {
 
-    double[] gridPixelSize = {(double)studySiteData.getGridPixelSize(),
-        (double)studySiteData.getGridPixelSize()};
+    double[] gridPixelSize =
+        {(double) studySiteData.getGridPixelSize(), (double) studySiteData.getGridPixelSize()};
 
     seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0], gridPixelSize[1],
         seedViabilityParams, seedDispersalParams, context);
@@ -167,7 +169,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   private SoilMoistureCalculator initialiseSoilMoistureCalculator(Context<Object> context,
       SiteBoundaryConds studySiteData) {
-    SoilMoistureCalculator smCalc =  new SoilMoistureCalculator(studySiteData.getFlowDirMap(),
+    SoilMoistureCalculator smCalc = new SoilMoistureCalculator(studySiteData.getFlowDirMap(),
         studySiteData.getMeanAnnualPrecipitation(), context);
     return smCalc;
   }
@@ -186,8 +188,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       SoilMoistureParams soilMoistureParams, GraphDatabaseService graph) {
 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapFactory(graph, modelID,
-        translator);
+    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapFactory(graph, modelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
     LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap);
 
@@ -203,8 +204,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // specify precipitation, grid pixel size
     SiteBoundaryConds sbcs = new SiteBoundaryCondsHardCoded(50, 10,
         new File(testDataDir, "dummy_51x51_lct_oak_pine_burnt.tif"),
-        new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif" ),
-        new File(testDataDir, "dummy_51x51_succession_state_mix.tif" ),
+        new File(testDataDir, "dummy_51x51_soil_type_uniform_A.tif"),
+        new File(testDataDir, "dummy_51x51_succession_state_mix.tif"),
         new File(testDataDir, "dummy_51x51_slope.tif"),
         new File(testDataDir, "dummy_51x51_binary_aspect.tif"),
         new File(testDataDir, "dummy_51x51_flowdir.tif"));
@@ -212,14 +213,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
   /**
-   * <h1>Note on implementation</h1>
-   * The conversion of {@code ConfigurationException} and {@code IOException} instances which
-   * might legitimately arise while reading study site data at the beginning of a simulation is a hack.
-   * This is necessary because it does not seem to be possible to specify that {@code Context.build}
-   * throws these types of checked exceptions. There is no way to recover from such an error, and the
-   * programmer must work out why these files can't be read and correct the problem. Therefore runtime
-   * exceptions are <emph>just about</emph> appropriate. However it would be bettter practice to find a
-   * way to propagate these specific checked exceptions to the top of the stack.
+   * <h1>Note on implementation</h1> The conversion of {@code ConfigurationException} and
+   * {@code IOException} instances which might legitimately arise while reading study site data at
+   * the beginning of a simulation is a hack. This is necessary because it does not seem to be
+   * possible to specify that {@code Context.build} throws these types of checked exceptions. There
+   * is no way to recover from such an error, and the programmer must work out why these files can't
+   * be read and correct the problem. Therefore runtime exceptions are <emph>just about</emph>
+   * appropriate. However it would be bettter practice to find a way to propagate these specific
+   * checked exceptions to the top of the stack.
    *
    * @param params Repast Simphony parameters specified in parameters.xml.
    * @return Object representing the study site specific boundary conditions for the simulation.
@@ -229,7 +230,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     String siteName = params.getValueAsString("studySite");
     SiteBoundaryConds studySiteData;
     try {
-      StudySiteDataContainer siteDataContainer = new StudySiteDataContainer(new File(dataDir, siteName));
+      StudySiteDataContainer siteDataContainer =
+          new StudySiteDataContainer(new File(dataDir, siteName));
       studySiteData = new SiteBoundaryCondsFromData(siteDataContainer);
     } catch (ConfigurationException e) {
       throw new RuntimeException("Could not load study site configuration.");
@@ -240,21 +242,22 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
 
-  public void endMethod(Context<Object> context, LctProportionWriter lctWriter){
+  public void endMethod(Context<Object> context, RecordWriter<Lct, Double> lctWriter) {
     System.out.println("End of the simulation");
     for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
       ((GraphDatabaseService) graph).shutdown();
     }
 
     try {
-      lctWriter.writeFile();
+      lctWriter.flush();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  public void updateLctWriter(LctProportionAggregator aggregator, LctProportionWriter lctWriter) {
+  public void updateLctWriter(LctProportionAggregator aggregator,
+      RecordWriter<Lct, Double> lctWriter) {
     lctWriter.add(aggregator.getLctProportions());
   }
 
@@ -277,7 +280,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // make the context aware of the graph database service
     context.add(graph);
 
-    // SiteBoundaryConds studySiteData = getDummySiteBoundaryConds();  // useful for testing
+    // SiteBoundaryConds studySiteData = getDummySiteBoundaryConds(); // useful for testing
     SiteBoundaryConds studySiteData = getSiteBoundaryCondsFromData(params);
 
     GridBuilderParameters<Object> gridParams = new GridBuilderParameters<>(new StrictBorders(),
@@ -299,12 +302,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
 
     try {
-      // print aggregated land cover proportions to console
       String siteName = params.getValueAsString("studySite");
       LctProportionAggregator lctPropAgg = new LctProportionAggregator(landCoverTypeMap);
-      LctProportionWriter lctWriter = new LctProportionWriter(new File("output", siteName + "_lct_props.csv"));
+      RecordWriter<Lct, Double> lctWriter;
+      lctWriter = new EnumRecordCsvWriter<Lct, Double>(Lct.class,
+          new File("output", siteName + "_lct_props.csv"));
       ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
-      sche.schedule(printProps, this, "updateLctWriter",  lctPropAgg, lctWriter);
+      sche.schedule(printProps, this, "updateLctWriter", lctPropAgg, lctWriter);
 
       // call method at the end of the simulation run. See
       // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
