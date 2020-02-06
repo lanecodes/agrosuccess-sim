@@ -7,15 +7,15 @@
   <description>Agent-based model of land-cover change</description>
   <build>
    	<plugins>
-   	<!-- 
-   	I've had great difficulty getting maven to compile the project as it seems to be 
+   	<!--
+   	I've had great difficulty getting maven to compile the project as it seems to be
    	unable to pull in the Repast Simphony Development Libraries. This appears to be
-   	related to its reluctance to recognise Eclipse classpath containers. This is the 
+   	related to its reluctance to recognise Eclipse classpath containers. This is the
    	same issue as is faced in this SO
    	https://stackoverflow.com/questions/43822745/add-dependencies-to-maven-from-custom-eclipse-version-repast
-   	
-   	compilation plugin currently commented out. The intention is that maven should be 
-   	able to portably install non-Repast dependencies, and Repast itself can be used 
+
+   	compilation plugin currently commented out. The intention is that maven should be
+   	able to portably install non-Repast dependencies, and Repast itself can be used
    	for packaging , as suggested in this SorceForge post:
    	https://sourceforge.net/p/repast/mailman/message/35615878/
    	-->
@@ -47,7 +47,7 @@
 	</plugin>
 	</plugins>
   </build>
-  
+
   <dependencies>
   	<dependency>
   	<!-- for applications using neo4j server -->
@@ -55,28 +55,42 @@
   		<artifactId>neo4j-java-driver</artifactId>
   		<version>1.4.4</version>
   	</dependency>
-  	
+
   	<dependency>
   	<!-- for embedded applications -->
   		<groupId>org.neo4j</groupId>
   		<artifactId>neo4j</artifactId>
   		<version>3.4.4</version>
   	</dependency>
-  	
+
   	<dependency>
   	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
 	<groupId>org.apache.commons</groupId>
 	<artifactId>commons-math3</artifactId>
 	<version>3.6.1</version>
 	</dependency>
-	
+
 	<!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
 	<dependency>
 	    <groupId>commons-configuration</groupId>
 	    <artifactId>commons-configuration</artifactId>
 	    <version>1.10</version>
 	</dependency>
-	
+
+	<!-- https://mvnrepository.com/artifact/commons-collections/commons-collections -->
+	<dependency>
+	    <groupId>commons-collections</groupId>
+	    <artifactId>commons-collections</artifactId>
+	    <version>3.2.2</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+	<dependency>
+	    <groupId>com.opencsv</groupId>
+	    <artifactId>opencsv</artifactId>
+	    <version>4.6</version>
+	</dependency>
+
 	<dependency>
 	<!-- https://mvnrepository.com/artifact/junit/junit -->
 	    <groupId>junit</groupId>
@@ -84,6 +98,6 @@
 	    <version>4.12</version>
 	    <scope>test</scope>
 	</dependency>
-  	
+
   </dependencies>
 </project>

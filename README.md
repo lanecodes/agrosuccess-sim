@@ -1,5 +1,17 @@
 # AgroSuccess
 
+Simulation model used for exploring influence of human decision making on
+ecological change.
+
+
+## Implemented study sites
+
+- algendar
+- atxuri
+- charco_da_candieira
+- monte_areo_mire
+- navarres
+- san_rafael
 
 ## Documentation
 User documentation should be written in `/src/site/markdown` and built by
@@ -8,6 +20,7 @@ User documentation should be written in `/src/site/markdown` and built by
 ```bash
 mvn site
 ```
+
 Note that this requires the `maven-site-plugin` plugin specified in `pom.xml`.
 This will generate a user documentation site in `target/site/`.
 
@@ -209,5 +222,8 @@ To help with this, see the embedded Neo4j database [tutorial](https://neo4j.com/
 - Update `model_description.txt` so that it directs users to look in
   `target/site` OR investigate how to configure `mvn site` to output generated
   site files in `docs`.
+- Investigate whether `AgroSuccessEnvrIntegrationTest` can be refactored to use
+  test data instead of study site data. This would enable tests to run much
+  faster.
 
 [Dos To Unix]: https://www.emacswiki.org/emacs/DosToUnix
