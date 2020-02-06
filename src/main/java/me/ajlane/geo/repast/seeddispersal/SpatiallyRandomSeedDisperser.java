@@ -1,14 +1,14 @@
 /**
- * 
+ *
  */
 package me.ajlane.geo.repast.seeddispersal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import me.ajlane.geo.GridUtils;
 import me.ajlane.random.ArrayUtils;
 import repast.model.agrosuccess.LscapeLayer;
@@ -19,12 +19,14 @@ import repast.simphony.valueLayer.GridValueLayer;
 /**
  * Number of <strong>new</strong> seeds given by N_{\sigma} - No cells currently occupied by seeds
  * of this species.
- * 
- * 
+ *
+ *
  * @author Andrew Lane
  *
  */
 public class SpatiallyRandomSeedDisperser extends SeedDisperser {
+
+  final static Logger logger = Logger.getLogger(SpatiallyRandomSeedDisperser.class);
 
   Map<String, GridValueLayer> seedLayersMap = new HashMap<String, GridValueLayer>();
 
@@ -75,7 +77,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
   /**
    * Use the seedSourceMap (landcover types -> seed sources) and landCoverType GridValuyeLayer to
    * calculate the number of pine, oak and deciduous seed sources.
-   * 
+   *
    * @param speciesName Species (pine, oak, deciduous) whose seed sources we want to count.
    * @return Number of seed source pixels for given species
    */
@@ -88,7 +90,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
         }
       }
     }
-    System.out.println(speciesName + " seed source count: " + seedSourceCount);
+    logger.debug(speciesName + " seed source count: " + seedSourceCount);
 
     return seedSourceCount;
   }
@@ -106,12 +108,12 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
    * where $N_{\sigma}$ is the number of seed sources for species $\sigma$ and $N_{tot}$ is the
    * total number of model cells.
    * </p>
-   * 
+   *
    * @param numSeedSources Number of seed sources in grid
    * @return Typical distance between a seed source of {@code speciesName}, and a cell which is not
    *         a source of that species, assuming seed sources are evenly and uniformly distributed in
    *         the model grid.
-   * 
+   *
    */
   private double typicalDistanceToSeedSource(int numSeedSources) {
     return 0.5 * numSeedSources * cellSize / Math.sqrt(n);
@@ -141,15 +143,14 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
    * Factor in the number of seed sources, the typical distance between them assuming they are
    * uniformly scattered in space, and the likely distribution distance on that basis using the
    * species-appropriate distribution kernel.
-   * 
+   *
    * @param speciesName
    * @return the number of cells we expect to have seeds of speciesName in them.
    */
   int getExpectedNumCellsWithSeeds(String speciesName) {
     double prob = probCellHasSeed(speciesName);
-    System.out.println("prob of cell having " + speciesName + " seed:" + prob);
-    System.out
-        .println("expected number of " + speciesName + " seeds: " + (int) Math.round(n * prob));
+    logger.debug("prob of cell having " + speciesName + " seed:" + prob);
+    logger.debug("expected number of " + speciesName + " seeds: " + (int) Math.round(n * prob));
     return (int) Math.round(n * prob);
 
   }
@@ -157,11 +158,11 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
   /**
    * Calculate the number of seeds to add to the model depending on the difference between the
    * expected number of cells with seeds assuming a uniform spread of seed-containing cells.
-   * 
+   *
    * Implementation note: the current number of seed-containing cells for the given species is
    * calculated using the SeedViabilityMonitor rather than the GridValueLayer as it is presumed
    * faster to get the length of an array than to iterate through all the elements of the array.
-   * 
+   *
    * @param speciesName Name of species for which we want to know how many cells to add seeds to
    * @return The number of cells to add speciesName seeds to. If there are already more than the
    *         expected number of seeds in the model, don't add any more seeds (return 0)
@@ -191,7 +192,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 
   /**
    * Get a list of the indices of grid cells <emph>not</emph> occupied by seeds of speciesName.
-   * 
+   *
    * @param speciesName
    * @return
    */
@@ -209,7 +210,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
 
   /**
    * For given speciesName, add seed occupying cells to GridValueLayer and SeedViabilityMonitor
-   * 
+   *
    * @param speciesName
    */
   void addSeeds(String speciesName) {
@@ -245,7 +246,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
   /**
    * Step time forwards one step, remove dead seeds and add new ones according to the spatially
    * random seed dispersal protocol.
-   * 
+   *
    * @see me.ajlane.geo.repast.seeddispersal.SeedDisperser#updateSeedLayers()
    */
   @Override

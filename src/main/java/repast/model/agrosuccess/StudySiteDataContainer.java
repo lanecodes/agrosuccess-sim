@@ -20,6 +20,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.log4j.Logger;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
 import repast.simphony.space.Dimensions;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -33,6 +34,8 @@ import me.ajlane.geo.repast.wind.WindSpeed;
  *
  */
 public class StudySiteDataContainer {
+
+  final static Logger logger = Logger.getLogger(StudySiteDataContainer.class);
 
   File siteDataDir;
   private HierarchicalConfiguration siteConfig;
@@ -58,7 +61,7 @@ public class StudySiteDataContainer {
     try {
       this.siteConfig = new XMLConfiguration(configFile);
     } catch (ConfigurationException e) {
-      System.out.println("Check XML configuration " + configFile.toString());
+      logger.error("Check XML configuration " + configFile.toString(), e);
       throw e;
     }
   }
@@ -190,11 +193,11 @@ public class StudySiteDataContainer {
       Path source = fileSystem.getPath(lctFileName);
       Files.copy(source, outputLocation.toPath());
     } catch (NoSuchFileException e) {
-      System.out.println("Could not find init-landcover file in zip file. " + "Check map number "
-          + mapNum + " is included in archive " + zipFile.toString() + ".");
+      logger.error("Could not find init-landcover file in zip file. " + "Check map number "
+          + mapNum + " is included in archive " + zipFile.toString() + ".", e);
       throw e;
     } catch (FileSystemNotFoundException e) {
-      System.out.println("Could not find zip file " + zipFile.toString() + ".");
+      logger.error("Could not find zip file " + zipFile.toString() + ".", e);
       throw e;
     }
     return outputLocation;

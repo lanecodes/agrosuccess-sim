@@ -5,6 +5,7 @@ import java.io.File;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.junit.After;
@@ -28,6 +29,8 @@ import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToArray;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class AgroSuccessEnvrIntegrationTest {
+
+  final static Logger logger = Logger.getLogger(AgroSuccessEnvrIntegrationTest.class);
 
   public Context<Object> context;
   public Schedule schedule;
@@ -55,11 +58,11 @@ public class AgroSuccessEnvrIntegrationTest {
     context = builder.build(context);
 
     // trigger the Heatbug's @ScheduledMethods to be added to the scheduler
-    System.out.println("Scheduling methods...");
+    logger.debug("Scheduling methods...");
     for (Object agent: context.getObjects(Object.class)) {
-      System.out.println(schedule.schedule(agent));
+      logger.debug(schedule.schedule(agent));
     }
-    System.out.println("Finished scheduling methods");
+    logger.debug("Finished scheduling methods");
   }
 
   @After

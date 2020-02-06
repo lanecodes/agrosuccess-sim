@@ -5,9 +5,12 @@ import org.neo4j.graphdb.Transaction;
 import static java.lang.Math.toIntExact;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 public class LcsGraphReader {
+
+  final static Logger logger = Logger.getLogger(LcsGraphReader.class);
 
   /**
    * @param modelID The identifier to be used to identify the nodes belonging to the desired model
@@ -32,7 +35,7 @@ public class LcsGraphReader {
 
   /**
    * Convert data from database stream into a native data structure: the AliasedLcsTransitionMap
-   * 
+   *
    * @param res Neo4j result stream object. This needs to be consumed before completing the database
    *        transaction. It is expected that the calling method handles this, here we only process
    *        the incoming stream.
@@ -61,7 +64,7 @@ public class LcsGraphReader {
 
 
   /**
-   * 
+   *
    * @param graph Graph database where land cover state model is stored
    * @param modelID The identifier to be used to identify the nodes belonging to the desired model
    *        stored within the graph
@@ -82,14 +85,14 @@ public class LcsGraphReader {
       tx.success();
 
       if (transMap.size() == 0) {
-        System.out.println("WARNING: 0 land cover transition rules found in graph database.");
+        logger.warn("0 land cover transition rules found in graph database.");
       }
       return transMap;
     }
   }
 
   /**
-   * 
+   *
    * @param graph Graph database where land cover state model is stored
    * @return Object mapping combinations of environmental conditions to outcome trajectories
    */

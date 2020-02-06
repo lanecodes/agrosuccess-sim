@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
+import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +24,8 @@ import repast.simphony.valueLayer.GridValueLayer;
 
 public class SoilMoistureCalculatorTest {
 
+    final static Logger logger = Logger.getLogger(SoilMoistureCalculatorTest.class);
+
 	private static Context<Object> context = new DefaultContext<Object>();
 	private static GridValueLayer flowDirectionGrid;
 	private static GridValueLayer soilMoistureLayer;
@@ -31,10 +34,11 @@ public class SoilMoistureCalculatorTest {
 	static void printGridValueLayer(GridValueLayer gvl){
 		for (int y=(int)gvl.getDimensions().getHeight()-1; y>=0; y--) {
 			for (int x=0; x<gvl.getDimensions().getWidth(); x++) {
-				//System.out.format("x: %d, y: %d, value: %.0f\n", x, y, gvl.get(x, y));
-				System.out.format("%.2f\t", (double)Math.round(gvl.get(x, y)*100)/100);
+				// TODO: work out how to format this to make the log more readable
+				logger.debug(String.format("%.2f\t", (double)Math.round(gvl.get(x, y)*100)/100));
+				// System.out.format("%.2f\t", (double)Math.round(gvl.get(x, y)*100)/100);
 			}
-			System.out.print("\n");
+			logger.debug("\n");
 		}
 	}
 
@@ -52,7 +56,7 @@ public class SoilMoistureCalculatorTest {
 				"data/test/hydro_correct_dummy.tif",
 				"flow direction")).getValueLayer();
 
-		System.out.println("flowDirectionGrid:");
+		logger.debug("flowDirectionGrid:");
 		printGridValueLayer(flowDirectionGrid);
 	}
 
@@ -82,7 +86,7 @@ public class SoilMoistureCalculatorTest {
 				{-48.0238 + 50, -48.0238 + 50, -48.0238 + 50}
 		};
 
-		System.out.println("soilMoistureLayer:");
+		logger.debug("soilMoistureLayer:");
 		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.SoilMoisture.name()));
 
 		for (int i=0; i<soilMoistureLayer.getDimensions().getHeight(); i++) {

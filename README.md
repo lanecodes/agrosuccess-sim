@@ -8,8 +8,8 @@ ecological change.
 
 - algendar
 - atxuri
-- charco_da_candieira
-- monte_areo_mire
+- charco\_da\_candieira
+- monte\_areo\_mire
 - navarres
 - san_rafael
 
@@ -169,6 +169,27 @@ Footnotes
 
 ### Model parameters
 ???
+
+### Logging
+
+#### Using Repast Simphony GUI
+
+Change `log4j` settings in `MessageCenter.log4j.properties`, e.g. to send
+debug messages to the console. Logs from custom AgroSuccess code are sent
+to the file `logs/agrosuccess.log`, whereas logs from Repast Simphony code
+are sent to `logs/debug.log`.
+
+#### Unit tests
+
+Logs for unit tests are configured in `src/test/resources/log4j.properties`.
+These logs are sent to the file `logs/tests.log`.
+
+#### Using Repast Simphony headless
+
+At time of writing on 2020-02-06, this is looking ahead. However it is
+expected that when run headless, logs will be configured in
+`src/main/resources/log4j.properties`, and will be sent to the file
+`logs/agrosuccess.log`.
 
 ## loadcypher
 

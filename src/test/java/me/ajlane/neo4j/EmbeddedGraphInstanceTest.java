@@ -56,7 +56,6 @@ public class EmbeddedGraphInstanceTest {
 		try (Transaction tx = graph.beginTx()) {
 			Result result = graph.execute(
 					"MATCH (n:LandCoverType) RETURN count(n) AS num_lct");
-			//System.out.println(result.resultAsString());
 			numLCT = toIntExact((long)result.next().get("num_lct"));
 			tx.success();
 		}

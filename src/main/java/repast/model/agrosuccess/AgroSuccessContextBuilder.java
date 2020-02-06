@@ -3,6 +3,7 @@ package repast.model.agrosuccess;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
@@ -48,6 +49,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @see repast.simphony.dataLoader.ContextBuilder#build(repast.simphony.context.Context)
    */
+
+  final static Logger logger = Logger.getLogger(AgroSuccessContextBuilder.class);
 
   // pseudo-agents modify GridValueLayer-s
   SoilMoistureCalculator soilMoistureCalculator;
@@ -98,8 +101,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       succession = studySiteData.getOakRegenMap();
       context.addValueLayer(succession);
     } catch (NullPointerException e) {
-      System.out.println("WARNING: Could not load succession state from file. "
-          + "Defaulting to homogenous secondary succession state.");
+      logger.warn("Could not load succession state from file. "
+                  + "Defaulting to homogenous secondary succession state.");
       succession = new GridValueLayer(LscapeLayer.OakRegen.name(), 0, true, new StrictBorders(),
           gridDimensions, gridOrigin);
       context.addValueLayer(succession);
@@ -244,7 +247,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
 
   public void endMethod(Context<Object> context, RecordWriter<Lct, Double> lctWriter) {
-    System.out.println("End of the simulation");
+    logger.info("End of the simulation");
     for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
       ((GraphDatabaseService) graph).shutdown();
     }
@@ -263,7 +266,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
   public void printLctProportion(LctProportionAggregator lctPropAgg) {
-    System.out.println(lctPropAgg.getLctProportions());
+    logger.debug(lctPropAgg.getLctProportions());
   }
 
   @Override
