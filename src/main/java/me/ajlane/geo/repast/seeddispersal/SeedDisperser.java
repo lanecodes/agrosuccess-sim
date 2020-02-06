@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package me.ajlane.geo.repast.seeddispersal;
 
@@ -8,73 +8,75 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import org.apache.log4j.Logger;
 import repast.simphony.valueLayer.GridValueLayer;
 
 /**
  * Abstract class which sets the scene for classes which distribute seeds in
  * Repast GridValueLayer-s which store the presence of pine, oak, and deciduous
  * seeds.
- * 
+ *
  * @author andrew
  *
  */
 public abstract class SeedDisperser {
 
+    final static Logger logger = Logger.getLogger(SeedDisperser.class);
+
 	GridValueLayer landCoverType;
-	
+
 	// track seeds in model
 	GridValueLayer pineSeeds, oakSeeds, deciduousSeeds;
 	SeedViabilityMonitor svm;
-	
+
 	// track model time step
 	int time;
-	
+
 	// maps seed source names (pine, oak, deciduous) to set of IDs
 	Map<String,Set<Integer>> seedSourceMap = getSeedSourceMap();
-	
+
 	int height; // number of cells vertically
 	int width; // number of cells horizontally
 	int n; // number of cells
 	double cellSize; // extent of raster grid cells in grid units, e.g. meters
-	
+
 	double minProb; // minimum probability for a cell to contain a species' seeds
 	// objects which generate probability of seed of each dispersal type (acorn vs wind
 	// dispersed being found in a cell.
-	AcornPresenceProbGenerator acornPresenceProbGenerator;	
+	AcornPresenceProbGenerator acornPresenceProbGenerator;
 	WindSeedPresenceProbGenerator windSeedPresenceProbGenerator;
 
 	void checkValueLayersAccessible() {
 		try {
 			pineSeeds.getName();
 		} catch (NullPointerException e) {
-			System.out.println(
-					"SeedDisperser could not find 'Pine' layer in context");
+			logger.error("SeedDisperser could not find 'Pine' layer in context", e);
+			throw e;
 		}
 
 		try {
 			oakSeeds.getName();
 		} catch (NullPointerException e) {
-			System.out.println(
-					"SeedDisperser could not find 'Oak' layer in context");
+		  logger.error("SeedDisperser could not find 'Oak' layer in context", e);
+		  throw e;
 		}
 
 		try {
 			deciduousSeeds.getName();
 		} catch (NullPointerException e) {
-			System.out.println(
-					"SeedDisperser could not find 'Deciduous' layer in context");
+			logger.error("SeedDisperser could not find 'Deciduous' layer in context", e);
+			throw e;
 		}
 
 		try {
 			landCoverType.getName();
 		} catch (NullPointerException e) {
-			System.out.println(
-					"SeedDisperser could not find 'Lct' layer in context");
+			logger.error("SeedDisperser could not find 'Lct' layer in context", e);
+			throw e;
 		}
 
 	}
-	
+
 	/**
 	 * @param ar
 	 * 		Array whose elements will be added to the set
@@ -82,13 +84,13 @@ public abstract class SeedDisperser {
 	 * 		Set whose elements were in ar
 	 */
 	Set<Integer> intArrayToSet(int[] ar) {
-		Set<Integer> set = new HashSet<Integer>();		
+		Set<Integer> set = new HashSet<Integer>();
 		for (int i=0; i<ar.length; i++) {
 			set.add(ar[i]);
 		}
 		return set;
 	}
-	
+
 	/**
 	 * landCoverType
 	 * 		0 = Water/ Quarry
@@ -100,7 +102,7 @@ public abstract class SeedDisperser {
 	 *		6 = Pine forest
 	 *		7 = Transition forest
 	 *		8 = Deciduous forest
-	 *		9 = Oak forest	  
+	 *		9 = Oak forest
 	 */
 	Map<String,Set<Integer>> getSeedSourceMap() {
 		Map<String,Set<Integer>> map = new HashMap<String,Set<Integer>>();
@@ -132,10 +134,10 @@ public abstract class SeedDisperser {
 							+ "GridValueLayer-s don't match.");
 		}
 	}
-	
+
 	/**
 	 * @param x
-	 * 		Length in x dimension 		
+	 * 		Length in x dimension
 	 * @param y
 	 * 		Length in y dimension
 	 * @return

@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 3 - Implement logging - 2020-02-06
+
+Replaces calls to `System.out.println` and `System.out.print` with calls to
+proper logging functions using `log4j`. This massively cleans up the console
+outputs making debugging simpler.
+
+#### Changed
+
+- A systematic find and replace to add `log4j` loggers to classes which need to
+  log to console, remove calls to `System.out.*` and replace them with logging
+  calls.
+- Modified `MessageCenter.log4j.properties` so log messages raised in my own code
+  are sent to the console and the logging file `logs/agrosuccess.log`
+
+#### Added
+
+- `src/test/resources/log4j.properties` file which controls logging config
+  during unit tests. These logs are sent to the file `logs/tests.log`.
+- `src/main/resources/log4j.properties` file which controls logging config
+  during runs of model without Repast Simphony GUI. When running with the
+  RI GUI, the logger config from the file `MessageCenter.log4j.properties`
+  are used instead (see 'Changed').
+
 ### 2 - Run environmental model with study site data - 2020-02-06
 
 AgroSuccess environmental model now runs with full resolution data for my

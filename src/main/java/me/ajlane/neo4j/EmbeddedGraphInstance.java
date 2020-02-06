@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package me.ajlane.neo4j;
 
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -27,28 +28,30 @@ import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.StoreLockException;
 
 /**
- * 
+ *
  * In addition to providing all the functionality guaranteed by the GraphDatabaseService interface,
  * this class also provides methods to use a GraphLoader object to add data to an embedded
- * org.neo4j.graphdb.GraphDatabaseService. NOTE this violates the single responsibility principle. A possible 
- * future improvement could be to refactor into two classes: 
- * 
+ * org.neo4j.graphdb.GraphDatabaseService. NOTE this violates the single responsibility principle. A possible
+ * future improvement could be to refactor into two classes:
+ *
  * <ol>
  * <li>EmbeddedGraphInstance which initialises
  * an embedded graph database using data from a specific location on disk, choosing appropriate
  * parameters and establishing a shutdown hook</li>
- * <li>ExternalCypherLoader which, given a GraphDatabaseService, loads Cypher from files on disk.</li> 
+ * <li>ExternalCypherLoader which, given a GraphDatabaseService, loads Cypher from files on disk.</li>
  * </ol>
- * 
+ *
  * This might have been implemented more elegantly by inheriting from a concrete class provided by
  * the Neo4j API, however no such object exits. In order to make use of the provided
  * GraphDatabaseFactory, I have satisfied the interface requirements by passing method calls onto a
  * GraphDatabaseService object held within each instance of this class.
- * 
+ *
  * @author Andrew Lane
  *
  */
 public class EmbeddedGraphInstance implements GraphDatabaseService {
+
+  final static Logger logger = Logger.getLogger(EmbeddedGraphInstance.class);
 
   private GraphDatabaseService graphDb;
 
@@ -80,8 +83,8 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
 
       registerShutdownHook(graphDb);
     } catch (StoreLockException e) {
-      System.out.println("Couldn't lock database at " + databaseDirectory + "\n"
-          + "Check it isn't being accessed by another process.");
+      logger.error("Couldn't lock database at " + databaseDirectory + "\n"
+                   + "Check it isn't being accessed by another process.", e);
       throw e;
     }
   }
@@ -121,7 +124,6 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
     GraphLoaderType graphLoader = factory.create(cypherRoot, fnameSuffix, globalParamFile);
 
     Boolean moreQueries = true;
-    // int queryNo = 0;
 
     try (Transaction tx = graphDb.beginTx()) {
 
@@ -129,18 +131,15 @@ public class EmbeddedGraphInstance implements GraphDatabaseService {
         String nextQuery = graphLoader.getNextQuery();
 
         if (nextQuery == null) {
-          // System.out.println("Loaded " + queryNo + " Cypher queries");
           moreQueries = false;
         } else {
-          // System.out.println("Loading query\n:" + nextQuery);
           Result res = graphDb.execute(nextQuery);
           res.close();
-          // queryNo++;
         }
       }
       tx.success();
     }
-    System.out.println("Finished loading Cypher from " + cypherRoot);
+    logger.debug("Finished loading Cypher from " + cypherRoot);
   }
 
   @Override

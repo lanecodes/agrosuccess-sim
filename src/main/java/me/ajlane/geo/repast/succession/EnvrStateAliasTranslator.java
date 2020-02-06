@@ -1,20 +1,23 @@
 /**
- * 
+ *
  */
 package me.ajlane.geo.repast.succession;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.collections15.BidiMap;
+import org.apache.log4j.Logger;
 
 /**
  * Translates between the numerical values used internally in a simulation to specify environmental
  * state and the human readable descriptions of those states specified in the database.
- * 
+ *
  * @author Andrew Lane
  *
  */
 public abstract class EnvrStateAliasTranslator {
+
+  final static Logger logger = Logger.getLogger(EnvrStateAliasTranslator.class);
 
   // BidiMap has format <alias, numericalID>
   protected Map<String, BidiMap<String, Integer>> envStateMap =
@@ -34,7 +37,7 @@ public abstract class EnvrStateAliasTranslator {
     try {
       return (String) envStateMap.get(envStateName).inverseBidiMap().get(value);
     } catch (NullPointerException e) {
-      System.out.println(unmappableErrorMessage(envStateName, value));
+      logger.error(unmappableErrorMessage(envStateName, value), e);
       throw e;
     }
   }
@@ -44,9 +47,9 @@ public abstract class EnvrStateAliasTranslator {
     try {
       return (int) envStateMap.get(envStateName).get(alias);
     } catch (NullPointerException e) {
-      System.out.println(unmappableErrorMessage(envStateName, alias));
+      logger.error(unmappableErrorMessage(envStateName, alias), e);
       throw e;
-    }    
+    }
   }
-  
+
 }

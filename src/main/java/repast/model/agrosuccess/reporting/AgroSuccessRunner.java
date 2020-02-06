@@ -1,5 +1,6 @@
 package repast.model.agrosuccess.reporting;
 
+import org.apache.log4j.Logger;
 import repast.model.agrosuccess.AgroSuccessContextBuilder;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -8,6 +9,8 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.Schedule;
 
 public class AgroSuccessRunner {
+
+  final static Logger logger = Logger.getLogger(AgroSuccessRunner.class);
 
   public static Context<Object> context;
   public static Schedule schedule;
@@ -22,11 +25,11 @@ public class AgroSuccessRunner {
     context = builder.build(context);
 
     // trigger the Heatbug's @ScheduledMethods to be added to the scheduler
-    System.out.println("Scheduling methods...");
+    logger.debug("Scheduling methods...");
     for (Object agent: context.getObjects(Object.class)) {
-      System.out.println(schedule.schedule(agent));
+      logger.debug(schedule.schedule(agent));
     }
-    System.out.println("Finished scheduling methods");
+    logger.debug("Finished scheduling methods");
   }
 
   public static void main(String[] args) {
