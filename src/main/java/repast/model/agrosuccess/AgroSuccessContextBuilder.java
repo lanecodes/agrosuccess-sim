@@ -25,6 +25,7 @@ import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.reporting.EnumRecordCsvWriter;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
 import repast.model.agrosuccess.reporting.RecordWriter;
+import repast.model.agrosuccess.reporting.SimulationID;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -271,6 +272,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     RunEnvironment modelCore = RunEnvironment.getInstance();
     Parameters params = modelCore.getParameters();
     modelCore.endAt(params.getInteger("nTicks"));
+    SimulationID simulationID = new SimulationID(params.getString("studySite"));
 
     // TODO Add parameters required by ModelParamsRepastParser to parameters.xml
     // EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
@@ -302,11 +304,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
 
     try {
-      String siteName = params.getValueAsString("studySite");
       LctProportionAggregator lctPropAgg = new LctProportionAggregator(landCoverTypeMap);
       RecordWriter<Lct, Double> lctWriter;
       lctWriter = new EnumRecordCsvWriter<Lct, Double>(Lct.class,
-          new File("output", siteName + "_lct_props.csv"));
+          new File("output", simulationID.toString() + "_lct-props.csv"));
       ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
       sche.schedule(printProps, this, "updateLctWriter", lctPropAgg, lctWriter);
 
