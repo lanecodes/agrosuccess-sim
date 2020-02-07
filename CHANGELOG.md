@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 4 - Fire spread model - 2020-02-??
+
+#### Added
+
+- `LcfReplicate` enumerator storing possible values for land-cover
+  flammability replicates per Millington 2009 Table 6.
+- `LcfMapUtil` for generating land-cover flammability data for land cover
+  types in AgroSuccess.
+
 ### 3 - Implement logging - 2020-02-06
 
 Replaces calls to `System.out.println` and `System.out.print` with calls to
