@@ -22,11 +22,22 @@ public class RepastGridUtils extends GridUtils {
     return answer;
   }
 
+  private static boolean allColumnsHaveSameLength(double[][] doubleArray) {
+    int nRows = doubleArray.length;
+    boolean answer = true;
+    for (int i = 1; i < nRows; i++) {
+      if (doubleArray[i].length != doubleArray[0].length) {
+        answer = false;
+      }
+    }
+    return answer;
+  }
+
   /**
    * @param intArray a 2D array in which all rows are assumed to have the same number of elements.
    * @return Equivalent repast GridValueLayer
    */
-  public static GridValueLayer arrayToGridValueLayer(String valueLayerName, int[][] intArray) {
+  public static IGridValueLayer arrayToGridValueLayer(String valueLayerName, int[][] intArray) {
     if (!allColumnsHaveSameLength(intArray)) {
       throw new IllegalArgumentException();
     }
@@ -41,7 +52,29 @@ public class RepastGridUtils extends GridUtils {
     }
     return gvl;
   }
-  
+
+  /**
+   * @param valueLayerName Name of the returned {@code GridValueLayer}
+   * @param doubleArray A 2D array in which all rows are assumed to have the same number of elements.
+   *
+   * @return Equivalent repast GridValueLayer.
+   */
+  public static IGridValueLayer arrayToGridValueLayer(String valueLayerName, double[][] doubleArray) {
+    if (!allColumnsHaveSameLength(doubleArray)) {
+      throw new IllegalArgumentException("All rows of input array must have the same length.");
+    }
+    int nRows = doubleArray.length;
+    int nCols = doubleArray[0].length;
+    GridValueLayer gvl = new GridValueLayer(valueLayerName, true, nRows, nCols);
+    for (int i = 0; i < nRows; i++) {
+      for (int j = 0; j < nCols; j++) {
+        // By convention, Java array indexed top to bottom, Repast GridValueLayer bottom to top
+        gvl.set(doubleArray[i][j], j, (nRows - 1) - i);
+      }
+    }
+    return gvl;
+  }
+
   public static int[][] gridValueLayerToArray(IGridValueLayer gvl) {
     int nRows = (int) gvl.getDimensions().getHeight();
     int nCols = (int) gvl.getDimensions().getWidth();
@@ -51,7 +84,7 @@ public class RepastGridUtils extends GridUtils {
         // By convention, Java array indexed top to bottom, Repast GridValueLayer bottom to top
         array[i][j] = (int) gvl.get(j, (nRows-1)-i);
       }
-    }    
+    }
     return array;
   }
 
@@ -104,45 +137,45 @@ public class RepastGridUtils extends GridUtils {
     }
     return true;
   }
-  
+
   /**
-   * Compare two repast GridValueLayer-s, return a list of GridCell objects representing the cells 
-   * where the value layers differ. 
-   * 
+   * Compare two repast GridValueLayer-s, return a list of GridCell objects representing the cells
+   * where the value layers differ.
+   *
    * @param gvl1 first grid value layer
    * @param gvl2 second grid value layer. Must have the same dimensions as {@code gvl1}
-   * @param delta maximum (absolute) value by which the value at a given coordinate can differ 
-   *    between the two value layers while still being considered equal. 
+   * @param delta maximum (absolute) value by which the value at a given coordinate can differ
+   *    between the two value layers while still being considered equal.
    * @return list of grid cells in which the grid value layers differ.
    */
-  public static List<GridCell> getDifferingCells(IGridValueLayer gvl1, IGridValueLayer gvl2, 
+  public static List<GridCell> getDifferingCells(IGridValueLayer gvl1, IGridValueLayer gvl2,
       double delta) {
     Dimensions dims = gvl1.getDimensions();
     if (!dims.equals(gvl2.getDimensions())) {
       throw new IndexOutOfBoundsException("Value layers have different dimensions, so values "
           + "cannot be directly compared.");
-    }       
+    }
     List<GridCell> diffCells = new ArrayList<>();
-    
+
     int w = (int) dims.getWidth();
     int h = (int) dims.getHeight();
     for (int x=0; x<w; x++) {
       for (int y=0; y<h; y++) {
         double diff = gvl1.get(x, y) - gvl2.get(x, y);
-        if (Math.abs(diff) > delta) { 
+        if (Math.abs(diff) > delta) {
           diffCells.add(new GridCell(diff, x, y));
         }
-      }      
+      }
     }
-    
-    if (diffCells.size() > 0) { return Collections.unmodifiableList(diffCells); } 
+
+    if (diffCells.size() > 0) { return Collections.unmodifiableList(diffCells); }
     else { return Collections.emptyList(); }
   }
-  
+
   /**
-   * Generates an integer hash value useful for determining whether two Repast GridValueLayer-s 
+   * Generates an integer hash value useful for determining whether two Repast GridValueLayer-s
    * have the same values.
-   * 
+   *
    * @param gvl
    * @return Hash value
    */
@@ -155,14 +188,14 @@ public class RepastGridUtils extends GridUtils {
     for (int x=0; x<w; x++) {
       for (int y=0; y<h; y++) {
         runningTotal += gvl.get(x, y)/ constDivisor;
-      }    
+      }
     }
-    return (new Double(runningTotal)).hashCode();    
+    return (new Double(runningTotal)).hashCode();
   }
-  
+
   /**
    * Get a simple total of all values in a GridValueLayer.
-   * 
+   *
    * @param gvl
    * @return
    */
@@ -173,7 +206,7 @@ public class RepastGridUtils extends GridUtils {
     for (int x=0; x<w; x++) {
       for (int y=0; y<h; y++) {
         runningTotal += gvl.get(x, y);
-      }    
+      }
     }
     return runningTotal;
   }

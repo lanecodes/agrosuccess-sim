@@ -3,8 +3,11 @@ package me.ajlane.geo.repast;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import repast.simphony.valueLayer.GridValueLayer;
+import repast.simphony.valueLayer.IGridValueLayer;
 
 public class RepastGridUtilsTest {
+
+  private static final double TOLERANCE = 0.00001;
 
   @Test
   public void arrayToGridValueLayerShouldThrowExceptionIfArrayIsRagged() {
@@ -18,20 +21,35 @@ public class RepastGridUtilsTest {
   }
 
   @Test
-  public void arrayToGridValueLayerShouldMakeCorrectGridValueLayer() {
+  public void intArrayToGridValueLayerShouldMakeCorrectGridValueLayer() {
     int[][] array = {{1, 2}, {3, 4}};
 
-    GridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
+    IGridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
     assertEquals(3, (int) gvl.get(0, 0));
     assertEquals(4, (int) gvl.get(1, 0));
     assertEquals(1, (int) gvl.get(0, 1));
     assertEquals(2, (int) gvl.get(1, 1));
   }
 
+  /**
+   * Check that {@code RepastGridUtils.arrayToGridValueLayer} correctly dispatches
+   * on the type of the supplied double array.
+   */
+  @Test
+  public void doubleArrayToGridValueLayerShouldMakeCorrectGridValueLayer() {
+    double[][] array = {{1.0, 2.0}, {3.0, 4.0}};
+
+    IGridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
+    assertEquals(3, gvl.get(0, 0), TOLERANCE);
+    assertEquals(4, gvl.get(1, 0), TOLERANCE);
+    assertEquals(1, gvl.get(0, 1), TOLERANCE);
+    assertEquals(2, gvl.get(1, 1), TOLERANCE);
+  }
+
   @Test
   public void testGridValueLayerToString() {
     int[][] array = {{1, 2}, {3, 4}};
-    GridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
+    IGridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
     assertEquals("GridValueLayer test layer:\n1.0  2.0\n3.0  4.0\n",
         RepastGridUtils.gridValueLayerToString(gvl));
   }
@@ -59,7 +77,7 @@ public class RepastGridUtilsTest {
 
     assertFalse(RepastGridUtils.gridValueLayersAreEqual(g1, g2));
   }
-  
+
   @Test
   public void arrayShouldCorrespondCorrectlyToGridValueLayer() {
     GridValueLayer g = new GridValueLayer("test layer", 0, true, 2, 2);
@@ -67,12 +85,12 @@ public class RepastGridUtilsTest {
     g.set(4, 1, 0); // bottom right
     g.set(1, 0, 1); // top left
     g.set(2, 1, 1); // top right
-    
+
     int[][] expectedArray = new int[][]{
       { 1, 2 },
       { 3, 4 }
-    }; 
-    
+    };
+
     assertArrayEquals(expectedArray, RepastGridUtils.gridValueLayerToArray(g));
   }
 
