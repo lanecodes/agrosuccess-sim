@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
+import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
@@ -17,15 +18,15 @@ public class SlopeRiskCalculatorTest {
     ValueLayer dem = testDemGvl();
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(dem, GRID_CELL_SIZE);
 
-    assertEquals(1.0, srCalc.getSlopeRisk(1, 1, Direction.E), TOLERANCE);  // > 0%, < 5%
-    assertEquals(1.05, srCalc.getSlopeRisk(1, 1, Direction.NE), TOLERANCE);  // > 5%, < 15%
-    assertEquals(1.10, srCalc.getSlopeRisk(1, 1, Direction.N), TOLERANCE);  // > 15%, < 25%
-    assertEquals(1.20, srCalc.getSlopeRisk(1, 1, Direction.NW), TOLERANCE);  // > 25%
+    assertEquals(1.0, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.E), TOLERANCE);  // > 0%, < 5%
+    assertEquals(1.05, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.NE), TOLERANCE);  // > 5%, < 15%
+    assertEquals(1.10, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.N), TOLERANCE);  // > 15%, < 25%
+    assertEquals(1.20, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.NW), TOLERANCE);  // > 25%
 
-    assertEquals(1.0, srCalc.getSlopeRisk(1, 1, Direction.W), TOLERANCE);  // > -5%, < 0%
-    assertEquals(0.95, srCalc.getSlopeRisk(1, 1, Direction.SW), TOLERANCE);  // > -15%, < 5%
-    assertEquals(0.90, srCalc.getSlopeRisk(1, 1, Direction.S), TOLERANCE);  // > -25%, < -15%
-    assertEquals(0.80, srCalc.getSlopeRisk(1, 1, Direction.SE), TOLERANCE);  // < -25%
+    assertEquals(1.0, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.W), TOLERANCE);  // > -5%, < 0%
+    assertEquals(0.95, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.SW), TOLERANCE);  // > -15%, < 5%
+    assertEquals(0.90, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.S), TOLERANCE);  // > -25%, < -15%
+    assertEquals(0.80, srCalc.getSlopeRisk(new GridPoint(1, 1), Direction.SE), TOLERANCE);  // < -25%
 
   }
 
@@ -34,18 +35,19 @@ public class SlopeRiskCalculatorTest {
     ValueLayer dem = testDemGvl();
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(dem, GRID_CELL_SIZE);
 
-    assertNull(srCalc.getSlopeRisk(0, 2, Direction.W));
-    assertNull(srCalc.getSlopeRisk(0, 2, Direction.N));
-    assertNotNull(srCalc.getSlopeRisk(0, 2, Direction.E));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(0, 2), Direction.W));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(0, 2), Direction.N));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(0, 2), Direction.N));
+    assertNotNull(srCalc.getSlopeRisk(new GridPoint(0, 2), Direction.E));
 
-    assertNull(srCalc.getSlopeRisk(0, 1, Direction.W));
-    assertNotNull(srCalc.getSlopeRisk(0, 1, Direction.E));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(0, 1), Direction.W));
+    assertNotNull(srCalc.getSlopeRisk(new GridPoint(0, 1), Direction.E));
 
-    assertNull(srCalc.getSlopeRisk(2, 1, Direction.E));
-    assertNotNull(srCalc.getSlopeRisk(2, 1, Direction.W));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(2, 1), Direction.E));
+    assertNotNull(srCalc.getSlopeRisk(new GridPoint(2, 1), Direction.W));
 
-    assertNull(srCalc.getSlopeRisk(0, 1, Direction.S));
-    assertNotNull(srCalc.getSlopeRisk(0, 1, Direction.E));
+    assertNull(srCalc.getSlopeRisk(new GridPoint(1, 0), Direction.S));
+    assertNotNull(srCalc.getSlopeRisk(new GridPoint(1, 0), Direction.E));
 
   }
 
@@ -58,7 +60,7 @@ public class SlopeRiskCalculatorTest {
    * corner-adjacent to cell i. The slope from cell i to cell j is given by:
    * </p>
    * <p>
-   * s_{i \rightarrow j} = \frac{e_i - e_j}{\alpha_{ij} d} \times 100%
+   * s_{i \rightarrow j} = \frac{e_j - e_i}{\alpha_{ij} d} \times 100%
    * </p>
    * <p>
    * where e_i - e_j is the <emph>rise</emph> of the slope. The rises needed to produce a slope of 5 m, 15 m, and 25 m
