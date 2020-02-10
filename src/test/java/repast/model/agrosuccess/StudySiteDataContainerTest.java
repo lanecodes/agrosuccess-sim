@@ -8,8 +8,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import me.ajlane.geo.repast.wind.WindDirection;
-import me.ajlane.geo.repast.wind.WindSpeed;
+import me.ajlane.geo.Direction;
+import me.ajlane.geo.repast.fire.WindSpeed;
 import repast.simphony.valueLayer.GridValueLayer;
 
 public class StudySiteDataContainerTest {
@@ -76,9 +76,9 @@ public class StudySiteDataContainerTest {
 
   @Test
   public void navarresWindDirectionShouldInitialise() {
-    Map<WindDirection, Double> windDirProbMap = dataContainer.getWindDirectionProb();
+    Map<Direction, Double> windDirProbMap = dataContainer.getWindDirectionProb();
     assertNotNull(windDirProbMap);
-    assertEquals(0.211618, windDirProbMap.get(WindDirection.E), 0.000001);
+    assertEquals(0.211618, windDirProbMap.get(Direction.E), 0.000001);
   }
 
 }

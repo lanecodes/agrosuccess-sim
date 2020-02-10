@@ -21,11 +21,11 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
+import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
+import me.ajlane.geo.repast.fire.WindSpeed;
 import repast.simphony.space.Dimensions;
 import repast.simphony.valueLayer.GridValueLayer;
-import me.ajlane.geo.repast.wind.WindDirection;
-import me.ajlane.geo.repast.wind.WindSpeed;
 
 /**
  * Contains logic to load study site specific data and parameters.
@@ -236,7 +236,7 @@ public class StudySiteDataContainer {
   }
 
   /**
-   * @return Map of {@link me.ajlane.geo.repast.wind.WindSpeed WindSpeed} enumeration constants to
+   * @return Map of {@link me.ajlane.geo.repast.fire.WindSpeed WindSpeed} enumeration constants to
    *         the probability of observing the wind speed corresponding to each member at the study
    *         site.
    */
@@ -254,20 +254,20 @@ public class StudySiteDataContainer {
   }
 
   /**
-   * @return Map of {@link me.ajlane.geo.repast.wind.WindDirection WindDirection} enumeration
+   * @return Map of {@link me.ajlane.geo.Direction WindDirection} enumeration
    *         constants to the probability of observing the wind direction corresponding to each
    *         member at the study site.
    */
-  public Map<WindDirection, Double> getWindDirectionProb() {
-    Map<WindDirection, Double> windDirProbMap =
-        new EnumMap<WindDirection, Double>(WindDirection.class);
+  public Map<Direction, Double> getWindDirectionProb() {
+    Map<Direction, Double> windDirProbMap =
+        new EnumMap<Direction, Double>(Direction.class);
     SubnodeConfiguration dirProbConfig =
         this.siteConfig.configurationAt("climate.wind.directionProb");
     Iterator<String> keys = dirProbConfig.getKeys();
     while (keys.hasNext()) {
       String dirName = keys.next();
       Double dirProb = dirProbConfig.getDouble(dirName);
-      windDirProbMap.put(WindDirection.valueOf(WordUtils.capitalize(dirName)), dirProb);
+      windDirProbMap.put(Direction.valueOf(WordUtils.capitalize(dirName)), dirProb);
     }
     return windDirProbMap;
   }
