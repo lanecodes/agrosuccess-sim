@@ -2,6 +2,7 @@ package me.ajlane.geo.repast.fire;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import me.ajlane.geo.Direction;
 
 /**
@@ -13,6 +14,8 @@ import me.ajlane.geo.Direction;
  *
  */
 public class WindRiskCalculator {
+
+  final static Logger logger = Logger.getLogger(WindRiskCalculator.class);
 
   private Map<WindOrientation, Double> lowWindSpeedRiskMap;
   private Map<WindOrientation, Double> mediumWindSpeedRiskMap;
@@ -104,7 +107,7 @@ public class WindRiskCalculator {
    *         fire spread
    */
   public static WindOrientation getWindOrientation(Direction windDir, Direction targetCellDir) {
-    int directionOrdinalDiff = windDir.ordinal() - targetCellDir.ordinal();
+    int directionOrdinalDiff = windDir.compareTo(targetCellDir);
     int normedOrdinalDiff = normaliseDirectionOrdinalDiff(directionOrdinalDiff);
     WindOrientation wo;
 
@@ -131,8 +134,22 @@ public class WindRiskCalculator {
     return wo;
   }
 
+  /**
+   * <p>
+   * Possible values for difference in raw enumerator ordinals are on [-7, 7]. This
+   * function maps each of these values to [0, 4] where a 0 indicates directions are
+   * parallel and 4 indicates they're antiparallel. The mathematical expression
+   * implemeted by this function is
+   * </p>
+   * <pre>
+   * f(x) = 4 - ||x| - 4|
+   * </pre>
+   * @param ordinalDiff Difference between the ordinal difference in directions.
+   * @return Number on [0, 4] indicating magnitude of difference in angle encoded
+   * by {@code ordinalDiff}.
+   */
   private static int normaliseDirectionOrdinalDiff(int ordinalDiff) {
-    return Math.abs(Math.abs(ordinalDiff + 4) - 4);
+    return 4 - Math.abs(Math.abs(ordinalDiff) - 4);
   }
 
 }

@@ -17,6 +17,8 @@ public class WindRiskCalculatorTest {
     assertEquals(WindOrientation.Acute,
         WindRiskCalculator.getWindOrientation(Direction.N, Direction.NE));
     assertEquals(WindOrientation.Acute,
+        WindRiskCalculator.getWindOrientation(Direction.NE, Direction.N));
+    assertEquals(WindOrientation.Acute,
         WindRiskCalculator.getWindOrientation(Direction.N, Direction.NW));
 
     assertEquals(WindOrientation.Perpendicular,
