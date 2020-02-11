@@ -5,7 +5,7 @@ import java.util.Map;
 import org.junit.Test;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 
-public class LcfMapGetterTest {
+public class LcfMapGetterHardCodedTest {
 
   private static final double TOLERANCE = 0.0001;
 
@@ -13,7 +13,7 @@ public class LcfMapGetterTest {
    * Test method {@code LcfMapGetterHardCoded#getMap} using LCF Map data built into the class.
    */
   @Test
-  public void testgetMap() {
+  public void testGetMap() {
     LcfMapGetter defaultGetter = new LcfMapGetterHardCoded(LcfReplicate.Default);
     Map<Lct, Double> defaultLcfMap = defaultGetter.getMap();
     assertEquals(0.23, defaultLcfMap.get(Lct.Pine), TOLERANCE);
