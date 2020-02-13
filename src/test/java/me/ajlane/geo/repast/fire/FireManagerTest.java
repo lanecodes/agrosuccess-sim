@@ -2,6 +2,7 @@ package me.ajlane.geo.repast.fire;
 
 import static org.junit.Assert.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -15,16 +16,35 @@ import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
-public class FireSpreaderTest {
+public class FireManagerTest {
 
-  final static Logger logger = Logger.getLogger(FireSpreaderTest.class);
+  final static Logger logger = Logger.getLogger(FireManagerTest.class);
 
-  private IGridValueLayer lct;
   private final SlopeRiskCalculator srCalc = getTestSlopeRiskCalculator();
   private final WindRiskCalculator wrCalc = new WindRiskCalculator();
   private final Map<Lct, Double> lcfMap = getTestLcfMap();
   private final Map<Direction, Double> windDirProbMap = getTestWindDirProbMap();
   private final Map<WindSpeed, Double> windSpeedProbMap = getTestWindSpeedProbMap();
+
+  private IGridValueLayer lct;
+  private FireSpreader fireSpreader;
+
+  @Before
+  public void setUp() {
+    this.lct = getTestLct();
+    this.fireSpreader = new FireSpreader(lct, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+  }
+
+  private static IGridValueLayer getTestLct() {
+    int[][] lctArray = {
+        {0, 0, 2, 2, 2},
+        {1, 1, 3, 3, 3},
+        {9, 3, 3, 3, 3},
+        {9, 9, 9, 9, 9},
+        {9, 9, 9, 9, 9},
+    };
+    return RepastGridUtils.arrayToGridValueLayer("lct", lctArray);
+  }
 
   private static Map<Direction, Double> getTestWindDirProbMap() {
     Map<Direction, Double> m = new HashMap<>();
@@ -66,58 +86,42 @@ public class FireSpreaderTest {
     return new SlopeRiskCalculator(dem, gridSize);
   }
 
-  private static IGridValueLayer getTestLct() {
-    int[][] lctArray = {
-        {0, 0, 2, 2, 2},
-        {1, 1, 3, 3, 3},
-        {9, 3, 3, 3, 3},
-        {9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9},
-    };
-    return RepastGridUtils.arrayToGridValueLayer("lct", lctArray);
-  }
-
-  @Before
-  public void setup() {
-    this.lct = getTestLct();
-  }
-
   @After
   public void tearDown() {
+    this.fireSpreader = null;
     this.lct = null;
   }
 
   @Test
   public void testInit() {
-    new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
+    double meanNumFiresPerYear = 32.0;
+    new FireManager(meanNumFiresPerYear, this.fireSpreader);
   }
 
   @Test
-  public void testGetLct() {
-    FireSpreader spreader =  new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
-
-    ValueLayer lctDims = spreader.getLct();
-    assertNotNull(lctDims);
+  public void testNumFires() {
+    FireManager fireManager = new FireManager(10.1, this.fireSpreader);
+    int n = fireManager.numFires();
+    logger.debug("Num fires sampled: " + n);
+    assertTrue(n > 0);
   }
 
   @Test
-  public void testSpreadFire() {
-    FireSpreader spreader =  new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
+  public void testFiresInitiated() {
+    FireManager fireManager = new FireManager(5.0, this.fireSpreader);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
-    logger.debug("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
+    logger.error("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
-    GridPoint initialFire = new GridPoint(2, 2);
-    spreader.spreadFire(initialFire);
+    List<GridPoint> ignitionPoints = fireManager.startFires();
+    logger.error("Ignition points: " + ignitionPoints);
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
-    logger.debug("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
+    logger.error("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
     assertTrue(finalPropBurnt > initPropBurnt);
+
   }
 
 }

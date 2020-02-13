@@ -136,7 +136,7 @@ public class FireSpreader {
   /**
    * Calculate the probability of a fire spreading from a cell to a specific neighbour.
    *
-   * @param fireFront Point at which the fire has the possibilty of spreading from a cell to one of its neighbours.
+   * @param fireFront Point at which the fire has the possibility of spreading from a cell to one of its neighbours.
    * @param wSpeed Wind speed
    * @param wDir Wind direction
    *
@@ -179,6 +179,10 @@ public class FireSpreader {
       throw new RuntimeException("Lct code unexpectedly didn't match Lct enumeration constant.");
     }
     return correctLct;
+  }
+
+  public ValueLayer getLct() {
+    return this.lct;
   }
 
 }
