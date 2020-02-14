@@ -50,6 +50,8 @@ public class AgroSuccessEnvrIntegrationTest {
     ParametersParser pp = new ParametersParser(paramsFile);
     Parameters params = pp.getParameters();
 
+    params.setValue("useDummyData", new Boolean(true));
+
     schedule = new Schedule();
     RunEnvironment.init(schedule, null, params, true);
 
@@ -84,6 +86,12 @@ public class AgroSuccessEnvrIntegrationTest {
     assertTrue(context.getValueLayer(LscapeLayer.Pine.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.Oak.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.Deciduous.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.FlowDir.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.Dem.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.OakRegen.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.TimeInState.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.DeltaD.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.DeltaT.name()) instanceof GridValueLayer);
   }
 
   @Test

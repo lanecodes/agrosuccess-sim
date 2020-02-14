@@ -1,7 +1,7 @@
 /**
  *
  */
-package repast.model.agrosuccess;
+package repast.model.agrosuccess.empirical;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +21,13 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
+import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
+import me.ajlane.geo.repast.fire.WindSpeed;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.space.Dimensions;
-import repast.simphony.valueLayer.GridValueLayer;
-import me.ajlane.geo.repast.wind.WindDirection;
-import me.ajlane.geo.repast.wind.WindSpeed;
+import repast.simphony.valueLayer.IGridValueLayer;
+import repast.simphony.valueLayer.ValueLayer;
 
 /**
  * Contains logic to load study site specific data and parameters.
@@ -33,12 +35,15 @@ import me.ajlane.geo.repast.wind.WindSpeed;
  * @author Andrew Lane
  *
  */
-public class StudySiteDataContainer {
+public class SiteDataLoader implements SiteAllData {
 
-  final static Logger logger = Logger.getLogger(StudySiteDataContainer.class);
+  final static Logger logger = Logger.getLogger(SiteDataLoader.class);
 
   File siteDataDir;
   private HierarchicalConfiguration siteConfig;
+
+  // Used to check all rasters read by this class have the same dimensions
+  private Dimensions prevRasterDimensions = null;
 
   /**
    * @param siteDataDir The directory in which the data required by the simulation for a
@@ -55,7 +60,7 @@ public class StudySiteDataContainer {
    *
    * @throws ConfigurationException
    */
-  StudySiteDataContainer(File siteDataDir) throws ConfigurationException {
+  public SiteDataLoader(File siteDataDir) throws ConfigurationException {
     this.siteDataDir = siteDataDir;
     File configFile = new File(siteDataDir, "site_parameters.xml");
     try {
@@ -67,98 +72,112 @@ public class StudySiteDataContainer {
   }
 
   /**
-   * @return UTF-8 encoded name of study site.
+   * {@inheritDoc}
    */
+  @Override
   public String getSiteName() {
     return this.siteConfig.getString("siteName");
   }
 
   /**
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} encoding each grid
-   *         cell's percentage incline. See <a href=
-   *         "https://github.com/lanecodes/demproc/blob/master/demproc/makelayers.py"><code>demproc</code></a>
-   *         docs for encoding details.
+   * {@inheritDoc}
    */
-  public GridValueLayer getSlopeMap() {
+  @Override
+  public IGridValueLayer getDemMap() {
+    File file = new File(this.siteDataDir, "hydrocorrect_dem.tif");
+    GeoRasterValueLayer grvl =
+        new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Dem.name());
+
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public IGridValueLayer getSlopeMap() {
     File file = new File(this.siteDataDir, "slope.tif");
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Slope.name());
 
-    return grvl.getValueLayer();
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
   }
 
   /**
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} encoding whether each
-   *         grid cell has a northerly or southerly aspect. See <a href=
-   *         "https://github.com/lanecodes/demproc/blob/master/demproc/makelayers.py"><code>demproc</code></a>
-   *         docs for encoding details.
+   * {@inheritDoc}
    */
-  public GridValueLayer getAspectMap() {
+  @Override
+  public IGridValueLayer getAspectMap() {
     File file = new File(this.siteDataDir, "binary_aspect.tif");
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Aspect.name());
 
-    return grvl.getValueLayer();
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
   }
 
   /**
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} encoding the direction
-   *         in which water flows over the landscape. See <a href=
-   *         "https://github.com/lanecodes/demproc/blob/master/demproc/makelayers.py"><code>demproc</code></a>
-   *         docs for encoding details.
+   * {@inheritDoc}
    */
-  public GridValueLayer getFlowDirectionMap() {
+  @Override
+  public IGridValueLayer getFlowDirMap() {
     File file = new File(this.siteDataDir, "flow_dir.tif");
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.FlowDir.name());
 
-    return grvl.getValueLayer();
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
   }
 
   /**
-   * A homogeneous type A soil type map.
-   *
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} of homogeneous type A
-   *         soil type.
+   * {@inheritDoc}
    */
-  public GridValueLayer getSoilTypeMap() {
+  @Override
+  public IGridValueLayer getSoilTypeMap() {
     return getSoilTypeMap("A");
   }
 
   /**
-   * @param soilTypeLetter One of A, B, C, or D. These correspond to the types used in Millington et
-   *        al. 2009. It is assumed that soil type is homogeneous across the landscape. Encoded as 0
-   *        -> type A, 1 -> type B, ..., 3 -> type D.
-   *
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} encoding soil type.
+   * {@inheritDoc}
    */
-  public GridValueLayer getSoilTypeMap(String soilTypeLetter) {
+  @Override
+  public IGridValueLayer getSoilTypeMap(String soilTypeLetter) {
     File file = new File(this.siteDataDir, "uniform_soil_map_" + soilTypeLetter + ".tif");
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.SoilType.name());
 
-    return grvl.getValueLayer();
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
   }
 
   /**
-   * Extract default land cover type map from the initial conditions archive for the simulation's
-   * study site. Namely the file {@code init-landcover0.tif} within {@code init_lct_maps.zip}.
-   *
-   * @return {@link repast.simphony.valueLayer.GridValueLayer GridValueLayer} encoding land cover
-   *         state.
-   * @throws IOException
+   * {@inheritDoc}
    */
-  public GridValueLayer getLandcoverTypeMap() throws IOException {
-    return getLandcoverTypeMap(0);
+  @Override
+  public IGridValueLayer getLctMap() throws IOException {
+    return getLctMap(0);
   }
 
-  public GridValueLayer getLandcoverTypeMap(int mapNum) throws IOException {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public IGridValueLayer getLctMap(int mapNum) throws IOException {
     File file = extractInitialLandCoverMap(new File(this.siteDataDir, "init_lct_maps.zip"), mapNum);
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Lct.name());
     file.delete(); // Delete file LCT map temporarily extracted from the archive
 
-    return grvl.getValueLayer();
+    IGridValueLayer layer = grvl.getValueLayer();
+    checkDimensionsConsistentWithPrevious(layer);
+    return layer;
   }
 
   /**
@@ -180,7 +199,7 @@ public class StudySiteDataContainer {
       tmpDir = Files.createTempDirectory(null);
     } catch (IOException e) {
       System.out
-      .println("Could not create temporary directory to extract initial land cover map into.");
+          .println("Could not create temporary directory to extract initial land cover map into.");
       throw e;
     }
     String lctFileName = "init-landcover" + (new Integer(mapNum)).toString() + ".tif";
@@ -193,8 +212,8 @@ public class StudySiteDataContainer {
       Path source = fileSystem.getPath(lctFileName);
       Files.copy(source, outputLocation.toPath());
     } catch (NoSuchFileException e) {
-      logger.error("Could not find init-landcover file in zip file. " + "Check map number "
-          + mapNum + " is included in archive " + zipFile.toString() + ".", e);
+      logger.error("Could not find init-landcover file in zip file. " + "Check map number " + mapNum
+          + " is included in archive " + zipFile.toString() + ".", e);
       throw e;
     } catch (FileSystemNotFoundException e) {
       logger.error("Could not find zip file " + zipFile.toString() + ".", e);
@@ -203,32 +222,47 @@ public class StudySiteDataContainer {
     return outputLocation;
   }
 
-  /**
-   * @return Monthly precipitation in millimetres, averaged across the year.
-   */
-  public double getPrecipitation() {
-    return this.siteConfig.getDouble("climate.meanMonthlyPrecipitation");
+  private void checkDimensionsConsistentWithPrevious(ValueLayer layer) {
+    if (!dimensionsMatchPrevious(layer)) {
+      throw new RuntimeException(layer.getName() + " has dimensions which don't match those "
+          + "of previously loaded value layers.");
+    }
   }
 
   /**
-   * Grid shape dimensions (how many cells along each axis). Calculated from the Slope map.
-   *
-   * TODO: Write some checks to confirm the dimensions of all the loaded value layers match.
-   *
-   * @return {@code int} array of grid dimensions in form [xDimension, yDimension]
+   * @param layer Value layer under test.
+   * @return {@code true} if the dimensions of this value layer match those of the value layers
+   *         previously loaded by this class.
    */
+  private boolean dimensionsMatchPrevious(ValueLayer layer) {
+    Dimensions dims = layer.getDimensions();
+    boolean match;
+    if (this.prevRasterDimensions == null) {
+      this.prevRasterDimensions = layer.getDimensions();
+      match = true;
+    } else {
+      if (this.prevRasterDimensions.equals(dims)) {
+        match = true;
+      } else {
+        match = false;
+      }
+    }
+    return match;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public int[] getGridDimensions() {
-
-    Dimensions slopeDimensions = getSlopeMap().getDimensions();
-    return new int[] {(int) slopeDimensions.getWidth(), (int) slopeDimensions.getHeight()};
+    Dimensions dims = getDemMap().getDimensions();
+    return new int[] {(int) dims.getWidth(), (int) dims.getHeight()};
   }
 
   /**
-   * (x,y) dimensions of the grid cell pixels, retrieved from site_parameters.xml these will me in
-   * meters
-   *
-   * @return [Xpixel size, Ypixel size]
+   * {@inheritDoc}
    */
+  @Override
   public double[] getGridCellPixelSize() {
     Double xSize = this.siteConfig.getDouble("geographic.raster.gridCellPixelSizeX");
     Double ySize = this.siteConfig.getDouble("geographic.raster.gridCellPixelSizeY");
@@ -236,10 +270,9 @@ public class StudySiteDataContainer {
   }
 
   /**
-   * @return Map of {@link me.ajlane.geo.repast.wind.WindSpeed WindSpeed} enumeration constants to
-   *         the probability of observing the wind speed corresponding to each member at the study
-   *         site.
+   * {@inheritDoc}
    */
+  @Override
   public Map<WindSpeed, Double> getWindSpeedProb() {
     Map<WindSpeed, Double> windSpeedProbMap = new EnumMap<WindSpeed, Double>(WindSpeed.class);
     SubnodeConfiguration speedProbConfig =
@@ -254,21 +287,44 @@ public class StudySiteDataContainer {
   }
 
   /**
-   * @return Map of {@link me.ajlane.geo.repast.wind.WindDirection WindDirection} enumeration
-   *         constants to the probability of observing the wind direction corresponding to each
-   *         member at the study site.
+   * {@inheritDoc}
    */
-  public Map<WindDirection, Double> getWindDirectionProb() {
-    Map<WindDirection, Double> windDirProbMap =
-        new EnumMap<WindDirection, Double>(WindDirection.class);
+  @Override
+  public Map<Direction, Double> getWindDirectionProb() {
+    Map<Direction, Double> windDirProbMap = new EnumMap<Direction, Double>(Direction.class);
     SubnodeConfiguration dirProbConfig =
         this.siteConfig.configurationAt("climate.wind.directionProb");
     Iterator<String> keys = dirProbConfig.getKeys();
     while (keys.hasNext()) {
       String dirName = keys.next();
       Double dirProb = dirProbConfig.getDouble(dirName);
-      windDirProbMap.put(WindDirection.valueOf(WordUtils.capitalize(dirName)), dirProb);
+      windDirProbMap.put(Direction.valueOf(WordUtils.capitalize(dirName)), dirProb);
     }
     return windDirProbMap;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public double getMeanMonthlyPrecipitation() {
+    return this.siteConfig.getDouble("climate.meanMonthlyPrecipitation");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public double getTotalAnnualPrecipitation() {
+    return this.siteConfig.getDouble("climate.meanAnnualPrecipitation");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public double getMeanAnnualTemperature() {
+    return this.siteConfig.getDouble("climate.meanAnnualTemperature");
+  }
+
 }

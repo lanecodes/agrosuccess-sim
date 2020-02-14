@@ -16,8 +16,9 @@ import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;
+import repast.simphony.valueLayer.IGridValueLayer;
 import static me.ajlane.geo.repast.RepastGridUtils.arrayToGridValueLayer;
-import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToString;
+import static me.ajlane.geo.repast.RepastGridUtils.valueLayerToString;
 import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayersAreEqual;;
 
 /**
@@ -247,9 +248,9 @@ public class AgroSuccessLcsUpdaterTest {
     }
   }
 
-  private String gvlErrorStr(GridValueLayer expectedGvl, GridValueLayer actualGvl) {
-    return "expected:\n" + gridValueLayerToString(expectedGvl) + "but got:\n"
-        + gridValueLayerToString(actualGvl);
+  private String gvlErrorStr(IGridValueLayer expectedGvl, IGridValueLayer actualGvl) {
+    return "expected:\n" + valueLayerToString(expectedGvl) + "but got:\n"
+        + valueLayerToString(actualGvl);
   }
 
   @Test
@@ -258,10 +259,10 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
         new int[][] {{6, 6, 5}, {5, 5, 5}, {5, 5, 5}});
 
-    GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
+    IGridValueLayer actualGvl = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
@@ -273,7 +274,7 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
         new int[][] {{-1, -1, 6}, {6, 9, 9}, {9, 9, 9}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
@@ -288,7 +289,7 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{-1, -1, 15}, {15, 20, 20}, {20, 20, 20}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
@@ -303,7 +304,7 @@ public class AgroSuccessLcsUpdaterTest {
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{1, 1, 15}, {15, 20, 19}, {19, 19, 19}});
 
     GridValueLayer actualGvl =
@@ -320,7 +321,7 @@ public class AgroSuccessLcsUpdaterTest {
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
         new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
@@ -336,7 +337,7 @@ public class AgroSuccessLcsUpdaterTest {
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
         new int[][] {{-1, -1, -1}, {-1, -1, 9}, {9, 9, 9}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
@@ -352,7 +353,7 @@ public class AgroSuccessLcsUpdaterTest {
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{-1, -1, -1}, {-1, -1, 20}, {20, 20, 20}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
@@ -368,7 +369,7 @@ public class AgroSuccessLcsUpdaterTest {
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
-    GridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
+    IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.TimeInState.name(),
         new int[][] {{2, 2, 1}, {1, 1, 20}, {20, 20, 20}});
 
     GridValueLayer actualGvl =
@@ -378,7 +379,5 @@ public class AgroSuccessLcsUpdaterTest {
         gridValueLayersAreEqual(expectedGvl, actualGvl));
   }
   
-
-
 }
 

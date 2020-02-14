@@ -9,7 +9,6 @@ import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
-import repast.simphony.valueLayer.ValueLayer;
 
 public class AgroSuccessLcsUpdater implements LcsUpdater {
   LcsUpdateDecider updateDecider;
