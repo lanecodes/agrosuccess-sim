@@ -6,14 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 4 - Fire spread model - 2020-02-??
+### 4 - Fire spread model - 2020-02-14
 
 #### Added
 
 - `LcfReplicate` enumerator storing possible values for land-cover
   flammability replicates per Millington 2009 Table 6.
-- `LcfMapUtil` for generating land-cover flammability data for land cover
-  types in AgroSuccess.
+- `LcfMapGetter` interface for generating land-cover flammability data for
+  land cover types in AgroSuccess.. This is implemented by
+  `LcfMapGetterHardCoded` and `LcfMapGetterFroMGraph`.
+- `SlopeRiskCalculator`
+- `WindRiskCalculator`
+- `WindOrientation`
+- `GridPointKingMove` to represent movement from one cell to an adjacent cell
+- `FireSpreader` which represents progress of an already ignited fire
+- `FireManager` which manages fire ignitions and interacts with the Repast
+  scheduler.
+
+#### Changed
+
+- Whereas previously empirical data was loaded into the model with
+  `SiteBoundaryConds`, this is now done with `SiteAllData`.
+- `AgroSuccessContextBuilder` has been refactored to make use of `SiteAllData`.
+  Further refactoring needs to be done to tidy it up and make it readable,
+  however. The root of these problems is the complexity of some of the objects
+  needed to run the simulations. This will be simplified by abstracting these
+  object construction steps using the Builder pattern.
 
 ### 3 - Implement logging - 2020-02-06
 
