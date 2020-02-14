@@ -18,7 +18,7 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import static me.ajlane.geo.repast.RepastGridUtils.arrayToGridValueLayer;
-import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToString;
+import static me.ajlane.geo.repast.RepastGridUtils.valueLayerToString;
 import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayersAreEqual;;
 
 /**
@@ -249,8 +249,8 @@ public class AgroSuccessLcsUpdaterTest {
   }
 
   private String gvlErrorStr(IGridValueLayer expectedGvl, IGridValueLayer actualGvl) {
-    return "expected:\n" + gridValueLayerToString(expectedGvl) + "but got:\n"
-        + gridValueLayerToString(actualGvl);
+    return "expected:\n" + valueLayerToString(expectedGvl) + "but got:\n"
+        + valueLayerToString(actualGvl);
   }
 
   @Test

@@ -9,6 +9,7 @@ package repast.model.agrosuccess;
  *
  */
 public enum LscapeLayer {
+  Dem ("elevation above sea level in meters."),
   Lct ("current land cover type"),
   OakRegen ("presence of regenerative oak vegetation (succession pathway). "
       + "0=Regeneration, 1=Secondary."),

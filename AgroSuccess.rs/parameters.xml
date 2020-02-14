@@ -1,41 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+					<parameter name="randomSeed" displayName="Default Random Seed" type="int"
 						defaultValue="__NULL__"
-						isReadOnly="false" 
+						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
+
 		/>
-				<parameter name="studySite" displayName="Study Site" type="java.lang.String" 
-						defaultValue="navarres" 
-						isReadOnly="false" 
+				<parameter name="studySite" displayName="Study Site" type="java.lang.String"
+						defaultValue="navarres"
+						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									
+
 		/>
-				<parameter name="graphPath" displayName="Path to graph data store" type="java.lang.String" 
-						defaultValue="data/graph/databases" 
-						isReadOnly="true" 
+				<parameter name="graphPath" displayName="Path to graph data store" type="java.lang.String"
+						defaultValue="data/graph/databases"
+						isReadOnly="true"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									
+
 		/>
-				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String" 
-						defaultValue="data/study-sites" 
-						isReadOnly="true" 
+				<parameter name="graphModelID" displayName="ID of model to read from the graph" type="java.lang.String"
+						defaultValue="AgroSuccess-dev"
+						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									
+
 		/>
-				<parameter name="nTicks" displayName="Simulation length" type="java.lang.Integer" 
-						defaultValue="50" 
-						isReadOnly="false" 
+				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String"
+						defaultValue="data/study-sites"
+						isReadOnly="true"
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+
+		/>
+				<parameter name="useDummyData" displayName="Switch to use dummy data (for testing)" type="java.lang.Boolean"
+						defaultValue="false"
+						isReadOnly="false"
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+
+		/>
+				<parameter name="dummyDataRoot" displayName="Dummy data root directory" type="java.lang.String"
+						defaultValue="data/test"
+						isReadOnly="true"
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+		/>
+
+				<parameter name="nTicks" displayName="Simulation length" type="java.lang.Integer"
+						defaultValue="50"
+						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
+
 		/>
-				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String" 
-						defaultValue="/AgroSuccess/data/geographic" 
-						isReadOnly="false" 
+				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String"
+						defaultValue="/AgroSuccess/data/geographic"
+						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									
+
 		/>
 		</parameters>
-
-

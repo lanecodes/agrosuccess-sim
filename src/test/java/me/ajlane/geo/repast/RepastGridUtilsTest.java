@@ -51,11 +51,11 @@ public class RepastGridUtilsTest {
   }
 
   @Test
-  public void testGridValueLayerToString() {
+  public void testValueLayerToString() {
     int[][] array = {{1, 2}, {3, 4}};
     IGridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
-    assertEquals("GridValueLayer test layer:\n1.0  2.0\n3.0  4.0\n",
-        RepastGridUtils.gridValueLayerToString(gvl));
+    assertEquals("ValueLayer test layer:\n1.0  2.0\n3.0  4.0\n",
+        RepastGridUtils.valueLayerToString(gvl));
   }
 
   @Test

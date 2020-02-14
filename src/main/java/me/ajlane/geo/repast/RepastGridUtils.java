@@ -215,14 +215,14 @@ public class RepastGridUtils extends GridUtils {
     return array;
   }
 
-  public static String gridValueLayerToString(IGridValueLayer gvl) {
-    int nRows = Math.round((float) gvl.getDimensions().getHeight());
-    int nCols = Math.round((float) gvl.getDimensions().getWidth());
-    String string = "GridValueLayer " + gvl.getName() + ":\n";
+  public static String valueLayerToString(ValueLayer layer) {
+    int nRows = Math.round((float) layer.getDimensions().getHeight());
+    int nCols = Math.round((float) layer.getDimensions().getWidth());
+    String string = "ValueLayer " + layer.getName() + ":\n";
 
     for (int y = nRows - 1; y >= 0; y--) {
       for (int x = 0; x < nCols; x++) {
-        string = string + gvl.get(x, y) + getDelimeter(nCols, x);
+        string = string + layer.get(x, y) + getDelimeter(nCols, x);
       }
     }
 
