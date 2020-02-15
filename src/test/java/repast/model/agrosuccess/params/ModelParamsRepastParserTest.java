@@ -1,4 +1,4 @@
-package repast.model.agrosuccess;
+package repast.model.agrosuccess.params;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -6,6 +6,9 @@ import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 import repast.simphony.parameter.Parameters;
+import repast.model.agrosuccess.params.EnvrModelParams;
+import repast.model.agrosuccess.params.ModelParamsRepastParser;
+import repast.model.agrosuccess.params.UnspecifiedParameterException;
 import repast.simphony.parameter.DefaultParameters;
 
 public class ModelParamsRepastParserTest {

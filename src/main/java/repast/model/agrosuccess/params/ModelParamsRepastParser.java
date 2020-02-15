@@ -1,7 +1,4 @@
-/**
- * 
- */
-package repast.model.agrosuccess;
+package repast.model.agrosuccess.params;
 
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
@@ -93,7 +90,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   
   /**
    * @return All parameters necessary for modelling seed dispersal.
-   * @see repast.model.agrosuccess.EnvrModelParams#getSeedDispersalParams()
+   * @see repast.model.agrosuccess.params.EnvrModelParams#getSeedDispersalParams()
    */
   @Override
   public SeedDispersalParams getSeedDispersalParams() {
@@ -108,7 +105,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
 
   /** 
    * @return All parameters necessary for modelling seed survivorship in the seed bank
-   * @see repast.model.agrosuccess.EnvrModelParams#getSeedViabilityParams()
+   * @see repast.model.agrosuccess.params.EnvrModelParams#getSeedViabilityParams()
    */
   @Override
   public SeedViabilityParams getSeedViabilityParams() {
@@ -120,7 +117,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
 
   /**
    * @return All parameters necessary for discretising soil moisture
-   * @see repast.model.agrosuccess.EnvrModelParams#getSoilMoistureParams()
+   * @see repast.model.agrosuccess.params.EnvrModelParams#getSoilMoistureParams()
    */
   @Override
   public SoilMoistureParams getSoilMoistureParams() {

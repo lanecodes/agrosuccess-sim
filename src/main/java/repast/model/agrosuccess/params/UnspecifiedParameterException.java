@@ -1,4 +1,4 @@
-package repast.model.agrosuccess;
+package repast.model.agrosuccess.params;
 /**
  * Exception thrown when an expected model parameter hasn't been provided.
  * 

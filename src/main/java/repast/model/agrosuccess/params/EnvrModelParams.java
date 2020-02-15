@@ -1,7 +1,4 @@
-/**
- * 
- */
-package repast.model.agrosuccess;
+package repast.model.agrosuccess.params;
 
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
