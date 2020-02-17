@@ -110,25 +110,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         siteData, LcfReplicate.Default);
     context.add(fireManager);
 
-    ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
-
-    try {
-      LctProportionAggregator lctPropAgg =
-          new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
-      RecordWriter<Lct, Double> lctWriter;
-      lctWriter = new EnumRecordCsvWriter<Lct, Double>(Lct.class,
-          new File("output", simulationID.toString() + "_lct-props.csv"));
-      ScheduleParameters printProps = ScheduleParameters.createRepeating(0, 1, -10);
-      sche.schedule(printProps, this, "updateLctWriter", lctPropAgg, lctWriter);
-
-      // call method at the end of the simulation run. See
-      // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
-      ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
-      sche.schedule(stop, this, "endMethod", context, lctWriter);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    initLctReporters(context, simulationID);
 
     return context;
   }
@@ -270,6 +252,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return lcsUpdater;
   }
 
+  /**
+   * Create a FireManager pseudo-agent and configure it to run the fire regime in the simulation.
+   *
+   * @param demLayer Digital Elevation Model as a {@code ValueLayer}
+   * @param lctLayer Land cover type as a {@code IGridValueLayer}
+   * @param windData Site-specific wind speed and direction data
+   * @param rasterData Information about site's raster grids, used for cell size
+   * @param climateData Site-specific climate data (temperature and precipitation)
+   * @param lcfReplicate Which land cover flammability replicate to use (See Millington et al. 2009
+   *        Table 6).
+   * @return Configured FireManager
+   */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
       SiteWindData windData, SiteRasterData rasterData, SiteClimateData climateData,
       LcfReplicate lcfReplicate) {
@@ -286,7 +280,51 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return new FireManager(meanNumFires, fireSpreader);
   }
 
-  public void endMethod(Context<Object> context, RecordWriter<Lct, Double> lctWriter) {
+  /**
+   * Create objects used for reporting land cover type proportions to disk. Make the Repast
+   * scheduler aware of their methods and configure them to run at appropriate times.
+   *
+   * @param context Simulation context
+   * @param id Simulation ID, used to name output files.
+   */
+  private void initLctReporters(Context<Object> context, SimulationID id) {
+    ISchedule sche = RunEnvironment.getInstance().getCurrentSchedule();
+    // call method at the end of the simulation run. See
+    // https://martavallejophd.wordpress.com/2012/03/26/run-a-method-at-the-end-of-the-simulation/
+    ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
+    ScheduleParameters updateReporters = ScheduleParameters.createRepeating(0, 1, -10);
+
+    LctProportionAggregator lctPropAgg =
+        new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
+    RecordWriter<Lct, Double> lctWriter = initLctWriter(id);
+
+    sche.schedule(updateReporters, this, "updateLctWriter", lctPropAgg, lctWriter);
+    sche.schedule(stop, this, "finaliseSimulation", context, lctWriter);
+  }
+
+  /**
+   * @param id ID of simulation model, used to generate name for output file.
+   * @return Writer object responsible for committing land cover type proportion results to disk.
+   */
+  private RecordWriter<Lct, Double> initLctWriter(SimulationID id) {
+    RecordWriter<Lct, Double> lctWriter;
+    try {
+      lctWriter = new EnumRecordCsvWriter<Lct, Double>(Lct.class,
+          new File("output", id.toString() + "_lct-props.csv"));
+    } catch (IOException e) {
+      throw new RuntimeException("Could not initialise land cover type writer.");
+    }
+    return lctWriter;
+  }
+
+
+  /**
+   * Code to run at the end of the simulation. Releases resources and reports outputs to disk.
+   *
+   * @param context Simulation concept
+   * @param lctWriter Writer used to send output to disk file.
+   */
+  public void finaliseSimulation(Context<Object> context, RecordWriter<Lct, Double> lctWriter) {
     logger.info("End of the simulation");
     for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
       ((GraphDatabaseService) graph).shutdown();
@@ -295,18 +333,28 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     try {
       lctWriter.flush();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new RuntimeException("Could not flush land cover type writer");
     }
   }
 
-  public void updateLctWriter(LctProportionAggregator aggregator,
+  /**
+   * Add current land cover type proportions to object which will write them to disk.
+   *
+   * @param lctAggregator Object aware of current land cover type proportions
+   * @param lctWriter Commits information about land cover type proportion to disk
+   */
+  public void updateLctWriter(LctProportionAggregator lctAggregator,
       RecordWriter<Lct, Double> lctWriter) {
-    lctWriter.add(aggregator.getLctProportions());
+    lctWriter.add(lctAggregator.getLctProportions());
   }
 
-  public void printLctProportion(LctProportionAggregator lctPropAgg) {
-    logger.debug(lctPropAgg.getLctProportions());
+  /**
+   * Write current land cover type proportions to console.
+   *
+   * @param lctAggregator Object aware of current land cover type proportions
+   */
+  public void printLctProportion(LctProportionAggregator lctAggregator) {
+    logger.debug(lctAggregator.getLctProportions());
   }
 
 }
