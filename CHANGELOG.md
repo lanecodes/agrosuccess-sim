@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 5 - Refactor AgroSuccessContextBuilder - 2020-02-17
+
+#### Changed
+
+- Created `repast.model.agrosuccess.params` package to contain all classes
+  and interfaces realted to model parameters
+- Finished implementing `ModelParamsRepastParser` which extracts AgroSuccess
+  specific parameter objects from parameters.xml
+- Clean up  `AgroSuccessContextBuilder#build` by moving code into dedicated
+  functions. `build` can now be read from top to bottom without much
+  difficulty.
+
 ### 4 - Fire spread model - 2020-02-14
 
 #### Added
