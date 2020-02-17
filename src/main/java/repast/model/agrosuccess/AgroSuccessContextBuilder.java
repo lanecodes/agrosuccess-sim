@@ -12,7 +12,6 @@ import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
-import me.ajlane.geo.repast.fire.LcfReplicate;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
 import me.ajlane.geo.repast.fire.WindRiskCalculator;
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
@@ -271,12 +270,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(demLayer, aveGridCellSize);
     WindRiskCalculator wrCalc = new WindRiskCalculator();
-    FireSpreader fireSpreader = new FireSpreader(lctLayer, srCalc, wrCalc, lcfGetter.getMap(),
-        windData.getWindDirectionProb(), windData.getWindSpeedProb());
-    // Millington et al.2009 eq 7
+    // Millington et al. 2009 eq 7
     double meanNumFires = fireParams.getClimateIgnitionScalingParam()
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
-    return new FireManager(meanNumFires, fireSpreader);
+    FireSpreader fireSpreader = new FireSpreader(lctLayer, srCalc, wrCalc, lcfGetter.getMap(),
+        windData.getWindDirectionProb(), windData.getWindSpeedProb());
+
+    return new FireManager(meanNumFires, fireSpreader, meanNumFires);
   }
 
   /**

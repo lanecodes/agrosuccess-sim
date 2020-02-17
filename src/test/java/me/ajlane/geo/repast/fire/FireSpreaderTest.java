@@ -53,13 +53,8 @@ public class FireSpreaderTest {
   }
 
   private static SlopeRiskCalculator getTestSlopeRiskCalculator() {
-    int[][] demArray = {
-        {110, 110, 110, 110, 110},
-        {107, 107, 107, 107, 107},
-        {105, 105, 105, 105, 105},
-        {104, 104, 104, 104, 104},
-        {104, 104, 104, 104, 104},
-    };
+    int[][] demArray = {{110, 110, 110, 110, 110}, {107, 107, 107, 107, 107},
+        {105, 105, 105, 105, 105}, {104, 104, 104, 104, 104}, {104, 104, 104, 104, 104},};
     ValueLayer dem = RepastGridUtils.arrayToGridValueLayer("dem", demArray);
     double gridSize = 25;
 
@@ -67,13 +62,8 @@ public class FireSpreaderTest {
   }
 
   private static IGridValueLayer getTestLct() {
-    int[][] lctArray = {
-        {0, 0, 2, 2, 2},
-        {1, 1, 3, 3, 3},
-        {9, 3, 3, 3, 3},
-        {9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9},
-    };
+    int[][] lctArray =
+        {{0, 0, 2, 2, 2}, {1, 1, 3, 3, 3}, {9, 3, 3, 3, 3}, {9, 9, 9, 9, 9}, {9, 9, 9, 9, 9},};
     return RepastGridUtils.arrayToGridValueLayer("lct", lctArray);
   }
 
@@ -95,8 +85,8 @@ public class FireSpreaderTest {
 
   @Test
   public void testGetLct() {
-    FireSpreader spreader =  new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
+    FireSpreader spreader = new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap,
+        this.windDirProbMap, this.windSpeedProbMap);
 
     ValueLayer lctDims = spreader.getLct();
     assertNotNull(lctDims);
@@ -104,15 +94,16 @@ public class FireSpreaderTest {
 
   @Test
   public void testSpreadFire() {
-    FireSpreader spreader =  new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
+    FireSpreader spreader = new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap,
+        this.windDirProbMap, this.windSpeedProbMap);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
     GridPoint initialFire = new GridPoint(2, 2);
-    spreader.spreadFire(initialFire);
+    double fuelMoistureFactor = 0.25;
+    spreader.spreadFire(initialFire, fuelMoistureFactor);
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");

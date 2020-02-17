@@ -28,21 +28,19 @@ public class FireManagerTest {
 
   private IGridValueLayer lct;
   private FireSpreader fireSpreader;
+  private Double fuelMoistureFactor;
 
   @Before
   public void setUp() {
     this.lct = getTestLct();
-    this.fireSpreader = new FireSpreader(lct, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+    this.fireSpreader =
+        new FireSpreader(lct, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+    this.fuelMoistureFactor = 0.25;
   }
 
   private static IGridValueLayer getTestLct() {
-    int[][] lctArray = {
-        {0, 0, 2, 2, 2},
-        {1, 1, 3, 3, 3},
-        {9, 3, 3, 3, 3},
-        {9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9},
-    };
+    int[][] lctArray =
+        {{0, 0, 2, 2, 2}, {1, 1, 3, 3, 3}, {9, 3, 3, 3, 3}, {9, 9, 9, 9, 9}, {9, 9, 9, 9, 9},};
     return RepastGridUtils.arrayToGridValueLayer("lct", lctArray);
   }
 
@@ -73,13 +71,8 @@ public class FireManagerTest {
   }
 
   private static SlopeRiskCalculator getTestSlopeRiskCalculator() {
-    int[][] demArray = {
-        {110, 110, 110, 110, 110},
-        {107, 107, 107, 107, 107},
-        {105, 105, 105, 105, 105},
-        {104, 104, 104, 104, 104},
-        {104, 104, 104, 104, 104},
-    };
+    int[][] demArray = {{110, 110, 110, 110, 110}, {107, 107, 107, 107, 107},
+        {105, 105, 105, 105, 105}, {104, 104, 104, 104, 104}, {104, 104, 104, 104, 104},};
     ValueLayer dem = RepastGridUtils.arrayToGridValueLayer("dem", demArray);
     double gridSize = 25;
 
@@ -90,17 +83,18 @@ public class FireManagerTest {
   public void tearDown() {
     this.fireSpreader = null;
     this.lct = null;
+    this.fuelMoistureFactor = null;
   }
 
   @Test
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
-    new FireManager(meanNumFiresPerYear, this.fireSpreader);
+    new FireManager(meanNumFiresPerYear, this.fireSpreader, this.fuelMoistureFactor);
   }
 
   @Test
   public void testNumFires() {
-    FireManager fireManager = new FireManager(10.1, this.fireSpreader);
+    FireManager fireManager = new FireManager(10.1, this.fireSpreader, this.fuelMoistureFactor);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -108,11 +102,12 @@ public class FireManagerTest {
 
   @Test
   public void testFiresInitiated() {
-    FireManager fireManager = new FireManager(5.0, this.fireSpreader);
+    FireManager fireManager = new FireManager(5.0, this.fireSpreader, this.fuelMoistureFactor);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.error("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
+
 
     List<GridPoint> ignitionPoints = fireManager.startFires();
     logger.error("Ignition points: " + ignitionPoints);

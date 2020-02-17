@@ -17,10 +17,18 @@ public class FireManager {
 
   private FireSpreader fireSpreader;
   private Poisson distr;
+  private Double fuelMoistureFactor;
 
-  public FireManager(double meanNumFiresPerYear, FireSpreader fireSpreader) {
+  /**
+   * @param meanNumFiresPerYear Expected number of fires in the landscape in a year
+   * @param fireSpreader Object used to spread fire given an initial ignition
+   * @param fuelMoistureFactor Dimensionless factor parameterising the amount of moisture in the
+   *        fuel at the time of the fire
+   */
+  public FireManager(Double meanNumFiresPerYear, FireSpreader fireSpreader, Double fuelMoistureFactor) {
     this.fireSpreader = fireSpreader;
     this.distr = RandomHelper.createPoisson(meanNumFiresPerYear);
+    this.fuelMoistureFactor = fuelMoistureFactor;
   }
 
   public int numFires() {
@@ -30,7 +38,8 @@ public class FireManager {
   /**
    * Attempts to find a flammable grid cell for each of the numFiresToStart 1000 times.
    * After this many attempts to find a flammable cell it gives up.
-   * @return
+   *
+   * @return List of grid locations where fires were started
    */
   @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public List<GridPoint> startFires() {
@@ -42,7 +51,7 @@ public class FireManager {
         GridPoint randomPoint = randomGridPoint(this.fireSpreader.getLct());
         if (isFlammable(this.fireSpreader.getLct(), randomPoint)) {
           firesStarted.add(randomPoint);
-          this.fireSpreader.spreadFire(randomPoint);
+          this.fireSpreader.spreadFire(randomPoint, this.fuelMoistureFactor);
           break;
         } else {
           attemptCounter++;
