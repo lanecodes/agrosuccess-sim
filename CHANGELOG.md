@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 7 - Add fuel-moisture risk sensitivity to fire model - 2020-02-17
+
+#### CHANGED
+
+- `FireManager` and `FireSpreader` updated to accept a `fuelMoistureFactor`
+  parameter which controls moisture in fuel
+- `fuelMoistureFactor`, which in Millington et al. 2009 corresponds identically
+  to the expected number of fires per year, is converted into fuel moisture
+  tisk using Table 4.
+- This feeds into the fire spread probability algorithm implemented in
+  `FireSpreader.spreadFire`.
+
 ### 6 - Add fire parameters - 2020-02-17
 
 #### Added
