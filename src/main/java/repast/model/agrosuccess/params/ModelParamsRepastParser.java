@@ -3,6 +3,8 @@ package repast.model.agrosuccess.params;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import me.ajlane.geo.repast.fire.FireParams;
+import me.ajlane.geo.repast.fire.LcfReplicate;
 import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
@@ -67,6 +69,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   private Map<String, Integer> defaultSvParams = getDefaultSeedViabilityParams();
   private Map<String, Double> defaultSdParams = getDefaultSeedDispersalParams();
   private Map<String, Integer> defaultSmParams = getDefaultSoilMoistureParams();
+  private Map<String, Object> defaultFireParams = getDefaultFireParams();
 
   public ModelParamsRepastParser(Parameters repastParams) {
     this.rp = repastParams;
@@ -95,6 +98,13 @@ public class ModelParamsRepastParser implements EnvrModelParams {
     Map<String, Integer> m = new HashMap<>();
     m.put("mesicThreshold", 500);
     m.put("hydricThreshold", 1000);
+    return m;
+  }
+
+  private Map<String, Object> getDefaultFireParams() {
+    Map<String, Object> m = new HashMap<>();
+    m.put("lcfReplicate", LcfReplicate.Default);
+    m.put("climateIgnitionScalingParam", 12.0);
     return m;
   }
 
@@ -135,6 +145,18 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public FireParams getFireParams() {
+    String lcfString = getStringParam("lcfReplicate", "Default");
+    double cisParam = getDoubleParam("climateIgnitionScalingParam",
+        (double) this.defaultFireParams.get("climateIgnitionScalingParam"));
+
+    return new FireParams(cisParam, LcfReplicate.valueOf(lcfString));
+  }
+
+  /**
    * @param paramName The name of a parameter expected to be specified in the {@code Parameters}
    *        object passed to this class's constructor. If no parameter of that name is found, a
    *        sensible default will be used instead.
@@ -170,7 +192,25 @@ public class ModelParamsRepastParser implements EnvrModelParams {
     return value;
   }
 
-  private <T extends Number> String missingParamWarningMsg(String paramName, T defaultValue) {
+  /**
+   * @param paramName The name of a parameter expected to be specified in the {@code Parameters}
+   *        object passed to this class's constructor. If no parameter of that name is found, a
+   *        sensible default will be used instead.
+   * @param defaultValue Value to use if {@code paramName} not found in the parameters object.
+   * @return Value corresponding to the given parameter name
+   */
+  private String getStringParam(String paramName, String defaultValue) {
+    String value;
+    try {
+      value = this.rp.getString(paramName);
+    } catch (IllegalParameterException e) {
+      logger.warn(missingParamWarningMsg(paramName, defaultValue));
+      value = defaultValue;
+    }
+    return value;
+  }
+
+  private <T> String missingParamWarningMsg(String paramName, T defaultValue) {
     return "Could not find entry for '" + paramName + "' in parameters.xml."
         + " Using default value of " + defaultValue;
   }
