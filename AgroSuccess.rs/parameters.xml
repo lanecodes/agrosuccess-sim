@@ -6,10 +6,29 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 
 		/>
+				<parameter name="climateIgnitionScalingParam" displayName="Climate ignition scaling parameter" type="java.lang.Double"
+						defaultValue="12.0"
+						isReadOnly="false"
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+
+		/>
 				<parameter name="studySite" displayName="Study Site" type="java.lang.String"
 						defaultValue="navarres"
 						isReadOnly="false"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+
+		/>
+				<parameter name="useDummyData" displayName="Switch to use dummy data (for testing)" type="java.lang.Boolean"
+						defaultValue="false"
+						isReadOnly="false"
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+
+		/>
+				<parameter name="lcfReplicate" displayName="Land Cover Flammability replicate" type="java.lang.String"
+						defaultValue="Default"
+						isReadOnly="false"
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									values="TF1 TF2 TF3 TF4 Default TF5 TF6 TF7 TF8 "
 
 		/>
 				<parameter name="graphPath" displayName="Path to graph data store" type="java.lang.String"
@@ -30,18 +49,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 
 		/>
-				<parameter name="useDummyData" displayName="Switch to use dummy data (for testing)" type="java.lang.Boolean"
-						defaultValue="false"
-						isReadOnly="false"
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
-
-		/>
 				<parameter name="dummyDataRoot" displayName="Dummy data root directory" type="java.lang.String"
 						defaultValue="data/test"
 						isReadOnly="true"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-		/>
 
+		/>
 				<parameter name="nTicks" displayName="Simulation length" type="java.lang.Integer"
 						defaultValue="50"
 						isReadOnly="false"
@@ -50,7 +63,7 @@
 		/>
 				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String"
 						defaultValue="/AgroSuccess/data/geographic"
-						isReadOnly="false"
+						isReadOnly="true"
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 
 		/>

@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 6 - Add fire parameters - 2020-02-17
+
+#### Added
+
+- `FireParams` class with the methods `getClimateIgnitionScalingParam`
+  and `getLcfReplicate`.
+
+#### Changed
+
+- `EnvrModelParams` has a new  `getFireParams` method
+- `climateIgnitionScalingParam` and `lcfReplicate` now specified in
+  `parameters.xml`.
+
 ### 5 - Refactor AgroSuccessContextBuilder - 2020-02-17
 
 #### Changed

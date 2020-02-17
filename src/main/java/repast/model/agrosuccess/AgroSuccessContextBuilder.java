@@ -8,6 +8,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import me.ajlane.geo.repast.fire.FireManager;
+import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
@@ -104,10 +105,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         envrModelParams.getSoilMoistureParams());
     context.add(lcsUpdater);
 
-    // TODO Configure land cover flammability replicate in parameters.xml
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()), siteData, siteData,
-        siteData, LcfReplicate.Default);
+        siteData, envrModelParams.getFireParams());
     context.add(fireManager);
 
     initLctReporters(context, simulationID);
@@ -260,23 +260,22 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param windData Site-specific wind speed and direction data
    * @param rasterData Information about site's raster grids, used for cell size
    * @param climateData Site-specific climate data (temperature and precipitation)
-   * @param lcfReplicate Which land cover flammability replicate to use (See Millington et al. 2009
-   *        Table 6).
+   * @param fireParams Parameters needed to specify the fire ignition and spread model
    * @return Configured FireManager
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
       SiteWindData windData, SiteRasterData rasterData, SiteClimateData climateData,
-      LcfReplicate lcfReplicate) {
+      FireParams fireParams) {
     double[] gridCellSize = rasterData.getGridCellPixelSize();
     double aveGridCellSize = (gridCellSize[0] + gridCellSize[1]) / 2;
-    LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(lcfReplicate);
+    LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(demLayer, aveGridCellSize);
     WindRiskCalculator wrCalc = new WindRiskCalculator();
     FireSpreader fireSpreader = new FireSpreader(lctLayer, srCalc, wrCalc, lcfGetter.getMap(),
         windData.getWindDirectionProb(), windData.getWindSpeedProb());
     // Millington et al.2009 eq 7
-    double meanNumFires =
-        12 * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
+    double meanNumFires = fireParams.getClimateIgnitionScalingParam()
+        * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
     return new FireManager(meanNumFires, fireSpreader);
   }
 
