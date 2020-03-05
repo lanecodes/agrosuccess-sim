@@ -70,38 +70,20 @@ public class SlopeRiskCalculator {
     return new Double(slopePctToRisk(slopePct));
   }
 
+  /**
+   * @param direction
+   * @return The distance between the center of a square grid cell and the center of one of its
+   *         neighbours taking into account whether the neighbouring cell is corner adjacent or edge
+   *         adjacent to the start cell.
+   *
+   */
   private double runBetweenAdjacentPoints(Direction direction) {
     double run;
-
-    switch (direction) {
-      case N:
-        run = this.edgeAdjacentRun;
-        break;
-      case NE:
-        run = this.cornerAdjacentRun;
-        break;
-      case E:
-        run = this.edgeAdjacentRun;
-        break;
-      case SE:
-        run = this.cornerAdjacentRun;
-        break;
-      case S:
-        run = this.edgeAdjacentRun;
-        break;
-      case SW:
-        run = this.cornerAdjacentRun;
-        break;
-      case W:
-        run = this.edgeAdjacentRun;
-        break;
-      case NW:
-        run = this.cornerAdjacentRun;
-        break;
-      default:
-        throw new RuntimeException("Direction unexpectedly not recognised.");
+    if (direction.ordinal() % 2 == 0) {
+      run = this.edgeAdjacentRun;
+    } else {
+      run = this.cornerAdjacentRun;
     }
-
     return run;
   }
 
