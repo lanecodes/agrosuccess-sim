@@ -130,7 +130,7 @@ public class RepastGridUtilsTest {
   }
 
   @Test
-  public void testPointInValueLayer2D() {
+  public void testPointInValueLayer2DWithValueLayer() {
     ValueLayer testLayerDefaultOrigin =
         new GridValueLayer("Test default", 0, true, new int[] {10, 10});
     ValueLayer testLayerCustomOrigin = new GridValueLayer("Test custom", 0, true,
@@ -172,6 +172,33 @@ public class RepastGridUtilsTest {
     List<GridPoint> list50x30 = StreamSupport.stream(points50x30.spliterator(), false)
         .collect(Collectors.toList());
     assertEquals(1500, list50x30.size());
+
+  }
+
+  @Test
+  public void testPointInValueLayer2DWithArrays() {
+    int[] extent = new int[] {10, 10};
+    int[] defaultOrigin = new int[] {0, 0};
+    int[] customOrigin = new int[] {-2, 2};
+
+    GridPoint testPoint;
+
+    testPoint = new GridPoint(9, 9);
+    assertTrue(RepastGridUtils.pointInValueLayer2D(testPoint, extent, defaultOrigin));
+    assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, extent, customOrigin));
+
+    testPoint = new GridPoint(0, 2);
+    assertTrue(RepastGridUtils.pointInValueLayer2D(testPoint, extent, defaultOrigin));
+    assertTrue(RepastGridUtils.pointInValueLayer2D(testPoint, extent, customOrigin));
+
+    testPoint = new GridPoint(-1, 4);
+    assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, extent, defaultOrigin));
+    assertTrue(RepastGridUtils.pointInValueLayer2D(testPoint, extent, customOrigin));
+
+    testPoint = new GridPoint(10, 10);
+    assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, extent, defaultOrigin));
+    assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, extent, customOrigin));
+
   }
 
 }

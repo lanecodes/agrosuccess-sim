@@ -274,6 +274,23 @@ public class RepastGridUtils extends GridUtils {
   }
 
   /**
+   * @param testPoint Point to test
+   * @param extent The [x, y] extent of the value layer
+   * @param origin The [x, y] origin of the value layer
+   * @return {@code True} if {@code testPoint} falls within {@code layer}, {@code False} otherwise.
+   */
+  public static boolean pointInValueLayer2D(GridPoint testPoint, int[] extent, int[] origin) {
+    int xOrigin = origin[0];
+    int xExtent = extent[0];
+
+    int yOrigin = origin[1];
+    int yExtent = extent[1];
+
+    return pointInExtent1D(testPoint.getX(), xOrigin, xExtent)
+        & pointInExtent1D(testPoint.getY(), yOrigin, yExtent);
+  }
+
+  /**
    * @param point Point along a number line to test for inclusion within {@code extent}.
    * @param origin Origin of the number line.
    * @param extent Number of integer stops on the number line.
