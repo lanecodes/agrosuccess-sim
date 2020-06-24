@@ -25,6 +25,6 @@ public interface Household {
   /**
    * @return Unique identifier for household
    */
-  public int getId();
+  public long getId();
 
 }
