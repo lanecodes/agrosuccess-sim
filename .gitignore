@@ -21,6 +21,9 @@ output/
 # Modelling notes
 model/lct-colours.pdf
 model/lct-colours.svg
+model/class-diagram*.jpg
+model/comm-diagram-*.jpg
+model/comm-diagram-*.pdf
 
 # Derived images of software design model
 model/AgroSuccess-domain-20190205.png
@@ -34,6 +37,7 @@ src/main/java/Scratch.java
 
 # Documentation, not under vcs for the time being
 docs/*
+doc/
 
 # javadoc site
 site/*
