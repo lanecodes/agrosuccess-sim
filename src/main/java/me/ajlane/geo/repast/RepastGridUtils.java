@@ -93,7 +93,7 @@ public class RepastGridUtils extends GridUtils {
     }
     int nRows = doubleArray.length;
     int nCols = doubleArray[0].length;
-    GridValueLayer gvl = new GridValueLayer(valueLayerName, true, nRows, nCols);
+    GridValueLayer gvl = new GridValueLayer(valueLayerName, true, nCols, nRows);
     for (int i = 0; i < nRows; i++) {
       for (int j = 0; j < nCols; j++) {
         // By convention, Java array indexed top to bottom, Repast GridValueLayer bottom to top

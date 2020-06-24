@@ -4,7 +4,7 @@
 package me.ajlane.geo.repast.soilmoisture;
 
 import org.apache.log4j.Logger;
-import me.ajlane.geo.GridCell;
+import me.ajlane.geo.GridLoc;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -509,11 +509,11 @@ public class SoilMoistureCalculator {
    * @param flowDir Value in flow direction grid
    * @return array specifying the row and col of the target cell
    */
-  GridCell runoffTargetCell(int thisRow, int thisCol, int flowDir) {
+  GridLoc runoffTargetCell(int thisRow, int thisCol, int flowDir) {
     if (isOutlet(flowDir, thisCol, thisRow)) {
       return null;
     } else {
-      return new GridCell(targetRow(flowDir, thisRow), targetCol(flowDir, thisCol));
+      return new GridLoc(targetCol(flowDir, thisCol), targetRow(flowDir, thisRow));
     }
   }
 
@@ -552,9 +552,9 @@ public class SoilMoistureCalculator {
         newSoilMoistureVals[i][j] -= runoff;
 
         // add runoff to the draining cell, unless this cell is a sink
-        GridCell targetCell = runoffTargetCell(i, j, (int) flowDirMap.get(getX(j), getY(i)));
+        GridLoc targetCell = runoffTargetCell(i, j, (int) flowDirMap.get(getX(j), getY(i)));
         if (targetCell != null) {
-          newSoilMoistureVals[targetCell.getRow()][targetCell.getColumn()] += runoff;
+          newSoilMoistureVals[targetCell.getRow()][targetCell.getCol()] += runoff;
         }
       }
     }

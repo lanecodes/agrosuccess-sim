@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 8 - Introduce local value layer interfaces - 2020-06-24
+
+See javadoc for the new `CartesianGridDouble2D` interface for motivating
+rationale for introducing a new interface which mirrors some Repast Simphony
+features.
+
+#### ADDED
+
+- `CartesianGridDouble2D` and `WriteableCartesianGridDouble2D` interfaces
+- Corresponding adapter classes `ValueLayerAdapter` and `GridValueLayerAdapter`
+  to enable Repast `ValueLayer` and `IGridValueLayer` objects to provide these
+  interfaces.
+
+#### CHANGED
+
+- `GridCell` now called `GridLoc`
+
+#### FIXED
+
+- Corrected error in `RepastGridUtils` which mixed up order of row/ column
+  coordinates.
+
 ### 7 - Add fuel-moisture risk sensitivity to fire model - 2020-02-17
 
 #### CHANGED
