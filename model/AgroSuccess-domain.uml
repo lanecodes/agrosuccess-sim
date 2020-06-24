@@ -15,10 +15,18 @@
     <ownedAttribute xmi:type="uml:Property" xmi:id="_lbwl8BKaEemUQZtwH7F3zw" name="targetStateTransitionTimeMap"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_JnCRUO14EeiaCOWWgO8T3Q" name="Village">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_IHL5EO2BEeiaCOWWgO8T3Q" name="location"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_IHL5EO2BEeiaCOWWgO8T3Q" name="location" type="_uFZoAFmOEeqC6_2GRU98Cw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_eygQQFmPEeqC6_2GRU98Cw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_exYO4FmPEeqC6_2GRU98Cw" value="*"/>
+    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_LEd4oO14EeiaCOWWgO8T3Q" name="Household">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_DZwCIO2YEeiaCOWWgO8T3Q" name="population"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_DZwCIO2YEeiaCOWWgO8T3Q" name="numMembers">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_A_01MFmQEeqC6_2GRU98Cw" name="makeSubsistencePlan">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_Qep6sFmQEeqC6_2GRU98Cw" type="_OXklIO2ZEeiaCOWWgO8T3Q" direction="return"/>
+    </ownedOperation>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_L61f8O14EeiaCOWWgO8T3Q" name="SeedDispersal"/>
   <packagedElement xmi:type="uml:Class" xmi:id="_NRJLkO14EeiaCOWWgO8T3Q" name="Precipitation">
@@ -123,8 +131,18 @@
     </ownedEnd>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_OXklIO2ZEeiaCOWWgO8T3Q" name="SubsistencePlan">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_i95v8O2ZEeiaCOWWgO8T3Q" name="numWheatPlots"/>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_pgU7IO2ZEeiaCOWWgO8T3Q" name="numFireWoodPlots"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_i95v8O2ZEeiaCOWWgO8T3Q" name="numWheatPlots">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_pgU7IO2ZEeiaCOWWgO8T3Q" name="numFireWoodPlots">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_YaSRUFmMEeqC6_2GRU98Cw" name="numBarleyPlots">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_cEMXQFmMEeqC6_2GRU98Cw" name="numGrazingPlots">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="_WPqiwO2ZEeiaCOWWgO8T3Q" name="Determines" memberEnd="_WPrJ0u2ZEeiaCOWWgO8T3Q _WPzssO2ZEeiaCOWWgO8T3Q">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_WPrJ0O2ZEeiaCOWWgO8T3Q" source="org.eclipse.papyrus">
@@ -137,7 +155,9 @@
     </ownedEnd>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="__jWAIO56EeiMB9yho37DFQ" name="LandscapeKnowledge">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_FT9S8O3CEeiaCOWWgO8T3Q" name="numRasterCellsPerHa"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_FT9S8O3CEeiaCOWWgO8T3Q" name="numRasterCellsPerHa">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="_KJ-noO57EeiMB9yho37DFQ" name="Is-aware-of" memberEnd="_KKCSAO57EeiMB9yho37DFQ _KKDgIO57EeiMB9yho37DFQ">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_KKBD4O57EeiMB9yho37DFQ" source="org.eclipse.papyrus">
@@ -227,5 +247,17 @@
     </eAnnotations>
     <ownedEnd xmi:type="uml:Property" xmi:id="_SKLY0hKgEemUQZtwH7F3zw" name="precipitation" type="_NRJLkO14EeiaCOWWgO8T3Q" association="_SKJjoBKgEemUQZtwH7F3zw"/>
     <ownedEnd xmi:type="uml:Property" xmi:id="_SKQ4YBKgEemUQZtwH7F3zw" name="precipitationparameters" type="_O4YQ4BKgEemUQZtwH7F3zw" association="_SKJjoBKgEemUQZtwH7F3zw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_uFZoAFmOEeqC6_2GRU98Cw" name="GridPoint">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_JwZIYFmPEeqC6_2GRU98Cw" name="getX">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_VGXiIFmPEeqC6_2GRU98Cw" name="x" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_YSqfAFmPEeqC6_2GRU98Cw" name="getY">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_aMIiEFmPEeqC6_2GRU98Cw" name="y" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
   </packagedElement>
 </uml:Model>
