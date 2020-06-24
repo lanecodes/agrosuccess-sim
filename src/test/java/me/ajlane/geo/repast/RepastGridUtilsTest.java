@@ -51,6 +51,18 @@ public class RepastGridUtilsTest {
   }
 
   @Test
+  public void doubleArrayToGridValueLayerNonSquareGrid() {
+    double[][] array = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+    ValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
+    assertEquals(4, gvl.get(0, 0), TOLERANCE);
+    assertEquals(5, gvl.get(1, 0), TOLERANCE);
+    assertEquals(6, gvl.get(2, 0), TOLERANCE);
+    assertEquals(1, gvl.get(0, 1), TOLERANCE);
+    assertEquals(2, gvl.get(1, 1), TOLERANCE);
+    assertEquals(3, gvl.get(2, 1), TOLERANCE);
+  }
+
+  @Test
   public void testValueLayerToString() {
     int[][] array = {{1, 2}, {3, 4}};
     IGridValueLayer gvl = RepastGridUtils.arrayToGridValueLayer("test layer", array);
