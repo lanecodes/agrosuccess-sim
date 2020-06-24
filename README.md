@@ -30,6 +30,8 @@ generated site can be found in `site`.
 [Maven site]: https://maven.apache.org/guides/mini/guide-site.html
 
 ## Dependencies
+- Tested on Java 11 using [AdoptOpenJDK](https://adoptopenjdk.net/) HotSpot
+  binaries.
 - Dependencies are managed using Maven following [instructions][maven integration]
   found on the Repast mailing list. See also original discussion on repast-interest
    [mailing list]
@@ -190,6 +192,17 @@ At time of writing on 2020-02-06, this is looking ahead. However it is
 expected that when run headless, logs will be configured in
 `src/main/resources/log4j.properties`, and will be sent to the file
 `logs/agrosuccess.log`.
+
+## Known issues
+
+### 'illegal reflective access operation' warning
+
+Repast Simphony 2.7 has [XStream](http://x-stream.github.io/) as a dependency.
+XStream is used for serialising Java objects to XML. When running AgroSuccess
+on Java 11 (but not Java 8), XStream triggers a warning which is known to its
+developers and is the subject of a
+[long-standing issue](https://github.com/x-stream/xstream/issues/101).
+Importantly this is just a warning and should be ignored for the time being.
 
 ## loadcypher
 
