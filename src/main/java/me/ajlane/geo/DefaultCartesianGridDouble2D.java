@@ -31,7 +31,7 @@ public class DefaultCartesianGridDouble2D implements WriteableCartesianGridDoubl
   /**
    * @param array Array to convert to a grid. All rows must be the same length.
    */
-  DefaultCartesianGridDouble2D(double[][] array) {
+  public DefaultCartesianGridDouble2D(double[][] array) {
     this.array = array;
     this.dimensions = getDimensionsFromArray(array);
   }
