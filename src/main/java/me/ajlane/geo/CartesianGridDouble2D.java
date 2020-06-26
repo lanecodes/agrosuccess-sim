@@ -43,7 +43,7 @@ import me.ajlane.geo.repast.ValueLayerAdapter;
  * alongside the interface defined here.
  * </p>
  *
- * <h2>Strive for loose coupling</h2>
+ * <h3>Strive for loose coupling</h3>
  * <p>
  * The submodels in the environmental modelling components of AgroSuccess constitute reasonably
  * complicated cellular automata models in their own right. By maintaining loose coupling between
@@ -54,7 +54,7 @@ import me.ajlane.geo.repast.ValueLayerAdapter;
  * which future users would be able to reuse our code if it had Repast Simphony as a dependency.
  * </p>
  *
- * <h2>Create opportunities for optimisation</h2>
+ * <h3>Create opportunities for optimisation</h3>
  * <p>
  * As of version 2.7 Repast Simphony provides classes representing a spatial grid which stores
  * {@double} values (classes implementing {@link repast.simphony.valueLayer.ValueLayer}) but no
@@ -64,7 +64,7 @@ import me.ajlane.geo.repast.ValueLayerAdapter;
  * analogous interfaces corresponding to these types in mind.
  * </p>
  *
- * <h2>Reduce complexity and ambiguity in the grid layer API</h2>
+ * <h3>Reduce complexity and ambiguity in the grid layer API</h3>
  * <p>
  * There has evidently been some effort in Repast Simphony to make spatial grids which can have
  * arbitrary dimensions (see e.g. {@link repast.simphony.valueLayer.ValueLayer#get(double...)}).
@@ -75,7 +75,7 @@ import me.ajlane.geo.repast.ValueLayerAdapter;
  * ambiguity and improves readability.
  * </p>
  *
- * <h1>References</h1>
+ * <h3>References</h3>
  * <p>
  * McConnell, S. (2004). Code Complete (2nd ed.). Microsoft Press
  * </p>

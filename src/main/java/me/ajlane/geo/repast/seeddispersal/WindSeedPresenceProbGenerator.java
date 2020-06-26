@@ -5,32 +5,32 @@ package me.ajlane.geo.repast.seeddispersal;
  * Generate the probability of finding a seed from a species which uses wind to disperse its seeds
  * given the distance of that cell from the closest source of such seeds.
  * </p>
- * 
+ *
  * <p>
  * The probability of a wind dispersed seed being found in a cell at a given time is determined by
  * the following probability-assigning procedure:
  * </p>
- * 
+ *
  * <p>
  * p(x) = 0.95 if x &le; ED<br>
  * p(x) = \exp^{-b/MD * x} if ED &lt x &le; MD<br>
  * p(x) = 0.001 if x &gt MD
  * </p>
- * 
+ *
  * <p>
  * Following Millington et al. (2009) we set b=5 is the distance-decrease parameter, ED=75 m is the
  * minimum distance for which seed dispersal is exponentially distributed, and $MD=100$m is the
  * maximum distance for which seeds are exponentially distributed.
  * </p>
- * 
+ *
+ * <h3>References</h3>
  * <p>
- * <strong>References</strong><br>
  * Millington, J. D. A., Wainwright, J., Perry, G. L. W., Romero-Calcerrada, R., & Malamud, B. D.
  * (2009). Modelling Mediterranean landscape succession-disturbance dynamics: A landscape
  * fire-succession model. Environmental Modelling and Software, 24(10), 1196–1208.
  * https://doi.org/10.1016/j.envsoft.2009.03.013
  * </p>
- * 
+ *
  * @author Andrew Lane
  *
  */
@@ -70,7 +70,7 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
    * DEPRECIATED, use math commons exponential distribution instead Effectively a modified
    * exponential distribution. \exp^{-b/MD * x} as opposed to b/MD \exp^{-b/MD * x} which would be
    * the probability distribution proper.
-   * 
+   *
    * @param x Single argument of the function
    * @return
    */
@@ -84,7 +84,7 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
    * org.apache.commons.math3.distribution.ExponentialDistribution.cumulativeProbability was
    * returning 1.0 for all values. Hopefully just a problem with their implementation of this
    * distribution
-   * 
+   *
    * @param x Value at which to evaluate the exponential CDF
    * @return
    */
@@ -114,11 +114,12 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
 
   /**
    * See Millington2009
-   * 
+   *
    * @param distToClosestSeedSource Distance in meters to nearest seed source used to calculate
    *        probability of wind dispersed seed presence.
    * @return
    */
+  @Override
   public double getProb(double distToClosestSeedSource) {
     if (distToClosestSeedSource <= minExponentialDistance) {
       return 0.95;
@@ -129,6 +130,7 @@ public class WindSeedPresenceProbGenerator implements ISeedPresenceProbGenerator
     }
   }
 
+  @Override
   public double getMinProb() {
     return minProb;
   }

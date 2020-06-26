@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package me.ajlane.geo.repast.seeddispersal;
 
@@ -16,30 +16,29 @@ import org.apache.commons.math3.distribution.RealDistribution;
  * The probability of an Oak acorn being present in a cell at a given time is specified by the
  * lognormal distribution where x is the distance from the cell to the nearest oak-containing pixel:
  * </p>
- * 
+ *
  * <p>
  * p(x) = \frac{1}{x \sigma \sqrt{2 \pi}} \exp\left[- \frac{(\ln(x) - \mu)^2}{2\sigma^2}\right]
  * </p>
- * 
+ *
  * <p>
  * Following Pons and Pausas (2007) and Millington et al. (2009) we set sigma = 0.851 and mu =
  * 3.844. Note that these values are in log-scale.
  * </p>
- * 
- * <p>
- * <strong>References</strong><br>
+ *
+ * <h3>References</h3>
  * <p>
  * Pons, J., & Pausas, J. G. (2007). Acorn dispersal estimated by radio-tracking. Oecologia, 153(4),
  * 903–911. https://doi.org/10.1007/s00442-007-0788-x
  * </p>
- * 
+ *
  * <p>
  * Millington, J. D. A., Wainwright, J., Perry, G. L. W., Romero-Calcerrada, R., & Malamud, B. D.
  * (2009). Modelling Mediterranean landscape succession-disturbance dynamics: A landscape
  * fire-succession model. Environmental Modelling and Software, 24(10), 1196–1208.
  * https://doi.org/10.1016/j.envsoft.2009.03.013
  * </p>
- * 
+ *
  * @author Andrew Lane
  */
 public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
@@ -97,11 +96,12 @@ public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
 
   /**
    * See Millington2009
-   * 
+   *
    * @param distToClosestSeedSource Distance in meters to nearest seed source used to calculate
    *        probability of acorn presence
    * @return
    */
+  @Override
   public double getProb(double distToClosestSeedSource) {
     if (distToClosestSeedSource <= maxLognormalDistance) {
       return baseCellOccupancyProb(distToClosestSeedSource);
@@ -110,6 +110,7 @@ public class AcornPresenceProbGenerator implements ISeedPresenceProbGenerator {
     }
   }
 
+  @Override
   public double getMinProb() {
     return minProb;
   }

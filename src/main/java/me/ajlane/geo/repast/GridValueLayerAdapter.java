@@ -9,7 +9,7 @@ import repast.simphony.valueLayer.IGridValueLayer;
  * Convert objects implementing Repast Simphony's {@link IGridValueLayer} interface to work with the
  * {@link WriteableCartesianGridDouble2D} interface.
  *
- * <h1>TODO</h1>
+ * <h3>TODO</h3>
  * <ul>
  * <li>There is shared code between this class and {@link ValueLayerAdapter} which implements
  * Repast's {@code ValueLayer} interface. {@code IGridValueLayer} extends {@code ValueLayer} so one

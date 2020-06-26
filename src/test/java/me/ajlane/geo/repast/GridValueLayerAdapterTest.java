@@ -11,7 +11,7 @@ import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
 /**
- * <h1>Note</h1>
+ * <h3>Note</h3>
  * <p>
  * With the exception of {@link #testAssignment} all tests here correspond exactly to
  * {@link ValueLayerAdapterTest}. This is due to the need to duplicate code from that
