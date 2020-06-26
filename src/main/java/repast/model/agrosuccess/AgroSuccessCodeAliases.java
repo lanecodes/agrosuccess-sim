@@ -113,7 +113,7 @@ public class AgroSuccessCodeAliases {
     A(0), B(1), C(2), D(3);
     private int code;
     SoilType(int code) { this.code = code; }
-    int getCode() { return this.code; }
-  }   
+    public int getCode() { return this.code; }
+  }
 
 }
