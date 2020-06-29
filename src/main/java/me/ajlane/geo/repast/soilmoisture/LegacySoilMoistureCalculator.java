@@ -7,16 +7,15 @@ import org.apache.log4j.Logger;
 import me.ajlane.geo.GridLoc;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 /**
  * @author andrew
  *
  */
-public class SoilMoistureCalculator {
+public class LegacySoilMoistureCalculator implements SoilMoistureUpdater {
 
-  final static Logger logger = Logger.getLogger(SoilMoistureCalculator.class);
+  final static Logger logger = Logger.getLogger(LegacySoilMoistureCalculator.class);
 
   private IGridValueLayer soilMoisture;
   private IGridValueLayer landCoverType;
@@ -32,7 +31,7 @@ public class SoilMoistureCalculator {
    * @param initialSoilMoisture
    * @param context
    */
-  public SoilMoistureCalculator(double annualPrecipitation, Context<Object> context) {
+  public LegacySoilMoistureCalculator(double annualPrecipitation, Context<Object> context) {
 
     soilMoisture = (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
     slope = (IGridValueLayer) context.getValueLayer(LscapeLayer.Slope.name());
@@ -536,7 +535,8 @@ public class SoilMoistureCalculator {
   }
 
   // @ScheduledMethod(start = 1, interval = 1, priority = 1)
-  public void updateSoilMoistureLayer(double precip) {
+  @Override
+  public void updateSoilMoisture(double precip) {
     double[][] newSoilMoistureVals = new double[nY][nX];
     for (int i = 0; i < nY; i++) {
       for (int j = 0; j < nX; j++) {
@@ -565,11 +565,14 @@ public class SoilMoistureCalculator {
         soilMoisture.set(newSoilMoistureVals[i][j], getX(j), getY(i));
       }
     }
+    logger.debug("Finished updating soil moisture");
   }
 
-  @ScheduledMethod(start = 1, interval = 1, priority = 0)
+  @Deprecated
+  // This used to be scheduled here, but now implemented using {@link AgroSuccessSoilMoistureUpdate}
+  // @ScheduledMethod(start = 1, interval = 1, priority = 0)
   public void step() {
     logger.debug("Called soil moisture calc");
-    updateSoilMoistureLayer(this.annualPrecipitation);
+    updateSoilMoisture(this.annualPrecipitation);
   }
 }

@@ -11,7 +11,7 @@ import me.ajlane.geo.DummySlopeLayer3x3;
 import me.ajlane.geo.DummySoilTypeLayer3x3;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
 import me.ajlane.geo.repast.RepastGridUtils;
-import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
+import me.ajlane.geo.repast.soilmoisture.LegacySoilMoistureCalculator;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -19,14 +19,14 @@ import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 
-public class SoilMoistureCalculatorTest {
+public class LegacySoilMoistureCalculatorTest {
 
-    final static Logger logger = Logger.getLogger(SoilMoistureCalculatorTest.class);
+    final static Logger logger = Logger.getLogger(LegacySoilMoistureCalculatorTest.class);
 
 	private Context<Object> context = new DefaultContext<Object>();
 	private IGridValueLayer flowDirectionGrid;
 	private IGridValueLayer soilMoistureLayer;
-	private SoilMoistureCalculator soilMoistureCalc;
+	private SoilMoistureUpdater soilMoistureCalc;
 
 	@Before
 	public void setUp() {
@@ -53,10 +53,10 @@ public class SoilMoistureCalculatorTest {
 		context.addValueLayer(new DummySoilTypeLayer3x3(LscapeLayer.SoilType.name(), "B")); //  all cells have soil type B
 		context.addValueLayer(new DummyLandCoverTypeLayer3x3(LscapeLayer.Lct.name(), "pine forest")); // all cells occupied by pine forest
 
-		soilMoistureCalc = new SoilMoistureCalculator(50.0, context);
+		soilMoistureCalc = new LegacySoilMoistureCalculator(50.0, context);
 
 		// update soil moisture layer with 50mm of precipitation
-		soilMoistureCalc.updateSoilMoistureLayer(50.0);
+		soilMoistureCalc.updateSoilMoisture(50.0);
 
 		double[][] trueSoilMoistureLayer = {
 				{0+50, 48.0238 + 50, 2*48.0238 + 50 -48.0238},
