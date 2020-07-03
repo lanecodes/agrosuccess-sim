@@ -1,32 +1,173 @@
 # Documentation and packaging
 
-
 ## Documentation
 
-We would like to use Maven to both generate this site and manage javadoc generation
-via the `<reporting>` [section of the POM](https://maven.apache.org/plugins/maven-javadoc-plugin/usage.html). However this will not be possible until all dependencies currently included as
-Repast Simphony Development Libraries in Eclipse are also added as Maven dependencies. Below we document how we add Repast Simphony itself as a Maven dependency.
+- To build this site, go to the AgroSuccess repository root and run `mvn
+  site`. Maven will then generate the site according to specification in the
+  `build` section of `pom.xml`. Its outputs will be in `target/site`.
+- To generate the model API documentation (Javadoc), go to Project -> Generate
+  Javadoc in Eclipse.
 
-## Circumvent issue of RS not being in Maven Central
+We would like to be able to automatically generate Javadoc API documentation
+using Maven but this has not been possible due to issues discussed in [Repast
+Simphony and Maven](#rs-and-maven).
 
-The last version of Repast Simphony [added to Maven Central](https://mvnrepository.com/artifact/org.opensimulationsystems.cabsf/repast.simphony.bin_and_src) was v2.3.1, uploaded in 2016 by someone other than the Repast maintainers. We use 2.7 and have had problems created by the fact we can't use Repast Simphony as a Maven dependency. A workaround can be achieved by creating a local Maven repository, installing a jar containing the required RS classes there, and specifying that as our dependency in `pom.xml` as usual. Happily Repast Simphony keeps a copy of a jar containing all RS source and binaries on [its GitHub](https://github.com/Repast/repast.simphony) and can be downloaded from [repast.simphony.bin<sub>and</sub><sub>src.jar</sub>](https://github.com/Repast/repast.simphony/blob/v2.7.0/repast.simphony.bin_and_src/repast.simphony.bin_and_src.jar). There is a description of how to do this in the blog post [Adding a custom jar as a maven dependency](https://blog.valdaris.com/post/custom-jar/) which outlines the structure of this solution. This approach enables Maven to include classes from RS in uber-jars if builds for my model, which wouldn't happen if the RS jar was added directly as a dependency. A way in which I would propose deviating from the blog post's approach is that instead of creating a local maven repository within their project and checking these files into VCS, I'd be inclined to have a script download the file and create the local Maven repository somewhere else. This might even be possible to do in the POM itself using  [Bash Maven Plugin](https://stackoverflow.com/questions/8433652) although this is probably overkill for my purposes I should just clearly document how the local repository is created and RS installed into it. This could always be built on later after consulting with the repast-interest mailing list.
+## Packaging
 
-[Guide](https://www.theserverside.com/news/1364121/Setting-Up-a-Maven-Repository) on how to set up local Maven repository *server*. Note that there is a local Maven repository which holds artifacts cached from both local and remote servers.
+TODO
 
-See also [Steps to add external jar to local maven repository](https://www.testingtools.co/maven/steps-to-add-external-jar-to-local-maven-repository)
+## Repast Simphony and Maven
+<a name="rs-and-maven"></a>
 
-Recommended by Valdaris
+### Overview of the problem
 
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=<myGroup> \
-        -DartifactId=<myArtifactId> -Dversion=<myVersion> \
-        -Dpackaging=<myPackaging> -DlocalRepositoryPath=<path>
+We would like to use Maven to both generate this site and manage javadoc
+generation via the `<reporting>` [section of the
+POM](https://maven.apache.org/plugins/maven-javadoc-plugin/usage.html). However,
+Repast Simphony is installed using an Eclipse update site rather than through a
+build tool like Maven. Furthermore the last version of Repast Simphony [added
+to Maven
+Central](https://mvnrepository.com/artifact/org.opensimulationsystems.cabsf/repast.simphony.bin_and_src)
+was v2.3.1, uploaded in 2016 by someone other than the Repast maintainers. We
+use 2.7 and have had problems created by the fact we can't use Repast Simphony
+as a Maven dependency. Below we describe a workaround we have attepted
+involving the creation of a local Maven repository.
 
-Maven `install:install-file` documentation is [here](https://maven.apache.org/plugins/maven-install-plugin/install-file-mojo.html).
-Mkyong [points out](https://mkyong.com/maven/how-to-include-library-manully-into-maven-local-repository) we can just install into our local Maven repository.
+### Adding a custom `.jar` as a Maven dependency
 
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=<myGroup> \
-    	-DartifactId=<myArtifactId> -Dversion=<myVersion> \
-    	-Dpackaging=<myPackaging>
+There are two approaches we have considered for adding a custom `.jar` to a
+Maven project. Both of these approaches enables Maven to include the classes
+included in the custom `.jar` in uber-jars generated by builds of this
+project. This would not be possible if the custom `.jar` was added directly as
+a dependency, e.g. in `lib`.
 
-The above work of adding Repast Simphony jar to the local Maven repository is achieved in the script
-`./scripts/dependencies.py`.
+The solution [proposed by
+valdaris](https://blog.valdaris.com/post/custom-jar/), involves creating a new
+local Maven repository within the current project. The files in this repository
+would then by checked into VCS and travel with the project. The custom `.jar`
+would then be added to this local repo with
+
+```
+mvn install:install-file -Dfile=<path-to-file> -DgroupId=<myGroup> \
+    -DartifactId=<myArtifactId> -Dversion=<myVersion> \
+    -Dpackaging=<myPackaging> -DlocalRepositoryPath=<path>
+```
+
+However, we note it is possible to simply install the custom `.jar` in the
+user's existing local Maven repository (see e.g
+[here](https://www.testingtools.co/maven/steps-to-add-external-jar-to-local-maven-repository)
+and
+[here](https://mkyong.com/maven/how-to-include-library-manully-into-maven-local-repository)).
+using
+
+```
+mvn install:install-file -Dfile=<path-to-file> -DgroupId=<myGroup> \
+	-DartifactId=<myArtifactId> -Dversion=<myVersion> \
+	-Dpackaging=<myPackaging>
+```
+
+This could then be picked up by maven is the artifact is specified in
+`pom.xml`. For further information see Maven `install:install-file`
+documentation
+[here](https://maven.apache.org/plugins/maven-install-plugin/install-file-mojo.html).
+
+### Attempt to load Repast Simphony `.jar` as a Maven dependency
+
+The Repast Simphony developers provide a `.jar` containing the Repast Simphony
+sources and compiled classes on their [GitHub
+account](https://github.com/Repast/repast.simphony). The `.jar` itself is
+called
+[repast.simphony.bin<sub>and</sub><sub>src.jar</sub>](https://github.com/Repast/repast.simphony/blob/v2.7.0/repast.simphony.bin_and_src/repast.simphony.bin_and_src.jar). We
+bundled the work associated with the method of adding a custom `.jar` to the
+local Maven repository into the script `./scripts/dependencies.py`. It might be
+possible to have Maven run this script as part of the build, e.g. using the
+[Bash Maven Plugin](https://stackoverflow.com/questions/8433652). However so
+far we plan to simply document that users should run this script to install the
+necessary Repast Simphony libraries to a location Maven can reach before
+running the Maven build.
+
+Having added the Repast Simphony `.jar` to the local repsitory we added the
+following to `pom.xml`.
+
+```
+	<dependency>
+	<!-- Installed locally using ./scripts/dependencies.py -->
+		<groupId>io.github.repast</groupId>
+		<artifactId>repast.simphony.bin_and_src</artifactId>
+		<version>2.7.0</version>
+	</dependency>
+```
+
+However, having told Maven to use the Repast Simphony classes from the `.jar`
+we were not able to run Repast Simphony from Eclipse, instead obtaining the
+error shown in the [appendix](#rs-jar-error). This must be something to do with
+the classes loaded from the jar interfering with how Repast Simphony loads its
+dependencies in some way. We don't understand this problem, but might revisit
+it if we find that the methods Repast Simphony provides for packaging models
+prove insufficient and we decide to use Maven for packaging.
+
+## Appendices
+
+### Error when using Repast Simphony Jar
+<a name="rs-jar-error"></a>
+
+```
+ERROR [main] 16:52:19,005 saf.core.runtime.CorePlugin - Error instantiating plugins
+java.lang.reflect.InvocationTargetException
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at saf.core.runtime.CorePlugin.loadUIPlugin(CorePlugin.java:43)
+	at saf.core.runtime.CorePlugin.run(CorePlugin.java:32)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at saf.core.runtime.Boot.run(Boot.java:106)
+	at saf.core.runtime.Boot.main(Boot.java:248)
+	at repast.simphony.runtime.RepastMain.main(RepastMain.java:43)
+Caused by: saf.core.runtime.PluginDefinitionException: Unable to create class 'repast.simphony.R.RunRModel' in ActionSpec 'repast.simphony.R.runR'
+	at saf.core.ui.UIPlugin.processActionSpec(UIPlugin.java:251)
+	at saf.core.ui.ActionProcessor.process(ActionProcessor.java:15)
+	at saf.core.ui.ExtPointProcessor.iterate(ExtPointProcessor.java:31)
+	at saf.core.ui.UIPlugin.initialize(UIPlugin.java:75)
+	... 13 more
+Caused by: java.lang.NoClassDefFoundError: saf/core/ui/actions/ISAFAction
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:349)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:349)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at org.java.plugin.standard.StandardPluginClassLoader.loadClass(Unknown Source)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:348)
+	at saf.core.ui.UIPlugin.processActionSpec(UIPlugin.java:243)
+	... 16 more
+Caused by: java.lang.ClassNotFoundException: saf.core.ui.actions.ISAFAction
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:382)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:349)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 45 more
+```
