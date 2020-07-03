@@ -100,7 +100,7 @@ following to `pom.xml`.
 
 However, having told Maven to use the Repast Simphony classes from the `.jar`
 we were not able to run Repast Simphony from Eclipse, instead obtaining the
-error shown in the [appendix](#rs-jar-error). This must be something to do with
+error shown in the appendix. This must be something to do with
 the classes loaded from the jar interfering with how Repast Simphony loads its
 dependencies in some way. We don't understand this problem, but might revisit
 it if we find that the methods Repast Simphony provides for packaging models

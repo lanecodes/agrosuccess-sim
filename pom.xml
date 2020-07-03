@@ -117,13 +117,6 @@
 	</dependency>
 
 	<dependency>
-	<!-- Installed locally using ./scripts/dependencies.py -->
-		<groupId>io.github.repast</groupId>
-		<artifactId>repast.simphony.bin_and_src</artifactId>
-		<version>2.7.0</version>
-	</dependency>
-
-	<dependency>
 	<!-- https://mvnrepository.com/artifact/junit/junit -->
 	    <groupId>junit</groupId>
 	    <artifactId>junit</artifactId>
