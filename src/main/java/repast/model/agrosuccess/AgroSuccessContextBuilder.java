@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
+import me.ajlane.geo.repast.GridValueLayerAdapter;
+import me.ajlane.geo.repast.ValueLayerAdapter;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
@@ -19,10 +21,13 @@ import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
-import me.ajlane.geo.repast.soilmoisture.LegacySoilMoistureCalculator;
+import me.ajlane.geo.repast.soilmoisture.DefaultFlowDirectionMap;
+import me.ajlane.geo.repast.soilmoisture.JgraphtLandscapeFlow;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureUpdater;
+import me.ajlane.geo.repast.soilmoisture.agrosuccess.AgroSuccessCurveNumberGenerator;
 import me.ajlane.geo.repast.soilmoisture.agrosuccess.SoilMoistureUpdateAction;
 import me.ajlane.geo.repast.succession.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDecider;
@@ -101,10 +106,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         envrModelParams.getSeedDispersalParams(), envrModelParams.getSeedViabilityParams());
     context.add(seedDisperser);
 
-    // TODO Consider refactoring initSoilMoistureCalculator
-    SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context, siteData);
-    IAction updateSM =
-        new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
+    SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context);
+    IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
     schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateSM);
 
     LcsUpdater lcsUpdater = initLcsUpdater(context, graph, params.getString("graphModelID"),
@@ -226,10 +229,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param studySiteData
    * @return Configured soil moisture calculator
    */
-  private SoilMoistureUpdater initSoilMoistureCalculator(Context<Object> context,
-      SiteClimateData climateData) {
-    SoilMoistureUpdater smCalc =
-        new LegacySoilMoistureCalculator(climateData.getTotalAnnualPrecipitation(), context);
+  private SoilMoistureUpdater initSoilMoistureCalculator(Context<Object> context) {
+    SoilMoistureUpdater smCalc = new SoilMoistureCalculator(
+        new GridValueLayerAdapter(
+            (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.Lct.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.SoilType.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.Slope.name())),
+        new JgraphtLandscapeFlow(
+            new ValueLayerAdapter(context.getValueLayer(LscapeLayer.FlowDir.name())),
+            new DefaultFlowDirectionMap()),
+        new AgroSuccessCurveNumberGenerator());
+
     return smCalc;
   }
 
