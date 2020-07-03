@@ -1,575 +1,191 @@
-/**
- *
- */
 package me.ajlane.geo.repast.soilmoisture;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.log4j.Logger;
+import me.ajlane.geo.CartesianGridDouble2D;
 import me.ajlane.geo.GridLoc;
-import repast.model.agrosuccess.LscapeLayer;
-import repast.simphony.context.Context;
-import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.valueLayer.IGridValueLayer;
+import me.ajlane.geo.WriteableCartesianGridDouble2D;
 
 /**
- * @author andrew
+ * <p>
+ * Differs to {@link LegacySoilMoistureCalculator} by implementing a flow routing algorithm in which
+ * the runoff from cells is added to the total water input to the cells down stream of them. See
+ * Section 3.4 in Millington et. al 2009.
+ * </p>
+ * <p>
+ * Note that rather than dealing directly with a flow direction map, this class depends on an
+ * aspatial abstraction in the form of a {@link LandscapeFlow} to account for how water flows over
+ * the landscape.
+ * </p>
  *
+ * <h3>References</h3>
+ * <p>
+ * Millington, J. D. A., Wainwright, J., Perry, G. L. W., Romero-Calcerrada, R., & Malamud, B. D.
+ * (2009). Modelling Mediterranean landscape succession-disturbance dynamics: A landscape
+ * fire-succession model. Environmental Modelling and Software, 24(10), 1196–1208.
+ * https://doi.org/10.1016/j.envsoft.2009.03.013
+ * </p>
+ * <p>
+ * United States Department of Agriculture. (2004). Estimation of Direct Runoff from Storm Rainfall.
+ * In National Engineering Handbook Part 630 (Hydrology). Retrieved from
+ * https://directives.sc.egov.usda.gov/viewerFS.aspx?hid=21422
+ * </p>
+ *
+ * <h3>TODO</h3>
+ * <ul>
+ * <li>Insert reference to soil moisture calculations in Andrew Lane's thesis once section number is
+ * known.</li>
+ * </ul>
+ *
+ * @author Andrew Lane
  */
-public class SoilMoistureCalculator {
+public class SoilMoistureCalculator implements SoilMoistureUpdater {
 
   final static Logger logger = Logger.getLogger(SoilMoistureCalculator.class);
 
-  private IGridValueLayer soilMoisture;
-  private IGridValueLayer landCoverType;
-  private IGridValueLayer flowDirMap;
-  private IGridValueLayer soilMap;
-  private IGridValueLayer slope;
-  private int nX, nY;
-
-  private double annualPrecipitation;
+  private WriteableCartesianGridDouble2D soilMoisture;
+  private CartesianGridDouble2D landCoverType;
+  private CartesianGridDouble2D soilMap;
+  private CartesianGridDouble2D slope;
+  private LandscapeFlow landscapeFlow;
+  private CurveNumberGenerator curveNumberGenerator;
 
   /**
-   * @param iGridValueLayer
-   * @param initialSoilMoisture
-   * @param context
-   */
-  public SoilMoistureCalculator(double annualPrecipitation, Context<Object> context) {
-
-    soilMoisture = (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
-    slope = (IGridValueLayer) context.getValueLayer(LscapeLayer.Slope.name());
-    soilMap = (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilType.name());
-    flowDirMap = (IGridValueLayer) context.getValueLayer(LscapeLayer.FlowDir.name());
-    landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
-
-    nY = (int) soilMoisture.getDimensions().getHeight();
-    nX = (int) soilMoisture.getDimensions().getWidth();
-
-    this.annualPrecipitation = annualPrecipitation;
-
-    initSoilMoisture();
-  }
-
-  /**
-   * The time-dependent soil moisture vector is given by: m(t) = p(t) + D*r(t) In this equation,
-   * p(t) is the precipitation, r(t) is the runoff vector which encodes the runoff characteristics
-   * of each land-cover cell in consideration of soil type, vegetation cover and slope. D is a
-   * matrix which encodes all the information about landscape topology we need to route water around
-   * the landscape. D = A^T - A where A is the FlowConnectivityNetwork for the landscape.
+   * Clients should be careful to ensure
    *
-   * @param flow FlowConnectivityNetwork to use to calculate the drainage matrix.
-   * @return calculated drainageMatrix
+   * @param soilMoisture Spatial grid containing soil moisture values to be updated
+   * @param landCoverType Spatial grid containing numerical values encoding land-cover types
+   * @param soilMap Spatial grid containing numerical values encoding soil type
+   * @param slope Spatial grid containing numerical values encoding slope in %
+   * @param landscapeFlow Representation of how water flows over the landscape from one grid cell to
+   *        another
+   * @param curveNumberGenerator Maps slope, soil type and land-cover type to a single number
+   *        characterising how much water is retained in each grid cell
    */
-  /*
-   * public static SparseRealMatrix calcDrainageMatrix(FlowConnectivityNetwork flow) {
-   * SparseRealMatrix drainageMatrix; drainageMatrix = (SparseRealMatrix)
-   * flow.transpose().subtract(flow); return drainageMatrix; }
-   */
-
-  /*
-   * protected SparseRealMatrix getDrainageMatrix() { return drainageMatrix; }
-   */
+  public SoilMoistureCalculator(WriteableCartesianGridDouble2D soilMoisture,
+      CartesianGridDouble2D landCoverType, CartesianGridDouble2D soilMap,
+      CartesianGridDouble2D slope, LandscapeFlow landscapeFlow,
+      CurveNumberGenerator curveNumberGenerator) {
+    this.soilMoisture = soilMoisture;
+    this.landCoverType = landCoverType;
+    this.soilMap = soilMap;
+    this.slope = slope;
+    this.landscapeFlow = landscapeFlow;
+    this.curveNumberGenerator = curveNumberGenerator;
+  }
 
   /**
-   * Set all cells in the soil moisture ValueLayer to the same initial value
+   * Modify the {@code soilMoisture} map passed to this class's constructor to reflect the
+   * precipitation falling on the landscape in this time step.
+   */
+  @Override
+  public void updateSoilMoisture(double annualPrecip) {
+    for (CatchmentFlow catchment : this.landscapeFlow) {
+      updateCatchment(annualPrecip, catchment);
+    }
+    logger.debug("Soil moisture updated");
+  }
+
+  /**
+   * @param annualPrecip Water falling on grid cell in the catchment throughout the year [mm]
+   * @param catchment Catchment for which soil moisture is to be updated
+   */
+  private void updateCatchment(double annualPrecip, CatchmentFlow catchment) {
+    Map<GridLoc, Double> runoffMap = new HashMap<>();
+    List<GridLoc> cells = catchment.flowSourceDependencyOrder();
+    for (GridLoc cell : cells) {
+      updateCell(annualPrecip, cell, catchment.getSourceCells(cell), runoffMap);
+    }
+  }
+
+  /**
+   * @param annualPrecip Water falling on grid cell in the year [mm]
+   * @param cell Grid cell to be updated in {@code soilMoisture}
+   * @param sourceCells Cells which drain into the cell for which soil moisture is being calculated
+   * @param runoffMap Supporting data structure containing pre-calculated values of runoff from
+   *        upstream grid cells
+   */
+  private void updateCell(double annualPrecip, GridLoc cell, Set<GridLoc> sourceCells,
+      Map<GridLoc, Double> runoffMap) {
+    double totalInput = calcTotalWaterInput(annualPrecip, sourceCells, runoffMap);
+    double maxPotentialRetention = calcMaxPotentialRetention(getCurveNumber(cell));
+    double runoff = calcRunoff(totalInput, maxPotentialRetention);
+    runoffMap.put(cell, runoff);
+    this.soilMoisture.setValue(calcSoilMoisture(totalInput, runoff), cell);
+  }
+
+  /**
+   * $T_i = P + \sum_{j \in D_i} Q_j$ where $P$ is precipitation, Q_j is runoff (see
+   * {@link #calcRunoff(double, double)}), and $D_i$ is the set of cells draining into cell $i$.
    *
-   * @param initialSoilMoisture Initial value for soil moisture in all cells, units of mm.
+   * @param precip Total annual precipitation [mm]
+   * @param sourceCells Set of cells which drain into the cell for which total water input is being
+   *        calculated
+   * @param runoffMap Supporting data structure containing pre-calculated values for runoff for the
+   *        cells upstream of the one for which total water input is being calculated
+   * @return Total water input into a grid cell
    */
-  private void initSoilMoisture() {
-    int h = (int) soilMoisture.getDimensions().getHeight();
-    int w = (int) soilMoisture.getDimensions().getWidth();
-    for (int x = 0; x < w; x++) {
-      for (int y = 0; y < h; y++) {
-        soilMoisture.set(this.annualPrecipitation, x, y);
-      }
+  private static double calcTotalWaterInput(double precip, Set<GridLoc> sourceCells,
+      Map<GridLoc, Double> runoffMap) {
+    double total = precip;
+    for (GridLoc cell : sourceCells) {
+      total += runoffMap.get(cell);
     }
+    return total;
   }
 
   /**
-   * @param curveNumber Dimensionless number characterising the runoff characteristics of a patch of
-   *        ground.
-   * @return The initial abstraction rate of the land patch
-   */
-  private double abstractionRate(double curveNumber) {
-    return 2.54 * (1000 / curveNumber - 10);
-  }
-
-  /**
-   * @param precip Precipitation [mm]
-   * @param s Initial abstraction rate [dimensionless]
-   * @return Runoff [mm]
-   */
-  private double cellRunoff(double precip, double s) {
-    return Math.pow(precip - 0.02 * s, 2) / (precip + 0.08 * s);
-  }
-
-  /**
-   * Get the curve number for an individual cell given information about its landcover, soil type
-   * and slope. See Millington2009
+   * $S_i = 25.4 (1000 / CN_i - 10)$. Depends on the cell's curve number, $CN_i$, which accounts for
+   * variation in slope, land-cover and soil type. See United States Department of Agriculture,
+   * 2004.
    *
-   * @param slope Percentage incline
-   * @param soilType See Millington2009 0 = Type A 1 = Type B 2 = Type C 3 = Type D
-   * @param landCoverType 0 = Water/ Quarry 1 = Burnt 2 = Barley 3 = Wheat 4 = Depleted agricultural
-   *        land 5 = Shrubland 6 = Pine forest 7 = Transition forest 8 = Deciduous forest 9 = Oak
-   *        forest
-   * @return Curve number
+   * @param curveNumber
+   * @return Maximum potential water retention for a grid cell [mm].
    */
-  private double curveNumber(double slope, int soilType, int landCoverType) {
-    double result = -1;
-    if (slope < 3) {
-      switch (soilType) {
-        case 0: {
-          if (landCoverType == 6) {
-            result = 35;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 35;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 35;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 46;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 35;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 62;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 91;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          } // default value, indicates missing data
-          // TODO work out what to do about Burnt/Quarry. What should its CN be?
-        }
-        case 1: {
-          if (landCoverType == 6) {
-            result = 54;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 54;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 54;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 68;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 54;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 72;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 91;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          } // default value, indicates missing data
-        }
-        case 2: {
-          if (landCoverType == 6) {
-            result = 69;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 69;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 69;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 78;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 69;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 78;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 91;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          } // default value, indicates missing data
-        }
-        case 3: {
-          if (landCoverType == 6) {
-            result = 77;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 77;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 77;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 83;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 77;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 82;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 91;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          } // default value, indicates missing data
-        }
-      }
-    } else { // i.e. if slope >= 3
-      switch (soilType) {
-        case 0: {
-          if (landCoverType == 6) {
-            result = 39;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 39;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 39;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 46;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 39;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 65;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 94;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          } // default value, indicates missing data
-          // TODO work out what to do about Burnt/Quarry. What should its CN be?
-        }
-        case 1: {
-          if (landCoverType == 6) {
-            result = 60;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 60;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 60;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 68;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 60;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 76;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 94;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          }
-        }
-        case 2: {
-          if (landCoverType == 6) {
-            result = 73;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 73;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 73;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 78;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 73;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 84;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 94;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          }
-        }
-        case 3: {
-          if (landCoverType == 6) {
-            result = 78;
-            break;
-          } // pine
-          else if (landCoverType == 7) {
-            result = 78;
-            break;
-          } // transition forest
-          else if (landCoverType == 8) {
-            result = 78;
-            break;
-          } // deciduous forest
-          else if (landCoverType == 5) {
-            result = 83;
-            break;
-          } // shrubland
-          else if (landCoverType == 9) {
-            result = 78;
-            break;
-          } // oak
-          else if (landCoverType == 2 || landCoverType == 3 || landCoverType == 4) {
-            result = 87;
-            break;
-          } // barley, wheat and depleated agricultural land
-          else if (landCoverType == 1) {
-            result = 94;
-            break;
-          } // burnt
-          else {
-            result = -1;
-            break;
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  /*
-   * protected void updateRunoffVector(double precip) { for(int x=0; x<nX; x++) { for(int y=0; y<nY;
-   * y++){ double dX = (double) x; double dY = (double) y;
-   *
-   * int i = spatialCellIndex(x, y);
-   *
-   * double cn = curveNumber(slope.get(dX, dY), (int)soilMap.get(dX, dY), (int)landCoverType.get(dX,
-   * dY));
-   *
-   * runoffVector.setEntry(i, cellRunoff(precip, abstractionRate(cn))); } } // Sink node will
-   * extract precip mm of water per node connected to it // per time step, producing neutral water
-   * balance runoffVector.setEntry(nX*nY, precip*sinkAffinityFactor); }
-   */
-
-  /*
-   * protected RealVector getRunoffVector() { return runoffVector; }
-   */
-
-  /*
-   * private RealVector calcSoilMoistureVector(double precip) { updateRunoffVector(precip);
-   * RealVector precipVector = new ArrayRealVector(nX*nY+1).mapAdd(precip); return
-   * drainageMatrix.operate(runoffVector).add(precipVector); }
-   */
-
-  /*
-   * DEPRECIATED, reimplemented below without FlowDirectionNetwork public void
-   * updateSoilMoistureLayer(double precip) { double[] sm =
-   * calcSoilMoistureVector(precip).toArray(); // only go to sm.length-1 as vector includes runoff
-   * node for(int i=0; i<sm.length-1; i++){ int[] coords = indexSpatialCoords(i);
-   * //System.out.format("%d -> (%d, %d) = %3.2f\n", i, coords[1], coords[0], sm[i]);
-   * soilMoisture.set(sm[i], coords[1], coords[0]); } }
-   */
-
-  private boolean isOutlet(int flowDir, int thisCol, int thisRow) {
-    if (thisCol == 0 && (flowDir == 4 | flowDir == 5 | flowDir == 6)) {
-
-      return true;
-
-    } else if (thisCol == nX - 1 && (flowDir == 1 | flowDir == 2 | flowDir == 8)) {
-
-      return true;
-
-    } else if (thisRow == 0 && (flowDir == 2 | flowDir == 3 | flowDir == 4)) {
-
-      return true;
-
-    } else if (thisRow == nY - 1 && (flowDir == 6 | flowDir == 7 | flowDir == 8)) {
-
-      return true;
-
-    } else if (flowDir == 9) {
-
-      return true;
-
-    } else {
-
-      return false;
-
-    }
-
-  }
-
-  private int targetRow(int flowDir, int thisRow) {
-    if (flowDir == 6 | flowDir == 7 | flowDir == 8) {
-
-      return thisRow + 1;
-
-    } else if (flowDir == 1 | flowDir == 5) {
-
-      return thisRow;
-
-    } else if (flowDir == 2 | flowDir == 3 | flowDir == 4) {
-
-      return thisRow - 1;
-
-    } else {
-
-      return -1; // indicates no value, could be an error
-
-    }
-  }
-
-  private int targetCol(int flowDir, int thisCol) {
-    if (flowDir == 1 | flowDir == 2 | flowDir == 8) {
-
-      return thisCol + 1;
-
-    } else if (flowDir == 3 | flowDir == 7) {
-
-      return thisCol;
-
-    } else if (flowDir == 4 | flowDir == 5 | flowDir == 6) {
-
-      return thisCol - 1;
-
-    } else {
-
-      return -1; // indicates no value, could be an error
-
-    }
+  static double calcMaxPotentialRetention(int curveNumber) {
+    return 25.4 * ((1000.0 / curveNumber) - 10);
   }
 
   /**
-   * Determine which cell this cell drains into. If it is a sink cell return null, else return an
-   * int[] specifying the row and column of the target cell.
+   * @param cell Grid cell to calculate curve number for
+   * @return Curve number characterising the amount of water retained by this grid cell depending on
+   *         its slope and land-cover and soil types. See United States Department of Agriculture,
+   *         2004.
+   */
+  private int getCurveNumber(GridLoc cell) {
+    double slope = this.slope.getValue(cell);
+    int soilType = (int) this.soilMap.getValue(cell);
+    int landCoverType = (int) this.landCoverType.getValue(cell);
+    return this.curveNumberGenerator.getCurveNumber(slope, soilType, landCoverType);
+  }
+
+  /**
+   * $Q_i = (T_i - 0.2 * S_i)^2 / (T_i + 0.8 * S_i)$ where $T_i$ is total water input and $S_i$ is
+   * maximum water retention.
    *
-   * @param row Flow direction grid row number
-   * @param col Flow direction grid column number
-   * @param flowDir Value in flow direction grid
-   * @return array specifying the row and col of the target cell
+   * @param totalWaterInput Total amount of water entering the cell in mm, including both
+   *        precipitation and runoff from other cells.
+   * @param maximumPotentialWaterRetention Maximum water retention for the cell in mm. See
+   *        {@link SoilMoistureCalculator#calcMaxPotentialRetention(int)}
+   * @return Runoff from the cell in mm.
    */
-  GridLoc runoffTargetCell(int thisRow, int thisCol, int flowDir) {
-    if (isOutlet(flowDir, thisCol, thisRow)) {
-      return null;
-    } else {
-      return new GridLoc(targetCol(flowDir, thisCol), targetRow(flowDir, thisRow));
-    }
+  static double calcRunoff(double totalWaterInput, double maximumPotentialWaterRetention) {
+    return Math.pow(totalWaterInput - (0.2 * maximumPotentialWaterRetention), 2)
+        / (totalWaterInput + (0.8 * maximumPotentialWaterRetention));
   }
 
   /**
-   * @param i Row index in a 2-dimensional java array (top left origin)
-   * @return Corresponding y coordinate in the Cartesian (bottom-left origin) Repast GridValueLayer
+   * $M_i = T_i - Q_i$ where $T_i$ is total water input and $Q_i$ is runoff.
+   *
+   * @param totalWaterInput Total water entering the cell in a year [mm]
+   * @param runoff Amount of water leaving the cell in a year [mm]
+   * @return Soil moisture [mm]
    */
-  private int getY(int i) {
-    return nY - 1 - i;
+  static double calcSoilMoisture(double totalWaterInput, double runoff) {
+    return totalWaterInput - runoff;
   }
 
-  /**
-   * @param j Column index in a 2-dimensional java array (top left origin)
-   * @return Corresponding x coordinate in the Cartesian (bottom-left origin) Repast GridValueLayer.
-   *         x and j are are identical, but a method is provided to match semantics for non-trivial
-   *         y coordinate case.
-   */
-  private int getX(int j) {
-    return j;
-  }
-
-  // @ScheduledMethod(start = 1, interval = 1, priority = 1)
-  public void updateSoilMoistureLayer(double precip) {
-    double[][] newSoilMoistureVals = new double[nY][nX];
-    for (int i = 0; i < nY; i++) {
-      for (int j = 0; j < nX; j++) {
-        // add precipitation
-        newSoilMoistureVals[i][j] += precip;
-
-        // calculate runoff
-        double curveNumber = curveNumber(slope.get(getX(j), getY(i)),
-            (int) soilMap.get(getX(j), getY(i)), (int) landCoverType.get(getX(j), getY(i)));
-        double runoff = cellRunoff(precip, abstractionRate(curveNumber));
-
-        // subtract runoff from this cell
-        newSoilMoistureVals[i][j] -= runoff;
-
-        // add runoff to the draining cell, unless this cell is a sink
-        GridLoc targetCell = runoffTargetCell(i, j, (int) flowDirMap.get(getX(j), getY(i)));
-        if (targetCell != null) {
-          newSoilMoistureVals[targetCell.getRow()][targetCell.getCol()] += runoff;
-        }
-      }
-    }
-
-    // copy calculated values to soil moisture grid value layer
-    for (int i = 0; i < nY; i++) {
-      for (int j = 0; j < nX; j++) {
-        soilMoisture.set(newSoilMoistureVals[i][j], getX(j), getY(i));
-      }
-    }
-  }
-
-  @ScheduledMethod(start = 1, interval = 1, priority = 0)
-  public void step() {
-    logger.debug("Called soil moisture calc");
-    updateSoilMoistureLayer(this.annualPrecipitation);
-  }
 }

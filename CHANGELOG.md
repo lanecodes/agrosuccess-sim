@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 9 - Update soil moisture calculation - 2020-07-03
+
+There was an error in the previously implemented soil moisture calculation
+based on a misunderstanding of the description of the model specified in
+Millington, 2009. See `src/site/markdown/modelling-notes.md` for details of the
+theory behind the new implementation.
+
+#### ADDED
+
+- `GridLocKingMove` class
+- `JgraphtLandscapeFlow` and `JGraphTCatchmentFlow` aspatial representations
+  of how water flows over the landscape
+
+#### CHANGED
+
+- `CurveNumberGenerator` interface and `AgroSuccessCurveNumberGenerator` class
+  which map local land-cover state to a number characterising how much water is
+  retained in the grid cell. This was formerly part of the soil moisture
+  calculation class but has been refactored out.
+- A new `SoilMoistureCalculator` class replacing the old one which implements a
+  new `SoilMoistureUpdater` class.
+- `AgroSuccessContextBuilder` now uses the new `SoilMoistureCalculator`
+
 ### 8 - Introduce local value layer interfaces - 2020-06-24
 
 See javadoc for the new `CartesianGridDouble2D` interface for motivating

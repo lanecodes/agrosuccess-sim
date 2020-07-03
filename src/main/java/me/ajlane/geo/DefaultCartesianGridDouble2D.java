@@ -18,7 +18,7 @@ public class DefaultCartesianGridDouble2D implements WriteableCartesianGridDoubl
    * @param defaultValue Initial value used to fill every cell in the grid
    * @param dimensions Shape of the grid to generate
    */
-  DefaultCartesianGridDouble2D(double defaultValue, GridDimensions dimensions) {
+  public DefaultCartesianGridDouble2D(double defaultValue, GridDimensions dimensions) {
     this.array = new double[dimensions.getHeight()][dimensions.getWidth()];
     for (int i = 0; i < dimensions.getHeight(); i++) {
       for (int j = 0; j < dimensions.getWidth(); j++) {

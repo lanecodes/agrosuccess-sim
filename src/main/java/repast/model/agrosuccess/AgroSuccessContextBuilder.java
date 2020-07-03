@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
+import me.ajlane.geo.repast.GridValueLayerAdapter;
+import me.ajlane.geo.repast.ValueLayerAdapter;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
@@ -19,9 +21,14 @@ import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
 import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
+import me.ajlane.geo.repast.soilmoisture.DefaultFlowDirectionMap;
+import me.ajlane.geo.repast.soilmoisture.JgraphtLandscapeFlow;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureCalculator;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
+import me.ajlane.geo.repast.soilmoisture.SoilMoistureUpdater;
+import me.ajlane.geo.repast.soilmoisture.agrosuccess.AgroSuccessCurveNumberGenerator;
+import me.ajlane.geo.repast.soilmoisture.agrosuccess.SoilMoistureUpdateAction;
 import me.ajlane.geo.repast.succession.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDecider;
 import me.ajlane.geo.repast.succession.CodedLcsTransitionMap;
@@ -32,13 +39,13 @@ import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
+import repast.model.agrosuccess.empirical.SiteAllData;
+import repast.model.agrosuccess.empirical.SiteAllDataFactory;
+import repast.model.agrosuccess.empirical.SiteClimateData;
 import repast.model.agrosuccess.empirical.SiteRasterData;
 import repast.model.agrosuccess.empirical.SiteWindData;
 import repast.model.agrosuccess.params.EnvrModelParams;
 import repast.model.agrosuccess.params.ModelParamsRepastParser;
-import repast.model.agrosuccess.empirical.SiteAllData;
-import repast.model.agrosuccess.empirical.SiteAllDataFactory;
-import repast.model.agrosuccess.empirical.SiteClimateData;
 import repast.model.agrosuccess.reporting.EnumRecordCsvWriter;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
 import repast.model.agrosuccess.reporting.RecordWriter;
@@ -47,6 +54,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.Parameters;
@@ -76,6 +84,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     RunEnvironment modelCore = RunEnvironment.getInstance();
     Parameters params = modelCore.getParameters();
     SimulationID simulationID = new SimulationID(params.getString("studySite"));
+    ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
     modelCore.endAt(params.getInteger("nTicks"));
 
     EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
@@ -97,8 +106,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         envrModelParams.getSeedDispersalParams(), envrModelParams.getSeedViabilityParams());
     context.add(seedDisperser);
 
-    SoilMoistureCalculator smCalc = initSoilMoistureCalculator(context, siteData);
-    context.add(smCalc);
+    SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context);
+    IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateSM);
 
     LcsUpdater lcsUpdater = initLcsUpdater(context, graph, params.getString("graphModelID"),
         envrModelParams.getSoilMoistureParams());
@@ -219,10 +229,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param studySiteData
    * @return Configured soil moisture calculator
    */
-  private SoilMoistureCalculator initSoilMoistureCalculator(Context<Object> context,
-      SiteClimateData climateData) {
-    SoilMoistureCalculator smCalc =
-        new SoilMoistureCalculator(climateData.getTotalAnnualPrecipitation(), context);
+  private SoilMoistureUpdater initSoilMoistureCalculator(Context<Object> context) {
+    SoilMoistureUpdater smCalc = new SoilMoistureCalculator(
+        new GridValueLayerAdapter(
+            (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.Lct.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.SoilType.name())),
+        new ValueLayerAdapter(context.getValueLayer(LscapeLayer.Slope.name())),
+        new JgraphtLandscapeFlow(
+            new ValueLayerAdapter(context.getValueLayer(LscapeLayer.FlowDir.name())),
+            new DefaultFlowDirectionMap()),
+        new AgroSuccessCurveNumberGenerator());
+
     return smCalc;
   }
 
@@ -233,7 +251,6 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param context Simulation context
    * @param graph Graph database service containing model configuration
    * @param graphModelID ID of model stored in the graph
-   * @param smParams Soil moisture parameters
    * @return Configured LcsUpdater object
    */
   private LcsUpdater initLcsUpdater(Context<Object> context, GraphDatabaseService graph,
