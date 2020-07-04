@@ -140,6 +140,9 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   }
 
 
+  /**
+   * TODO Refactor {@link #getLcsUpdateMsg} for readability. There are multiple functions in here.
+   */
   @Override
   public LcsUpdateMsg getLcsUpdateMsg(CodedEnvrAntecedent currentEnvrState, Integer timeInState,
       CodedEnvrConsequent targetEnvrTrans) {
@@ -167,7 +170,14 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
     Integer thisDeltaT =
         getThisDeltaT(prevDeltaD, physAttribDeltaD, prevLcs, thisLcs, prevDeltaT, physAttribDeltaT);
 
-    return new LcsUpdateMsg((int) thisLcs, (int) thisTimeInState, physAttribDeltaD, thisDeltaT);
+    CodedEnvrConsequent nextTargetState;
+    if (thisDeltaT == physAttribDeltaT) {
+      nextTargetState = physAttribTrans; // Can be null
+    } else {
+      nextTargetState = new CodedEnvrConsequent(physAttribTrans.getTargetState(), thisDeltaT);
+    }
+
+    return new LcsUpdateMsg(currentEnvrState, thisTimeInState, nextTargetState);
   }
 
 }

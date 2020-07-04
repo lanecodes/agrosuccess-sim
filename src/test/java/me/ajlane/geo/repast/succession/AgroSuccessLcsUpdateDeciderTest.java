@@ -1,6 +1,7 @@
 package me.ajlane.geo.repast.succession;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -603,10 +604,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(14, msg.getTimeInState());
-    assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 6, msg.getTargetState());
+    assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(6, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -618,10 +619,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(15, msg.getTimeInState());
-    assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 6, msg.getTargetState());
+    assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(6, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -633,10 +634,9 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(6, msg.getCurrentState());
+    assertEquals(6, (int) msg.getCurrentState().getStartState());
     assertEquals(1, msg.getTimeInState());
-    assertNull("target state transition time not correct", msg.getTargetStateTransitionTime());
-    assertNull("target state not correct", msg.getTargetState());
+    assertNull("target state not correct", msg.getTargetTransition());
   }
 
   @Test
@@ -648,10 +648,9 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(6, msg.getCurrentState());
+    assertEquals(6, (int) msg.getCurrentState().getStartState());
     assertEquals(2, msg.getTimeInState());
-    assertNull(msg.getTargetStateTransitionTime());
-    assertNull(msg.getTargetState());
+    assertNull(msg.getTargetTransition());
   }
 
   @Test
@@ -664,10 +663,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(11, msg.getTimeInState());
-    assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 6, msg.getTargetState());
+    assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(6, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -680,10 +679,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(12, msg.getTimeInState());
-    assertEquals((Integer) 15, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 6, msg.getTargetState());
+    assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(6, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -698,10 +697,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(1, msg.getTimeInState());
-    assertEquals((Integer) 18, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 9, msg.getTargetState());
+    assertEquals(18, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(9, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -716,10 +715,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(2, msg.getTimeInState());
-    assertEquals((Integer) 18, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 9, msg.getTargetState());
+    assertEquals(18, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(9, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -734,10 +733,9 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(6, msg.getCurrentState());
+    assertEquals(6, (int) msg.getCurrentState().getStartState());
     assertEquals(51, msg.getTimeInState());
-    assertNull(msg.getTargetStateTransitionTime());
-    assertNull(msg.getTargetState());
+    assertNull(msg.getTargetTransition());
   }
 
   @Test
@@ -753,10 +751,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals("current state not correct", 6, msg.getCurrentState());
+    assertEquals("current state not correct", 6, (int) msg.getCurrentState().getStartState());
     assertEquals("time in state not correct", 1, msg.getTimeInState());
-    assertEquals((Integer) 8, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 7, msg.getTargetState());
+    assertEquals(8, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(7, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -771,10 +769,10 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(6, msg.getCurrentState());
+    assertEquals(6, (int) msg.getCurrentState().getStartState());
     assertEquals(2, msg.getTimeInState());
-    assertEquals((Integer) 8, msg.getTargetStateTransitionTime());
-    assertEquals((Integer) 7, msg.getTargetState());
+    assertEquals(8, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(7, (int) msg.getTargetTransition().getTargetState());
   }
 
   @Test
@@ -789,11 +787,9 @@ public class AgroSuccessLcsUpdateDeciderTest {
     LcsUpdateMsg msg =
         updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
 
-    assertEquals(5, msg.getCurrentState());
+    assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(1, msg.getTimeInState());
-    assertNull(msg.getTargetStateTransitionTime());
-    assertNull(msg.getTargetState());
-
+    assertNull(msg.getTargetTransition());
   }
 
 }

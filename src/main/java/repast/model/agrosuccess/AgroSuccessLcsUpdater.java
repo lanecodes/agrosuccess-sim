@@ -85,16 +85,15 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
         updateMsg = updateDecider.getLcsUpdateMsg(getCellEnvrState(x, y), getCellTimeInState(x, y),
             getCellTgtState(x, y));
 
-        landCoverType.set(updateMsg.getCurrentState(), x, y);
+        landCoverType.set(updateMsg.getCurrentState().getStartState(), x, y);
         timeInState.set(updateMsg.getTimeInState(), x, y);
 
-        if (updateMsg.getTargetState() == null) {
-          assert updateMsg.getTargetStateTransitionTime() == null;
+        if (updateMsg.getTargetTransition() == null) {
           deltaD.set(-1, x, y);
           deltaT.set(-1, x, y);
         } else {
-          deltaD.set(updateMsg.getTargetState(), x, y);
-          deltaT.set(updateMsg.getTargetStateTransitionTime(), x, y);
+          deltaD.set(updateMsg.getTargetTransition().getTargetState(), x, y);
+          deltaT.set(updateMsg.getTargetTransition().getTransitionTime(), x, y);
         }
       }
     }
