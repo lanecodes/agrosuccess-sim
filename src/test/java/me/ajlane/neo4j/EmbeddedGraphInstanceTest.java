@@ -1,8 +1,6 @@
 package me.ajlane.neo4j;
-import static org.junit.Assert.*;
-
 import static java.lang.Math.toIntExact;
-
+import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +49,7 @@ public class EmbeddedGraphInstanceTest {
 	}
 
 	@Test
-	public void AgroSuccessShouldHave10LandCoverTypes() {
+	public void AgroSuccessShouldHave9LandCoverTypes() {
 		int numLCT;
 		try (Transaction tx = graph.beginTx()) {
 			Result result = graph.execute(
@@ -59,11 +57,11 @@ public class EmbeddedGraphInstanceTest {
 			numLCT = toIntExact((long)result.next().get("num_lct"));
 			tx.success();
 		}
-		assertEquals(10, numLCT);
+		assertEquals(9, numLCT);
 	}
 
 	@Test
-	public void AgroSuccessShouldHave18EcoEngineeringActivites() {
+	public void AgroSuccessShouldHave8EcoEngineeringActivites() {
 		int numEEA;
 		try (Transaction tx = graph.beginTx()) {
 			Result result = graph.execute(
@@ -72,6 +70,6 @@ public class EmbeddedGraphInstanceTest {
 			result.close();
 			tx.success();
 		}
-		assertEquals(18, numEEA);
+		assertEquals(8, numEEA);
 	}
 }
