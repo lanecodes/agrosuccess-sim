@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 10 - Reflect updates in AgroSuccess-graph - 2020-07-03
+
+#### CHANGED
+
+Corresponding to `c6afb24` in agrosuccess-graph:
+
+- Remove Barley land-cover type
+- Remove `EcoEngineeringActivity`-s corresponding to agriculturalists doing
+  barley agriculture
+- Remove `digestible_matter` attribute from `AgroSuccessLct` class
+
+Corresponding to `9be0811` in agrosuccess-graph:
+
+- Add `is_mature_vegetation` attribute to `LandCoverType` nodes
+
 ### 9 - Update soil moisture calculation - 2020-07-03
 
 There was an error in the previously implemented soil moisture calculation

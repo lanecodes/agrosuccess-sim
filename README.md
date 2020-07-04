@@ -104,9 +104,24 @@ AS_ROOT=/home/andrew/Documents/codes/java/AgroSuccessWS/AgroSuccess
 AS_GRAPH_STORE=$(docker volume inspect as-neo4j-data | \
    grep "Mountpoint" | \
    sed 's/.*": "\(.*\)",.*/\1/')
+rm -rf $AS_ROOT/data/graph
 sudo rsync -av $AS_GRAPH_STORE/databases $AS_ROOT/data/graph
 sudo chown -R andrew:andrew $AS_ROOT/data/graph/databases
 ```
+
+To refresh the copy of the database used for running integration tests
+against, fun the following in addition to the above.
+
+```
+rm -rf $AS_ROOT/src/test/resources/databases/agrosuccess-test.db
+sudo rsync -av $AS_GRAPH_STORE/databases $AS_ROOT/src/test/resources
+sudo chown -R andrew:andrew $AS_ROOT/src/test/resources/databases
+mv $AS_ROOT/src/test/resources/databases/graph.db \
+	$AS_ROOT/src/test/resources/databases/agrosuccess-test.db
+```
+
+The reason for maintaining separate test and production database copies is to
+enable the production copy to be modified without interfering with the tests.
 
 [agrosuccess-graph]: https://ajlane50@bitbucket.org/ajlane50/agrosuccess-graph
 
