@@ -5,6 +5,12 @@ package me.ajlane.geo.repast.succession;
 
 import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
+import repast.model.agrosuccess.AgroSuccessCodeAliases;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Aspect;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.SeedPresence;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Succession;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Water;
 
 /**
  * Provides access to a mapping between environmental states and corresponding numerical codes to be
@@ -19,14 +25,13 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  * <ul>
  * <li>0 = WaterQuarry (Water or quarry)</li>
  * <li>1 = Burnt</li>
- * <li>2 = Barley</li>
- * <li>3 = Wheat</li>
- * <li>4 = DAL (Depleted agricultural land)</li>
- * <li>5 = Shrubland</li>
- * <li>6 = Pine (Pine forest)</li>
- * <li>7 = TransForest (transition forest)</li>
- * <li>8 = Deciduous (Deciduous forest)</li>
- * <li>9 = Oak (Oak forest)</li>
+ * <li>2 = Wheat</li>
+ * <li>3 = DAL (Depleted agricultural land)</li>
+ * <li>4 = Shrubland</li>
+ * <li>5 = Pine (Pine forest)</li>
+ * <li>6 = TransForest (transition forest)</li>
+ * <li>7 = Deciduous (Deciduous forest)</li>
+ * <li>8 = Oak (Oak forest)</li>
  * </ul>
  *
  * <h3>succession</h3>
@@ -54,6 +59,18 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  * <li>2 = hydric</li>
  * </ul>
  *
+ * <h3>Notes</h3>
+ * <p>
+ * It is important that the numerical codes used to represent land-cover states in the ecological
+ * succession model are consistent with those used to refer to different land-cover states in the
+ * different packages which comprise the overall model (e.g. in {@code FireManager#isFlammable}). To
+ * achieve this we use the enumeration {@link AgroSuccessCodeAliases.Lct#getCode()} as the single
+ * source of truth for these values. We similarly use enumerations to supply numerical encodings for
+ * succession pathway, aspect, seed presence, and soil moisture maps (see implementation below). We
+ * reason that strong coupling between this class and {@link AgroSuccessCodeAliases} is acceptable
+ * because both are specific the the AgroSuccess model.
+ * </p>
+ *
  * @author Andrew Lane
  * @see me.ajlane.geo.repast.succession.EnvrStateAliasTranslator#numericalValueFromAlias(String,
  *      String)
@@ -63,7 +80,7 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  */
 public class AgroSuccessEnvrStateAliasTranslator extends EnvrStateAliasTranslator {
 
-   public AgroSuccessEnvrStateAliasTranslator() {
+  public AgroSuccessEnvrStateAliasTranslator() {
     envStateMap.put("landCoverState", landCoverStateMap());
     envStateMap.put("succession", successionMap());
     envStateMap.put("aspect", aspectMap());
@@ -73,55 +90,41 @@ public class AgroSuccessEnvrStateAliasTranslator extends EnvrStateAliasTranslato
 
   private BidiMap<String, Integer> landCoverStateMap() {
     BidiMap<String, Integer> map = new DualHashBidiMap<String, Integer>();
-
-    map.put("WaterQuarry", 0);
-    map.put("Burnt", 1);
-    map.put("Barley", 2);
-    map.put("Wheat", 3);
-    map.put("DAL", 4);
-    map.put("Shrubland", 5);
-    map.put("Pine", 6);
-    map.put("TransForest", 7);
-    map.put("Deciduous", 8);
-    map.put("Oak", 9);
-
+    for (Lct lct : Lct.values()) {
+      map.put(lct.getAlias(), lct.getCode());
+    }
     return map;
   }
 
   private BidiMap<String, Integer> successionMap() {
     BidiMap<String, Integer> map = new DualHashBidiMap<String, Integer>();
-
-    map.put("regeneration", 0);
-    map.put("secondary", 1);
-
+    for (Succession s : Succession.values()) {
+      map.put(s.getAlias(), s.getCode());
+    }
     return map;
   }
 
   private BidiMap<String, Integer> aspectMap() {
     BidiMap<String, Integer> map = new DualHashBidiMap<String, Integer>();
-
-    map.put("north", 0);
-    map.put("south", 1);
-
+    for (Aspect a : Aspect.values()) {
+      map.put(a.getAlias(), a.getCode());
+    }
     return map;
   }
 
   private BidiMap<String, Integer> seedPresenceMap() {
     BidiMap<String, Integer> map = new DualHashBidiMap<String, Integer>();
-
-    map.put("false", 0);
-    map.put("true", 1);
-
+    for (SeedPresence sp : SeedPresence.values()) {
+      map.put(sp.getAlias(), sp.getCode());
+    }
     return map;
   }
 
   private BidiMap<String, Integer> waterMap() {
     BidiMap<String, Integer> map = new DualHashBidiMap<String, Integer>();
-
-    map.put("xeric", 0);
-    map.put("mesic", 1);
-    map.put("hydric", 2);
-
+    for (Water w : Water.values()) {
+      map.put(w.getAlias(), w.getCode());
+    }
     return map;
   }
 }

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 11 - Make AgroSuccessCodeAliases single source of truth for codes - 2020-07-06
+
+#### CHANGED
+
+Previously `AgroSuccessEnvrStateAliasTranslator` used hard coded values
+for numerical codes to map between aliases and numerical codes used in
+simulation grid cells for land-cover types and environmental conditions. Here
+we change this so `AgroSuccessEnvrStateAliasTranslator` depends on
+`AgroSuccessCodeAliases` and the enums it contains to serve as a single source
+of truth for these codes.
+
 ### 10 - Reflect updates in AgroSuccess-graph - 2020-07-03
 
 #### CHANGED
