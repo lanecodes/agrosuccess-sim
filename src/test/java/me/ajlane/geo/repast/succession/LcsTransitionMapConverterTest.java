@@ -1,6 +1,6 @@
 package me.ajlane.geo.repast.succession;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,11 +27,11 @@ public class LcsTransitionMapConverterTest {
         new LcsTransitionMapConverter(new AgroSuccessEnvrStateAliasTranslator());
 
     CodedLcsTransitionMap testCodedMap = new CodedLcsTransitionMap();
-    testCodedMap.put(new CodedEnvrAntecedent(6, 0, 0, 0, 1, 1, 2), new CodedEnvrConsequent(9, 10));
+    testCodedMap.put(new CodedEnvrAntecedent(5, 0, 0, 0, 1, 1, 2), new CodedEnvrConsequent(8, 10));
     // "Pine", "regeneration", "north", "false", "true", "true", "hydric"
     // "Oak", 10
 
-    testCodedMap.put(new CodedEnvrAntecedent(8, 0, 1, 1, 0, 0, 0), new CodedEnvrConsequent(6, 15));
+    testCodedMap.put(new CodedEnvrAntecedent(7, 0, 1, 1, 0, 0, 0), new CodedEnvrConsequent(5, 15));
     // "Deciduous", "regeneration", "south", "true", "false", "false", "xeric"
     // "Pine", 15
 
@@ -74,11 +74,11 @@ public class LcsTransitionMapConverterTest {
 
     CodedLcsTransitionMap testCodedMap = converter.convert(testAliasedMap);
 
-    assertEquals(new CodedEnvrConsequent(9, 10),
-        testCodedMap.getEnvrConsequent(new CodedEnvrAntecedent(6, 0, 0, 0, 1, 1, 2)));
+    assertEquals(new CodedEnvrConsequent(8, 10),
+        testCodedMap.getEnvrConsequent(new CodedEnvrAntecedent(5, 0, 0, 0, 1, 1, 2)));
 
-    assertEquals(new CodedEnvrConsequent(6, 15),
-        testCodedMap.getEnvrConsequent(new CodedEnvrAntecedent(8, 0, 1, 1, 0, 0, 0)));
+    assertEquals(new CodedEnvrConsequent(5, 15),
+        testCodedMap.getEnvrConsequent(new CodedEnvrAntecedent(7, 0, 1, 1, 0, 0, 0)));
   }
 
 }

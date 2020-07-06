@@ -41,10 +41,10 @@ public class AgroSuccessCurveNumberGeneratorTest {
   public void testSpotChecksCorrect() {
     CurveNumberGenerator cng = new AgroSuccessCurveNumberGenerator();
 
-    assertEquals(54, cng.getCurveNumber(2.1, 1, 7));
-    assertEquals(46, cng.getCurveNumber(5.2, 0, 5));
-    assertEquals(94, cng.getCurveNumber(3.0, 2, 1));
-    assertEquals(82, cng.getCurveNumber(1.1, 3, 4));
+    assertEquals(54, cng.getCurveNumber(2.1, 1, 6)); // trans forest
+    assertEquals(46, cng.getCurveNumber(5.2, 0, 4)); // shrubland
+    assertEquals(94, cng.getCurveNumber(3.0, 2, 1)); // burnt
+    assertEquals(82, cng.getCurveNumber(1.1, 3, 3)); // DAL
     assertEquals(-1, cng.getCurveNumber(1.1, 0, 0)); // Water/ quarry, undefined
 
   }
