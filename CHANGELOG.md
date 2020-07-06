@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 12 - Refactor `LandCoverType` interface - 2020-07-06
+
+#### CHANGED
+
+`LandCoverType` interface becomes `LandCoverTypeBase` and is extended by
+`LandCoverTypeEco` and `LandCoverTypeAnthro` which provide all the methods
+needed to charactise a land-cover type from ecological and anthropolocial
+perspectives respectively.
+
+`AgroSuccessLct` becomes `Neo4jAgroSuccessLct` to remove dependence on Neo4j
+from classes which use `LandCoverType`.
+
+These new interfaces will be used by classes loading information about
+land-cover types from the graph database rather than using hard-coded values.
+
 ### 11 - Make AgroSuccessCodeAliases single source of truth for codes - 2020-07-06
 
 #### CHANGED

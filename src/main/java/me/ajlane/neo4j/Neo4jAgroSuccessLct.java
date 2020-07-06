@@ -1,6 +1,8 @@
 package me.ajlane.neo4j;
 
 import org.neo4j.graphdb.Node;
+import me.ajlane.geo.repast.succession.LandCoverTypeAnthro;
+import me.ajlane.geo.repast.succession.LandCoverTypeEco;
 
 /**
  * Represents a Land Cover Type as represented in the model, including the graph database.
@@ -8,13 +10,13 @@ import org.neo4j.graphdb.Node;
  * @author Andrew Lane
  *
  */
-public class AgroSuccessLct implements LandCoverType {
+public class Neo4jAgroSuccessLct implements LandCoverTypeEco, LandCoverTypeAnthro {
 
   private String code, descr;
   private int num, fertility, landCoverConversionCost;
   private boolean isMatureVegetation;
 
-  public AgroSuccessLct(Node node) {
+  public Neo4jAgroSuccessLct(Node node) {
     this.code = (String) node.getProperty("code");
     this.descr = (String) node.getProperty("description");
     this.num = (new Long((long) node.getProperty("num"))).intValue();
