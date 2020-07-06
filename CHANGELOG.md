@@ -6,14 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 13 - Rule to kill juveniles when mature vegetation transition occurs - 2020-07-05
+### 13 - Rule to kill juveniles when mature vegetation transition occurs - 2020-07-06
+
+Here we add a new rule to kill juvenile plants (pine, oak and deciduous seeds)
+in a grid cell when the cell transitions to a mature vegetation state. This is
+to account for the fact that in the colonisation submodel, if seedlings are
+deposited in grid cell $i$ at time $t$, they will stay there in subsequent time
+steps $t+1, t+2, \dots$. The occurance of a grid cell transitioning to a mature
+vegetation type is ecologically significant because it indicates that the group
+to which the mature community corresponds---pine, oak or deciduous in
+AgroSuccess---has out-competed individuals belonging to other groups. For
+example, we might imagine mature oak woodland shading out pine saplings. We
+therefore enforce a rule that in the timestep where a grid cell transitions to
+a mature vegetation type, we ensure that the varibles indicating whether there
+are juvenile plants in the cell are set to false.
 
 #### CHANGED
 
-LcsUpdateMsg's methods have changed. It now returns the complete environmental
-state of the cell rather than just the current state of the cell. This enables
-the `LcsUpdateDecider` to modify the environmental conditions of a grid cell as
-well as determining when a land-cover state transition occurs.
+- LcsUpdateMsg's methods have changed. It now returns the complete
+  environmental state of the cell rather than just the current state of the
+  cell. This enables the `LcsUpdateDecider` to modify the environmental
+  conditions of a grid cell as well as determining when a land-cover state
+  transition occurs.
+- Constructor of `AgroSuccessLcsUpdateDecider` modified to require a set of
+  numerical codes for land-cover types representing mature vegetation communities.
+- Modifications made to `AgroSuccessLcsUpdater` to incorporate changes in
+  succession rules into the grid layer updates.
+
+#### ADDED
+- Implementation of the rule described above added to
+  `AgroSuccessLcsUpdateDecider`
+- Added corresponding tests to both `AgroSuccessLcsUpdateDeciderTest` and
+  `AgroSuccessLcsUpdaterTest`.
 
 ### 12 - Refactor `LandCoverType` interface - 2020-07-06
 

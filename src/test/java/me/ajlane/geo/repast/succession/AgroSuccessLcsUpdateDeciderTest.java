@@ -2,6 +2,8 @@ package me.ajlane.geo.repast.succession;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +17,7 @@ import org.junit.Test;
  * determine how land cover should evolve in time. This test suite focuses on checking that these
  * rules are correctly implemented the the {@code LcsUpdateDecider} class for a set of test cases.
  * </p>
- * 
+ *
  * <p>
  * Note that we have supplemented the statements specified in Millington et al. 2009 with the
  * additional statements described below. Statements 4.1, 4.2 and 7 have been added to account for a
@@ -23,7 +25,7 @@ import org.junit.Test;
  * physical attributes result in cells remaining in their current state with respect to Millington
  * et al. 2009.
  * </p>
- * 
+ *
  * <p>
  * The former authors dealt with this scenario by specifying 'dummy' transitions in which the end
  * state equals the start state, and the transition time associated with that transition, ΔT, is set
@@ -35,7 +37,7 @@ import org.junit.Test;
  * stuck in a particular state for a long time. Such a finding might motivate a reconsideration of
  * additional transition rules which were previously dismissed, for example.
  * </p>
- * 
+ *
  * <p>
  * Our approach to this issue is to allow the rule specification process to be about declaring
  * <i>possible</i> transitions rather than anticipating problem states in running simulations, and
@@ -46,25 +48,25 @@ import org.junit.Test;
  * symbol ∅ in the statement descriptions and the Java expression {@code null} in the implementation
  * logic.
  * </p>
- * 
+ *
  * <p>
  * <b>Statement 4'</b><br />
  * ΔD(t) != ΔD(t-1) ∧ C(t) = C(t-1) -&gt; ΔT(t) = Round([ΔT(t-1) + ΔT*(t)]/2)<br />
  * where ΔT*(t) denotes the time of state transition implied by the physical state of the cell in
  * the previous time step.
  * </p>
- * 
+ *
  * <p>
  * This rule supersedes <b>Statement 4</b> specified in Millington et al. 2009, and differs only in
  * making it explicit that the result of the averaging performed in the consequent is rounded to the
  * nearest integer year.
  * </p>
- * 
+ *
  * <p>
  * <b>Statement 4.1</b><br />
  * ΔT(t-1) = ∅ ∧ ΔT*(t) ∈ ℤ -&gt; ΔT(t) = Round([1 + ΔT*(t)]/2)<br />
  * </p>
- * 
+ *
  * <p>
  * Encodes the assumption that if there was no target state in the previous time step, but that
  * current environmental conditions facilitate a state change (i.e. ΔT*(t) has an integer value)
@@ -72,51 +74,53 @@ import org.junit.Test;
  * that ΔT(t-1) = 1. This is to mirror the logic implemented in the 'dummy' transitions specified in
  * Millington et al. 2009 (see above).
  * </p>
- * 
+ *
  * <p>
  * <b>Statement 4.2</b><br />
  * ΔD(t) = ΔD(t-1) ∧ C(t) = C(t-1)-&gt; ΔT(t) = ΔT(t-1)<br />
  * </p>
- * 
+ *
  * <p>
  * Ensures that if neither the current state or the target state have changed since the last time
  * step, the transition time will remain the same. This prevents a situation whereby the transition
  * time calculated by Statement <b>4'</b> or <b>4.1</b> is overwritten by the native transition time
  * of ΔD
  * </p>
- * 
+ *
  * <p>
  * <b>Statement 7</b><br />
  * ΔT(t-1) = ∅ ∧ ΔD(t-1) = ∅ -&gt; C(t) = C(t-1)<br />
  * </p>
- * 
+ *
  * <p>
  * If the current combination of physical conditions imply a simulation cell won't transition to a
  * different land cover type, its land cover type in this time step must be the same as the land
  * cover type in the previous time step.
  * </p>
- * 
+ *
  * <p>
  * <b>Transition pathways used in test scenarios</b><br />
  * <a href="#org4bae411">Table 1</a> shows the transition pathways considered in the test scenarios
  * in this test suite.
  * </p>
- * 
+ *
  * <table id="org76c4946" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 1:</span> The example transition
  * pathways considered in these tests. For each variable a meaningful value description is given
  * along with its corresponding numerical value as used in AgroSuccess in brackets.</caption>
- * 
+ *
  * <colgroup> <col class="org-left" />
- * 
+ *
  * <col class="org-left" />
- * 
+ *
  * <col class="org-left" />
- * 
+ *
  * <col class="org-left" />
- * 
+ *
  * <col class="org-left" />
- * 
+ *
+ * <col class="org-left" />
+ *
  * <col class="org-left" /> </colgroup> <thead>
  * <tr>
  * <th scope="col" class="org-left">Pathway no.</th>
@@ -125,6 +129,7 @@ import org.junit.Test;
  * <th scope="col" class="org-left">3</th>
  * <th scope="col" class="org-left">4</th>
  * <th scope="col" class="org-left">5</th>
+ * <th scope="col" class="org-left">6</th>
  * </tr>
  * </thead> <tbody>
  * <tr>
@@ -134,8 +139,9 @@ import org.junit.Test;
  * <td class="org-left">Shrubland (5)</td>
  * <td class="org-left">Pine (6)</td>
  * <td class="org-left">Shrubland (5)</td>
+ * <td class="org-left">TransForest (7)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">succession</td>
  * <td class="org-left">regeneration (0)</td>
@@ -143,8 +149,9 @@ import org.junit.Test;
  * <td class="org-left">regeneration (0)</td>
  * <td class="org-left">regeneration (0)</td>
  * <td class="org-left">regeneration (0)</td>
+ * <td class="org-left">regeneration (0)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">aspect</td>
  * <td class="org-left">south (1)</td>
@@ -152,8 +159,9 @@ import org.junit.Test;
  * <td class="org-left">south (1)</td>
  * <td class="org-left">south (1)</td>
  * <td class="org-left">south (1)</td>
+ * <td class="org-left">south (1)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">pine</td>
  * <td class="org-left">true (1)</td>
@@ -161,8 +169,9 @@ import org.junit.Test;
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
+ * <td class="org-left">true (1)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">oak</td>
  * <td class="org-left">false (0)</td>
@@ -170,8 +179,9 @@ import org.junit.Test;
  * <td class="org-left">false (0)</td>
  * <td class="org-left">false (0)</td>
  * <td class="org-left">false (0)</td>
+ * <td class="org-left">false (0)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">deciduous</td>
  * <td class="org-left">true (1)</td>
@@ -179,8 +189,9 @@ import org.junit.Test;
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
  * <td class="org-left">true (1)</td>
+ * <td class="org-left">true (1)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">water</td>
  * <td class="org-left">xeric (0)</td>
@@ -188,8 +199,9 @@ import org.junit.Test;
  * <td class="org-left">hydric (2)</td>
  * <td class="org-left">hydric (2)</td>
  * <td class="org-left">mesic (1)</td>
+ * <td class="org-left">hydric (2)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">end state, ΔD</td>
  * <td class="org-left">Pine (6)</td>
@@ -197,8 +209,9 @@ import org.junit.Test;
  * <td class="org-left">Oak (9)</td>
  * <td class="org-left">TransForest (7)</td>
  * <td class="org-left"><code>null</code> (∅)</td>
+ * <td class="org-left">Oak (9)</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔT</td>
  * <td class="org-left">15</td>
@@ -206,11 +219,12 @@ import org.junit.Test;
  * <td class="org-left">20</td>
  * <td class="org-left">15</td>
  * <td class="org-left"><code>null</code> (∅)</td>
+ * <td class="org-left">20</td>
  * </tr>
  * </tbody>
  * </table>
- * 
- * 
+ *
+ *
  * <p>
  * <b>Scenarios considered in tests</b><br />
  * <br />
@@ -218,35 +232,35 @@ import org.junit.Test;
  * adsorbing</b><br />
  * Transition from pathway 1 to pathway 2.
  * </p>
- * 
+ *
  * <p>
  * Assuming there are no changes in the environmental conditions, and that at time \(t=0\) the cell
  * has been in this state for 10 years, the state sequence shown in <a href="#orgda0d2e6">Table
  * 2</a> will take place.
  * </p>
- * 
+ *
  * <table id="orgda0d2e6" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 2:</span> State update sequence for
  * Scenario 1</caption>
- * 
+ *
  * <colgroup> <col class="org-left" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" /> </colgroup> <thead>
  * <tr>
  * <th scope="col" class="org-left">t</th>
@@ -273,7 +287,7 @@ import org.junit.Test;
  * <td class="org-right">6</td>
  * <td class="org-right">6</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">T<sub>in</sub></td>
  * <td class="org-right">10</td>
@@ -286,7 +300,7 @@ import org.junit.Test;
  * <td class="org-right">2</td>
  * <td class="org-right">3</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔT</td>
  * <td class="org-right">15</td>
@@ -299,7 +313,7 @@ import org.junit.Test;
  * <td class="org-right">∅</td>
  * <td class="org-right">∅</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔD</td>
  * <td class="org-right">6</td>
@@ -314,36 +328,36 @@ import org.junit.Test;
  * </tr>
  * </tbody>
  * </table>
- * 
+ *
  * <p>
  * <b>Scenario 2: No state transition occurs, but a change in physical variables results in a change
  * in target state</b><br />
  * Transition from pathway 1 to pathway 3.
  * </p>
- * 
+ *
  * <p>
  * A chance increase in soil moisture results in the cell's transition switching from pathway 1 to
  * pathway 3 at timestep 3. Here the transition completion time has increased from 15 years to 20
  * years. Consequently this example provides the opportunity to test the code's ability to calculate
  * the updated transition time.
  * </p>
- * 
+ *
  * <table id="orgb016eca" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 3:</span> State update sequence for
  * Scenario 2</caption>
- * 
+ *
  * <colgroup> <col class="org-left" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" /> </colgroup> <thead>
  * <tr>
  * <th scope="col" class="org-left">t</th>
@@ -364,7 +378,7 @@ import org.junit.Test;
  * <td class="org-right">5</td>
  * <td class="org-right">5</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">T<sub>in</sub></td>
  * <td class="org-right">10</td>
@@ -374,7 +388,7 @@ import org.junit.Test;
  * <td class="org-right">2</td>
  * <td class="org-right">3</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔT</td>
  * <td class="org-right">15</td>
@@ -384,7 +398,7 @@ import org.junit.Test;
  * <td class="org-right">18</td>
  * <td class="org-right">18</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔD</td>
  * <td class="org-right">6</td>
@@ -396,33 +410,33 @@ import org.junit.Test;
  * </tr>
  * </tbody>
  * </table>
- * 
+ *
  * <p>
  * <b>Scenario 3: Initial state is adsorbing, but change in physical variables results in new target
  * state</b><br />
  * Transition from pathway 2 to pathway 4.
  * </p>
- * 
+ *
  * <p>
  * Following an increase in soil moisture in timestep 2, a cell which was stuck in the Pine land
  * cover type as a consequence of its other physical variables can now change into transition
  * forest.
  * </p>
- * 
+ *
  * <table id="org018e578" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 4:</span> State update sequence for
  * Scenario 3</caption>
- * 
+ *
  * <colgroup> <col class="org-left" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" /> </colgroup> <thead>
  * <tr>
  * <th scope="col" class="org-left">t</th>
@@ -441,7 +455,7 @@ import org.junit.Test;
  * <td class="org-right">6</td>
  * <td class="org-right">6</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">T<sub>in</sub></td>
  * <td class="org-right">50</td>
@@ -450,7 +464,7 @@ import org.junit.Test;
  * <td class="org-right">2</td>
  * <td class="org-right">3</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔT</td>
  * <td class="org-right">∅</td>
@@ -459,7 +473,7 @@ import org.junit.Test;
  * <td class="org-right">8</td>
  * <td class="org-right">8</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔD</td>
  * <td class="org-right">∅</td>
@@ -473,7 +487,7 @@ import org.junit.Test;
  * <p>
  * <br />
  * </p>
- * 
+ *
  * <p>
  * <b>Scenario 4: no land cover state occurs, but change in physical variables eliminates target
  * state</b>
@@ -482,21 +496,21 @@ import org.junit.Test;
  * No state change occurs, but as a result of a slight increase in soil moisture (xeric to mesic) at
  * time step 0, there is no longer any target state specified
  * </p>
- * 
+ *
  * <table id="org2e7b675" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
  * <caption class="t-above"><span class="table-number">Table 5:</span> State update sequence for
  * Scenario 4</caption>
- * 
+ *
  * <colgroup> <col class="org-left" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" />
- * 
+ *
  * <col class="org-right" /> </colgroup> <thead>
  * <tr>
  * <th scope="col" class="org-left">t</th>
@@ -515,7 +529,7 @@ import org.junit.Test;
  * <td class="org-right">5</td>
  * <td class="org-right">5</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">T<sub>in</sub></td>
  * <td class="org-right">14</td>
@@ -524,7 +538,7 @@ import org.junit.Test;
  * <td class="org-right">3</td>
  * <td class="org-right">4</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔT</td>
  * <td class="org-right">15</td>
@@ -533,7 +547,7 @@ import org.junit.Test;
  * <td class="org-right">∅</td>
  * <td class="org-right">∅</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">ΔD</td>
  * <td class="org-right">6</td>
@@ -542,7 +556,7 @@ import org.junit.Test;
  * <td class="org-right">∅</td>
  * <td class="org-right">∅</td>
  * </tr>
- * 
+ *
  * <tr>
  * <td class="org-left">&#xa0;</td>
  * <td class="org-right">&#xa0;</td>
@@ -553,20 +567,83 @@ import org.junit.Test;
  * </tr>
  * </tbody>
  * </table>
+ *
+ * <p>
+ * <b>Scenario 5: land-cover state transition to transition forest occurs</b>
+ * </p>
+ * <p>
+ * This enables us to test that a transition to a non-mature vegetation type doesn't produce the
+ * side effect of killing juvenile vegetation in the cell.
+ * </p>
+ *
+ * <table id="org2e7b677" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+ * <caption class="t-above"><span class="table-number">Table 6:</span> State update sequence for
+ * Scenario 5</caption>
+ *
+ * <colgroup> <col class="org-left" />
+ *
+ * <col class="org-right" />
+ *
+ * <col class="org-right" />
+ *
+ * <col class="org-right" /> </colgroup> <thead>
+ * <tr>
+ * <th scope="col" class="org-left">t</th>
+ * <th scope="col" class="org-right">0</th>
+ * <th scope="col" class="org-right">1</th>
+ * <th scope="col" class="org-right">2</th>
+ * </tr>
+ * </thead> <tbody>
+ * <tr>
+ * <td class="org-left">C</td>
+ * <td class="org-right">6</td>
+ * <td class="org-right">7</td>
+ * <td class="org-right">7</td>
+ * </tr>
+ *
+ * <tr>
+ * <td class="org-left">T<sub>in</sub></td>
+ * <td class="org-right">15</td>
+ * <td class="org-right">1</td>
+ * <td class="org-right">2</td>
+ * </tr>
+ *
+ * <tr>
+ * <td class="org-left">ΔT</td>
+ * <td class="org-right">15</td>
+ * <td class="org-right">20</td>
+ * <td class="org-right">20</td>
+ * </tr>
+ *
+ * <tr>
+ * <td class="org-left">ΔD</td>
+ * <td class="org-right">6</td>
+ * <td class="org-right">9</td>
+ * <td class="org-right">9</td>
+ * </tr>
+ *
+ * <tr>
+ * <td class="org-left">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * <td class="org-right">&#xa0;</td>
+ * </tr>
+ * </tbody>
+ * </table>
  * <p>
  * <br />
  * </p>
- * 
+ *
  * @author Andrew Lane
  */
 public class AgroSuccessLcsUpdateDeciderTest {
   LcsUpdateDecider updateDecider;
 
   /**
-   * 
+   *
    * Note that no entry is made for pathway 2, as it has no target state so is not expected to be
    * found in the transition map
-   * 
+   *
    * @return The transition map which will be used for each test case, according to the transition
    *         pathways described in the javadoc for this class.
    */
@@ -582,12 +659,29 @@ public class AgroSuccessLcsUpdateDeciderTest {
     // Add transition pathway 4 to transition map
     transMap.put(new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2), new CodedEnvrConsequent(7, 15));
 
+    // Add transition pathway 6 to transition map
+    transMap.put(new CodedEnvrAntecedent(7, 0, 1, 1, 0, 1, 2), new CodedEnvrConsequent(9, 20));
+
     return transMap;
+  }
+
+  /**
+   * Records whether the land-cover type corresponding to a land-cover type code represents a mature
+   * vegetation community or not.
+   *
+   * @return Set of codes corresponding to mature vegetation for testing purposes
+   */
+  private Set<Integer> makeTestMatureVegCodes() {
+    Set<Integer> matureVegCodes = new HashSet<>();
+    matureVegCodes.add(6); // pine
+    matureVegCodes.add(9); // oak
+    return matureVegCodes;
   }
 
   @Before
   public void setUp() {
-    updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap());
+    updateDecider =
+        new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap(), makeTestMatureVegCodes());
   }
 
   @After
@@ -608,6 +702,11 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals(14, msg.getTimeInState());
     assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
     assertEquals(6, (int) msg.getTargetTransition().getTargetState());
+
+    // Pine and deciduous seeds present before transition to pine occurs
+    assertEquals(1, (int) msg.getCurrentState().getPineSeeds());
+    assertEquals(0, (int) msg.getCurrentState().getOakSeeds());
+    assertEquals(1, (int) msg.getCurrentState().getDeciduousSeeds());
   }
 
   @Test
@@ -623,6 +722,11 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals(15, msg.getTimeInState());
     assertEquals(15, (int) msg.getTargetTransition().getTransitionTime());
     assertEquals(6, (int) msg.getTargetTransition().getTargetState());
+
+    // Pine and deciduous seeds present before transition to pine occurs
+    assertEquals(1, (int) msg.getCurrentState().getPineSeeds());
+    assertEquals(0, (int) msg.getCurrentState().getOakSeeds());
+    assertEquals(1, (int) msg.getCurrentState().getDeciduousSeeds());
   }
 
   @Test
@@ -637,6 +741,11 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals(6, (int) msg.getCurrentState().getStartState());
     assertEquals(1, msg.getTimeInState());
     assertNull("target state not correct", msg.getTargetTransition());
+
+    // Pine and deciduous seeds killed off following transition to pine
+    assertEquals(0, (int) msg.getCurrentState().getPineSeeds());
+    assertEquals(0, (int) msg.getCurrentState().getOakSeeds());
+    assertEquals(0, (int) msg.getCurrentState().getDeciduousSeeds());
   }
 
   @Test
@@ -790,6 +899,29 @@ public class AgroSuccessLcsUpdateDeciderTest {
     assertEquals(5, (int) msg.getCurrentState().getStartState());
     assertEquals(1, msg.getTimeInState());
     assertNull(msg.getTargetTransition());
+  }
+
+  @Test
+  public void scenario5TimeStep1ShouldBeAsExpected() {
+    // transition pathway 4
+    CodedEnvrAntecedent prevPhysicalState = new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2);
+    int prevTimeInState = 15;
+    CodedEnvrConsequent prevTargetTrans = new CodedEnvrConsequent(7, 15);
+
+    LcsUpdateMsg msg =
+        updateDecider.getLcsUpdateMsg(prevPhysicalState, prevTimeInState, prevTargetTrans);
+
+    assertEquals(7, (int) msg.getCurrentState().getStartState());
+    assertEquals(1, msg.getTimeInState());
+    assertEquals(20, (int) msg.getTargetTransition().getTransitionTime());
+    assertEquals(9, (int) msg.getTargetTransition().getTargetState());
+
+    // Trans forest not mature vegetation so juvenile seeds remain
+    // Compare to scenario 1 where pine and deciduous juveniles are killed off
+    // following transition to mature pine forest
+    assertEquals(1, (int) msg.getCurrentState().getPineSeeds());
+    assertEquals(0, (int) msg.getCurrentState().getOakSeeds());
+    assertEquals(1, (int) msg.getCurrentState().getDeciduousSeeds());
   }
 
 }
