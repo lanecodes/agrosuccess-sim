@@ -11,18 +11,18 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
-public class AgroSuccessLctTest {
+public class Neo4jAgroSuccessLctTest {
 
   private static File graphDir = new File("src/test/resources/databases/agrosuccess-test.db");
 
-  private static List<AgroSuccessLct> getLcts() {
+  private static List<Neo4jAgroSuccessLct> getLcts() {
     GraphDatabaseService graph = new EmbeddedGraphInstance(graphDir.getAbsolutePath());
-    List<AgroSuccessLct> lctNodes = new ArrayList<AgroSuccessLct>();
+    List<Neo4jAgroSuccessLct> lctNodes = new ArrayList<Neo4jAgroSuccessLct>();
     Label label = Label.label("LandCoverType");
     try (Transaction tx = graph.beginTx()) {
       try (ResourceIterator<Node> lcts = graph.findNodes(label)) {
         while (lcts.hasNext()) {
-          lctNodes.add(new AgroSuccessLct(lcts.next()));
+          lctNodes.add(new Neo4jAgroSuccessLct(lcts.next()));
         }
       }
     }
@@ -33,7 +33,7 @@ public class AgroSuccessLctTest {
   @Test
   public void shouldFind9LandCoverTypesInGraph() {
     // confirms
-    for (AgroSuccessLct lct : getLcts()) {
+    for (Neo4jAgroSuccessLct lct : getLcts()) {
       System.out.println(lct.getCode());
     }
     assertEquals(9, getLcts().size());
