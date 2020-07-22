@@ -2,6 +2,8 @@ package repast.model.agrosuccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
@@ -260,7 +262,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     LcsTransitionMapFactory fac =
         new GraphBasedLcsTransitionMapFactory(graph, graphModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
-    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap);
+    // TODO Refactor so set of mature land-cover types loaded from graph
+    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap, new HashSet<Integer>(
+        Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous.getCode())));
 
     SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(smParams);
 

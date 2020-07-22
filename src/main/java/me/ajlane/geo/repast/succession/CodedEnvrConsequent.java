@@ -1,8 +1,8 @@
 package me.ajlane.geo.repast.succession;
 
-public class CodedEnvrConsequent extends EnvrConsequent<Integer> {
+public class CodedEnvrConsequent extends EnvrConsequent<Integer, Integer> {
 
-  public CodedEnvrConsequent(Integer targetState, int transitionTime) {
+  public CodedEnvrConsequent(Integer targetState, Integer transitionTime) {
     super(targetState, transitionTime);
   }
 }

@@ -82,19 +82,26 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
     LcsUpdateMsg updateMsg;
     for (int x = 0; x < nCols; x++) {
       for (int y = 0; y < nRows; y++) {
-        updateMsg = updateDecider.getLcsUpdateMsg(getCellEnvrState(x, y), getCellTimeInState(x, y),
+        CodedEnvrAntecedent prevEnvrState = getCellEnvrState(x, y);
+        updateMsg = updateDecider.getLcsUpdateMsg(prevEnvrState, getCellTimeInState(x, y),
             getCellTgtState(x, y));
 
-        landCoverType.set(updateMsg.getCurrentState(), x, y);
+        landCoverType.set(updateMsg.getCurrentState().getStartState(), x, y);
         timeInState.set(updateMsg.getTimeInState(), x, y);
 
-        if (updateMsg.getTargetState() == null) {
-          assert updateMsg.getTargetStateTransitionTime() == null;
+        if (updateMsg.getTargetTransition() == null) {
           deltaD.set(-1, x, y);
           deltaT.set(-1, x, y);
         } else {
-          deltaD.set(updateMsg.getTargetState(), x, y);
-          deltaT.set(updateMsg.getTargetStateTransitionTime(), x, y);
+          deltaD.set(updateMsg.getTargetTransition().getTargetState(), x, y);
+          deltaT.set(updateMsg.getTargetTransition().getTransitionTime(), x, y);
+        }
+
+        // Ensure seed presence is correct if land cover state updated
+        if (updateMsg.getCurrentState().getStartState() != prevEnvrState.getStartState()) {
+          this.pine.set(updateMsg.getCurrentState().getPineSeeds(), x, y);
+          this.oak.set(updateMsg.getCurrentState().getOakSeeds(), x, y);
+          this.deciduous.set(updateMsg.getCurrentState().getDeciduousSeeds(), x, y);
         }
       }
     }

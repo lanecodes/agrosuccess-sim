@@ -185,8 +185,9 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
     if (currentValue == 1) {
       gvl.set(0.0, col, row);
     } else {
-      throw new IllegalArgumentException("Tried to remove the following seed from GridValueLayer "
-          + "containing no seed. Programming error.\n" + seed.toString());
+      logger.debug("Tried to remove the following seed from GridValueLayer containing no seed. "
+          + "If there has been no transition to mature land-cover type in this "
+          + "time step this might be a programming error.\n" + seed.toString());
     }
   }
 

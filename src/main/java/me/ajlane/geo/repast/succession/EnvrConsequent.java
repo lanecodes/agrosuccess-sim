@@ -7,21 +7,21 @@ package me.ajlane.geo.repast.succession;
  * @param <T> type of the start state specifier (e.g Integer or String)
  * @author Andrew Lane
  */
-class EnvrConsequent<T> {
+class EnvrConsequent<T1, T2> {
 
-  private T targetState; // the land cover state this consequent represents
-  private int transitionTime; // the number of years taken to transition to targetState
+  private T1 targetState; // the land cover state this consequent represents
+  private T2 transitionTime; // the number of years taken to transition to targetState
 
-  public EnvrConsequent(T targetState, int transitionTime) {
+  public EnvrConsequent(T1 targetState, T2 transitionTime) {
     this.targetState = targetState;
     this.transitionTime = transitionTime;
   }
 
-  public T getTargetState() {
+  public T1 getTargetState() {
     return targetState;
   }
 
-  public int getTransitionTime() {
+  public T2 getTransitionTime() {
     return transitionTime;
   }
 
@@ -30,11 +30,10 @@ class EnvrConsequent<T> {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((targetState == null) ? 0 : targetState.hashCode());
-    result = prime * result + transitionTime;
+    result = prime * result + ((transitionTime == null) ? 0 : transitionTime.hashCode());
     return result;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -43,13 +42,16 @@ class EnvrConsequent<T> {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    EnvrConsequent<T> other = (EnvrConsequent<T>) obj;
+    EnvrConsequent<?,?> other = (EnvrConsequent<?,?>) obj;
     if (targetState == null) {
       if (other.targetState != null)
         return false;
     } else if (!targetState.equals(other.targetState))
       return false;
-    if (transitionTime != other.transitionTime)
+    if (transitionTime == null) {
+      if (other.transitionTime != null)
+        return false;
+    } else if (!transitionTime.equals(other.transitionTime))
       return false;
     return true;
   }

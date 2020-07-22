@@ -1,6 +1,13 @@
 package repast.model.agrosuccess;
 
-import static org.junit.Assert.*;
+import static me.ajlane.geo.repast.RepastGridUtils.arrayToGridValueLayer;
+import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayersAreEqual;
+import static me.ajlane.geo.repast.RepastGridUtils.valueLayerToString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,10 +23,7 @@ import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.valueLayer.GridValueLayer;
-import repast.simphony.valueLayer.IGridValueLayer;
-import static me.ajlane.geo.repast.RepastGridUtils.arrayToGridValueLayer;
-import static me.ajlane.geo.repast.RepastGridUtils.valueLayerToString;
-import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayersAreEqual;;
+import repast.simphony.valueLayer.IGridValueLayer;;
 
 /**
  * @author Andrew Lane
@@ -30,13 +34,13 @@ public class AgroSuccessLcsUpdaterTest {
   LcsUpdateDecider updateDecider;
 
   /**
-   * 
+   *
    * Note that no entry is made for pathway 2, as it has no target state so is not expected to be
    * found in the transition map
-   * 
+   *
    * @return The transition map which will be used for each test case, according to the transition
    *         pathways described in the javadoc for this class.
-   * 
+   *
    * @see me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDeciderTest#makeTestCodedLcsTransitionMap()
    */
   private CodedLcsTransitionMap makeTestCodedLcsTransitionMap() {
@@ -58,7 +62,7 @@ public class AgroSuccessLcsUpdaterTest {
    * In this context all grid cells contain the same value, and each layer's values correspond to
    * Scenario 1 time step 4 documented in
    * {@link me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDeciderTest}. *
-   * 
+   *
    * @return A newly minted context to use in below test cases
    */
   private Context<Object> getUniformContext() {
@@ -82,18 +86,18 @@ public class AgroSuccessLcsUpdaterTest {
 
   /**
    * <b>Time evolution of heteroContext</b></br>
-   * 
+   *
    * <pre class="example">
    * t        lct                ΔD                ΔT              T_{in}            pathway
-   *    
+   *
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
-   *    |  5 |  5 |  5 |  |  6 |  6 |  6 |  | 15 | 15 | 15 |  | 15 | 15 | 14 |  |  1 |  1 |  1 |    
-   *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+    
-   * 0  |  5 |  5 |  5 |  |  6 |  9 |  9 |  | 15 | 20 | 20 |  | 14 | 19 | 18 |  |  1 |  3 |  3 |    
-   *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+    
-   *    |  5 |  5 |  5 |  |  9 |  9 |  9 |  | 20 | 20 | 20 |  | 18 | 18 | 18 |  |  3 |  3 |  3 |    
+   *    |  5 |  5 |  5 |  |  6 |  6 |  6 |  | 15 | 15 | 15 |  | 15 | 15 | 14 |  |  1 |  1 |  1 |
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
-   *    
+   * 0  |  5 |  5 |  5 |  |  6 |  9 |  9 |  | 15 | 20 | 20 |  | 14 | 19 | 18 |  |  1 |  3 |  3 |
+   *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
+   *    |  5 |  5 |  5 |  |  9 |  9 |  9 |  | 20 | 20 | 20 |  | 18 | 18 | 18 |  |  3 |  3 |  3 |
+   *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
+   *
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
    *    |  6 |  6 |  5 |  | -1 | -1 |  6 |  | -1 | -1 | 15 |  |  1 |  1 | 15 |  | -1 | -1 |  1 |
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
@@ -101,7 +105,7 @@ public class AgroSuccessLcsUpdaterTest {
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
    *    |  5 |  5 |  5 |  |  9 |  9 |  9 |  | 20 | 20 | 20 |  | 19 | 19 | 19 |  |  3 |  3 |  3 |
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
-   * 
+   *
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
    *    |  6 |  6 |  6 |  | -1 | -1 | -1 |  | -1 | -1 | -1 |  |  2 |  2 |  1 |  | -1 | -1 | -1 |
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
@@ -110,7 +114,7 @@ public class AgroSuccessLcsUpdaterTest {
    *    |  5 |  5 |  5 |  |  9 |  9 |  9 |  | 20 | 20 | 20 |  | 20 | 20 | 20 |  |  3 |  3 |  3 |
    *    +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+  +----+----+----+
    * </pre>
-   * 
+   *
    * @return
    */
   private Context<Object> getHeteroContext() {
@@ -152,7 +156,8 @@ public class AgroSuccessLcsUpdaterTest {
   @Before
   public void setUp() {
     smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(new SoilMoistureParams(500, 1000));
-    updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap());
+    Set<Integer> matureVeg = new HashSet<>(Arrays.asList(6, 9)); // pine and oak
+    updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap(), matureVeg);
   }
 
   @After
@@ -178,6 +183,12 @@ public class AgroSuccessLcsUpdaterTest {
         assertEquals(errorStr(i, j, 5, LscapeLayer.Lct.name()), 5,
             (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
+        // Expect pine and deciduous seeds to be present
+        assertEquals(errorStr(i, j, 1, LscapeLayer.Pine.name()), 1,
+            (int) context.getValueLayer(LscapeLayer.Pine.name()).get(i, j));
+        assertEquals(errorStr(i, j, 1, LscapeLayer.Deciduous.name()), 1,
+            (int) context.getValueLayer(LscapeLayer.Deciduous.name()).get(i, j));
+
         assertEquals(errorStr(i, j, 15, LscapeLayer.TimeInState.name()), 15,
             (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(i, j));
 
@@ -193,7 +204,10 @@ public class AgroSuccessLcsUpdaterTest {
 
   /**
    * Test demonstrates a land cover transition taking place.
-   * 
+   *
+   * Because the transition is to a mature land-cover type (pine) we expect all juvenile plants
+   * (pine, oak, and deciduous seeds) to have been removed.
+   *
    * Also shows how -1 should be used to encode 'no target land cover state' and 'no target land
    * cover transition time'
    */
@@ -209,6 +223,13 @@ public class AgroSuccessLcsUpdaterTest {
       for (int j = 0; j < 3; j++) {
         assertEquals(errorStr(i, j, 6, LscapeLayer.Lct.name()), 6,
             (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
+
+        // Expect pine and deciduous seeds to have been removed due to transition to mature
+        // land-cover type
+        assertEquals(errorStr(i, j, 0, LscapeLayer.Pine.name()), 0,
+            (int) context.getValueLayer(LscapeLayer.Pine.name()).get(i, j));
+        assertEquals(errorStr(i, j, 0, LscapeLayer.Deciduous.name()), 0,
+            (int) context.getValueLayer(LscapeLayer.Deciduous.name()).get(i, j));
 
         assertEquals(errorStr(i, j, 1, LscapeLayer.TimeInState.name()), 1,
             (int) context.getValueLayer(LscapeLayer.TimeInState.name()).get(i, j));
@@ -378,6 +399,6 @@ public class AgroSuccessLcsUpdaterTest {
     assertTrue(gvlErrorStr(expectedGvl, actualGvl),
         gridValueLayersAreEqual(expectedGvl, actualGvl));
   }
-  
+
 }
 

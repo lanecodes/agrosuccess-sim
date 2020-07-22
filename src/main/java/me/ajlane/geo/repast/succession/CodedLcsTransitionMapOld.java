@@ -8,11 +8,11 @@ import org.neo4j.graphdb.Transaction;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 /**
- * 
+ *
  * @author Andrew Lane
  */
 public class CodedLcsTransitionMapOld extends
-    HashMap<EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvrConsequent<Integer>> {
+    HashMap<EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer>, EnvrConsequent<Integer, Integer>> {
 
   private static final long serialVersionUID = 4682382255681752353L;
 
@@ -71,7 +71,7 @@ public class CodedLcsTransitionMapOld extends
                 envStateAliasTranslator.numericalValueFromAlias("water",
                     transData.get("water").toString()));
 
-        EnvrConsequent<Integer> envConsequent =
+        EnvrConsequent<Integer, Integer> envConsequent =
             new EnvrConsequent<>(
                 envStateAliasTranslator.numericalValueFromAlias("landCoverState",
                     transData.get("end_code").toString()),
