@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 14 - Add environmental update rules to AgroSuccessLcsUpdateDecider - 2020-08-10
+
+These correspond to rules S4 and S5 in the thesis, and reflect the ability of
+the transition of a cell to a mature land-cover state, or the occurrence of
+high frequency fire to cause a cell to have juveniles killed, or to have the
+succession pathway change from regeneration to succession
+
+#### ADDED
+
+- `SeedStateUpdater` and `SeedState` classes to implement rule S4
+- Oak mortality rule S5 logic added to new `SuccessionPathwayUpdater` class
+- `EnvrSimState` class added to contain grid cell data needed for succession
+  model but not part of physical state of the grid cell
+
+#### CHANGED
+
+- `LscapeLayer#FireCount` added. This tracks how many fires occurred in each
+  grid cell during the simulation
+- `LscapeLayer#OakAge` added. This tracks how many continuous years the grid
+  cell has contained reproductively mature oak (i.e. oak or transition forest
+  land-cover)
+
 ### 13 - Rule to kill juveniles when mature vegetation transition occurs - 2020-07-06
 
 Here we add a new rule to kill juvenile plants (pine, oak and deciduous seeds)

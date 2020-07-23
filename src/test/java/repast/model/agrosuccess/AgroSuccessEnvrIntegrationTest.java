@@ -92,6 +92,8 @@ public class AgroSuccessEnvrIntegrationTest {
     assertTrue(context.getValueLayer(LscapeLayer.TimeInState.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.DeltaD.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.DeltaT.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.FireCount.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.OakAge.name()) instanceof GridValueLayer);
   }
 
   @Test

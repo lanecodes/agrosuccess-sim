@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,18 +19,34 @@ import me.ajlane.geo.repast.succession.CodedEnvrConsequent;
 import me.ajlane.geo.repast.succession.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
+import me.ajlane.geo.repast.succession.SeedStateUpdater;
+import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.environment.RunState;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;;
 
 /**
+ * Note: This is an integration test rather than a unit test. Checks {@link SeedStateUpdater},
+ * {@link SuccessionPathwayUpdater}, {@link AgroSuccessLcsUpdateDecider}, and
+ * {@link AgroSuccessLcsUpdater} work together properly.
+ *
  * @author Andrew Lane
  *
  */
 public class AgroSuccessLcsUpdaterTest {
   SoilMoistureDiscretiser smDiscretiser;
   LcsUpdateDecider updateDecider;
+
+  SuccessionPathwayUpdater successionUpdater;
+  SeedStateUpdater seedUpdater;
+
+  Context<Object> context;
 
   /**
    *
@@ -47,13 +62,16 @@ public class AgroSuccessLcsUpdaterTest {
     CodedLcsTransitionMap transMap = new CodedLcsTransitionMap();
 
     // Add transition pathway 1 to transition map
-    transMap.put(new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 0), new CodedEnvrConsequent(6, 15));
+    transMap.put(new CodedEnvrAntecedent(Lct.Shrubland.getCode(), 0, 1, 1, 0, 1, 0),
+        new CodedEnvrConsequent(Lct.Pine.getCode(), 15));
 
     // Add transition pathway 3 to transition map
-    transMap.put(new CodedEnvrAntecedent(5, 0, 1, 1, 0, 1, 2), new CodedEnvrConsequent(9, 20));
+    transMap.put(new CodedEnvrAntecedent(Lct.Shrubland.getCode(), 0, 1, 1, 0, 1, 2),
+        new CodedEnvrConsequent(Lct.Oak.getCode(), 20));
 
     // Add transition pathway 4 to transition map
-    transMap.put(new CodedEnvrAntecedent(6, 0, 1, 1, 0, 1, 2), new CodedEnvrConsequent(7, 15));
+    transMap.put(new CodedEnvrAntecedent(Lct.Pine.getCode(), 0, 1, 1, 0, 1, 2),
+        new CodedEnvrConsequent(Lct.TransForest.getCode(), 15));
 
     return transMap;
   }
@@ -65,11 +83,10 @@ public class AgroSuccessLcsUpdaterTest {
    *
    * @return A newly minted context to use in below test cases
    */
-  private Context<Object> getUniformContext() {
-    Context<Object> context = new DefaultContext<>();
-
+  private Context<Object> addLayersToUniformContext(Context<Object> context) {
     // everywhere shrubland
-    context.addValueLayer(new GridValueLayer(LscapeLayer.Lct.name(), 5, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.Lct.name(),
+        Lct.Shrubland.getCode(), true, 3, 3));
     context.addValueLayer(new GridValueLayer(LscapeLayer.OakRegen.name(), 0, true, 3, 3));
     context.addValueLayer(new GridValueLayer(LscapeLayer.Aspect.name(), 1, true, 3, 3));
     context.addValueLayer(new GridValueLayer(LscapeLayer.Pine.name(), 1, true, 3, 3));
@@ -78,8 +95,11 @@ public class AgroSuccessLcsUpdaterTest {
     // xeric
     context.addValueLayer(new GridValueLayer(LscapeLayer.SoilMoisture.name(), 200, true, 3, 3));
     context.addValueLayer(new GridValueLayer(LscapeLayer.TimeInState.name(), 14, true, 3, 3));
-    context.addValueLayer(new GridValueLayer(LscapeLayer.DeltaD.name(), 6, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.DeltaD.name(),
+        Lct.Pine.getCode(), true, 3, 3));
     context.addValueLayer(new GridValueLayer(LscapeLayer.DeltaT.name(), 15, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.FireCount.name(), 0, true, 3, 3));
+    context.addValueLayer(new GridValueLayer(LscapeLayer.OakAge.name(), 0, true, 3, 3));
 
     return context;
   }
@@ -117,11 +137,16 @@ public class AgroSuccessLcsUpdaterTest {
    *
    * @return
    */
-  private Context<Object> getHeteroContext() {
-    Context<Object> context = new DefaultContext<>();
+  private Context<Object> addLayersToHeteroContext(Context<Object> context) {
+    int shrubCode = Lct.Shrubland.getCode();
+    int pineCode = Lct.Pine.getCode();
+    int oakCode = Lct.Oak.getCode();
 
     context.addValueLayer(arrayToGridValueLayer(LscapeLayer.Lct.name(),
-        new int[][] {{5, 5, 5}, {5, 5, 5}, {5, 5, 5}}));
+        new int[][] {
+            {shrubCode, shrubCode, shrubCode},
+            {shrubCode, shrubCode, shrubCode},
+            {shrubCode, shrubCode, shrubCode}}));
 
     context.addValueLayer(arrayToGridValueLayer(LscapeLayer.OakRegen.name(),
         new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
@@ -145,19 +170,36 @@ public class AgroSuccessLcsUpdaterTest {
         new int[][] {{15, 15, 14}, {14, 19, 18}, {18, 18, 18}}));
 
     context.addValueLayer(arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
-        new int[][] {{6, 6, 6}, {6, 9, 9}, {9, 9, 9}}));
+        new int[][] {
+            {pineCode, pineCode, pineCode},
+            {pineCode, oakCode, oakCode},
+            {oakCode, oakCode, oakCode}}));
 
     context.addValueLayer(arrayToGridValueLayer(LscapeLayer.DeltaT.name(),
         new int[][] {{15, 15, 15}, {15, 20, 20}, {20, 20, 20}}));
+
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.FireCount.name(),
+        new int[][] {{0, 0, 0}, {0, 1, 1}, {1, 1, 2}}));
+
+    context.addValueLayer(arrayToGridValueLayer(LscapeLayer.OakAge.name(),
+        new int[][] {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}));
 
     return context;
   }
 
   @Before
   public void setUp() {
+    ISchedule schedule = new Schedule();
+    RunEnvironment.init(schedule, null, null, true);
+    context = new DefaultContext<>();
+    RunState.init().setMasterContext(context);
+
     smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(new SoilMoistureParams(500, 1000));
-    Set<Integer> matureVeg = new HashSet<>(Arrays.asList(6, 9)); // pine and oak
-    updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap(), matureVeg);
+    successionUpdater = new SuccessionPathwayUpdater(200.);
+    seedUpdater = new SeedStateUpdater(new HashSet<Integer>(Arrays.asList(Lct.Pine.getCode(),
+        Lct.Oak.getCode(), Lct.Deciduous.getCode())));
+    updateDecider = new AgroSuccessLcsUpdateDecider(makeTestCodedLcsTransitionMap(),
+        successionUpdater, seedUpdater);
   }
 
   @After
@@ -167,20 +209,21 @@ public class AgroSuccessLcsUpdaterTest {
   }
 
   private String errorStr(int row, int col, double value, String layerName) {
-    return "row " + row + ", column " + col + "in layer " + layerName + " should be " + value
+    return "row " + row + ", column " + col + " in layer " + layerName + " should be " + value
         + " but isn't.";
   }
 
   @Test
   public void testUniformContextAfter1Timestep() {
-    Context<Object> context = getUniformContext();
+    Context<Object> context = addLayersToUniformContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
 
     lcsUpdater.updateLandscapeLcs();
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 5, LscapeLayer.Lct.name()), 5,
+        assertEquals(errorStr(i, j, Lct.Shrubland.getCode(), LscapeLayer.Lct.name()),
+            Lct.Shrubland.getCode(),
             (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
         // Expect pine and deciduous seeds to be present
@@ -195,7 +238,8 @@ public class AgroSuccessLcsUpdaterTest {
         assertEquals(errorStr(i, j, 15, LscapeLayer.DeltaT.name()), 15,
             (int) context.getValueLayer(LscapeLayer.DeltaT.name()).get(i, j));
 
-        assertEquals(errorStr(i, j, 6, LscapeLayer.DeltaD.name()), 6,
+        assertEquals(errorStr(i, j, Lct.Pine.getCode(), LscapeLayer.DeltaD.name()),
+            Lct.Pine.getCode(),
             (int) context.getValueLayer(LscapeLayer.DeltaD.name()).get(i, j));
       }
     }
@@ -213,7 +257,7 @@ public class AgroSuccessLcsUpdaterTest {
    */
   @Test
   public void testUniformContextAfter2Timesteps() {
-    Context<Object> context = getUniformContext();
+    Context<Object> context = addLayersToUniformContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
 
     lcsUpdater.updateLandscapeLcs();
@@ -221,7 +265,7 @@ public class AgroSuccessLcsUpdaterTest {
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 6, LscapeLayer.Lct.name()), 6,
+        assertEquals(errorStr(i, j, Lct.Pine.getCode(), LscapeLayer.Lct.name()), Lct.Pine.getCode(),
             (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
         // Expect pine and deciduous seeds to have been removed due to transition to mature
@@ -245,7 +289,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testUniformContextAfter3Timesteps() {
-    Context<Object> context = getUniformContext();
+    Context<Object> context = addLayersToUniformContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
 
     lcsUpdater.updateLandscapeLcs();
@@ -254,7 +298,8 @@ public class AgroSuccessLcsUpdaterTest {
 
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        assertEquals(errorStr(i, j, 6, LscapeLayer.Lct.name()), 6,
+        assertEquals(errorStr(i, j, Lct.Pine.getCode(), LscapeLayer.Lct.name()),
+            Lct.Pine.getCode(),
             (int) context.getValueLayer(LscapeLayer.Lct.name()).get(i, j));
 
         assertEquals(errorStr(i, j, 2, LscapeLayer.TimeInState.name()), 2,
@@ -276,12 +321,15 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter1TimestepLctUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
     IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
-        new int[][] {{6, 6, 5}, {5, 5, 5}, {5, 5, 5}});
+        new int[][] {
+      {Lct.Pine.getCode(), Lct.Pine.getCode(), Lct.Shrubland.getCode()},
+      {Lct.Shrubland.getCode(), Lct.Shrubland.getCode(), Lct.Shrubland.getCode()},
+      {Lct.Shrubland.getCode(), Lct.Shrubland.getCode(), Lct.Shrubland.getCode()}});
 
     IGridValueLayer actualGvl = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 
@@ -291,12 +339,15 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter1TimestepDeltaDUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
     IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
-        new int[][] {{-1, -1, 6}, {6, 9, 9}, {9, 9, 9}});
+        new int[][] {
+      {-1, -1, Lct.Pine.getCode()},
+      {Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Oak.getCode()},
+      {Lct.Oak.getCode(), Lct.Oak.getCode(), Lct.Oak.getCode()}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
 
@@ -306,7 +357,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter1TimestepDeltaTUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
@@ -321,7 +372,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter1TimestepTimeInStateUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
 
@@ -337,13 +388,16 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter2TimestepsLctUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
     IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.Lct.name(),
-        new int[][] {{6, 6, 6}, {6, 9, 5}, {5, 5, 5}});
+        new int[][] {
+      {Lct.Pine.getCode(), Lct.Pine.getCode(), Lct.Pine.getCode()},
+      {Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Shrubland.getCode()},
+      {Lct.Shrubland.getCode(), Lct.Shrubland.getCode(), Lct.Shrubland.getCode()}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
 
@@ -353,13 +407,16 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter2TimestepsDeltaDUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
 
     IGridValueLayer expectedGvl = arrayToGridValueLayer(LscapeLayer.DeltaD.name(),
-        new int[][] {{-1, -1, -1}, {-1, -1, 9}, {9, 9, 9}});
+        new int[][] {
+      {-1, -1, -1},
+      {-1, -1, Lct.Oak.getCode()},
+      {Lct.Oak.getCode(), Lct.Oak.getCode(), Lct.Oak.getCode()}});
 
     GridValueLayer actualGvl = (GridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
 
@@ -369,7 +426,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter2TimestepsDeltaTUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();
@@ -385,7 +442,7 @@ public class AgroSuccessLcsUpdaterTest {
 
   @Test
   public void testHeteroContextAfter2TimestepsTimeInStateUpdates() {
-    Context<Object> context = getHeteroContext();
+    Context<Object> context = addLayersToHeteroContext(this.context);
     LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
     lcsUpdater.updateLandscapeLcs();
     lcsUpdater.updateLandscapeLcs();

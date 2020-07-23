@@ -3,10 +3,13 @@ package repast.model.agrosuccess;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.geo.repast.succession.CodedEnvrAntecedent;
 import me.ajlane.geo.repast.succession.CodedEnvrConsequent;
+import me.ajlane.geo.repast.succession.EnvrSimState;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdateMsg;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
 
@@ -15,27 +18,40 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
   SoilMoistureDiscretiser smDiscretiser;
   int nRows, nCols;
   IGridValueLayer landCoverType, oakRegen, aspect, pine, oak, deciduous, soilMoisture, timeInState,
-      deltaD, deltaT;
+      deltaD, deltaT, fireCount, oakAge;
+  ISchedule schedule;
 
   public AgroSuccessLcsUpdater(Context<Object> context, LcsUpdateDecider lcsUpdateDecider,
       SoilMoistureDiscretiser smDiscretiser) {
 
-    this.landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
-    this.oakRegen = (IGridValueLayer) context.getValueLayer(LscapeLayer.OakRegen.name());
-    this.aspect = (IGridValueLayer) context.getValueLayer(LscapeLayer.Aspect.name());
-    this.pine = (IGridValueLayer) context.getValueLayer(LscapeLayer.Pine.name());
-    this.oak = (IGridValueLayer) context.getValueLayer(LscapeLayer.Oak.name());
-    this.deciduous = (IGridValueLayer) context.getValueLayer(LscapeLayer.Deciduous.name());
-    this.soilMoisture = (IGridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
-    this.timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
-    this.deltaD = (IGridValueLayer) context.getValueLayer(LscapeLayer.DeltaD.name());
-    this.deltaT = (IGridValueLayer) context.getValueLayer(LscapeLayer.DeltaT.name());
+    this.landCoverType = getValueLayer(context, LscapeLayer.Lct);
+    this.oakRegen = getValueLayer(context, LscapeLayer.OakRegen);
+    this.aspect = getValueLayer(context, LscapeLayer.Aspect);
+    this.pine = getValueLayer(context, LscapeLayer.Pine);
+    this.oak = getValueLayer(context, LscapeLayer.Oak);
+    this.deciduous = getValueLayer(context, LscapeLayer.Deciduous);
+    this.soilMoisture = getValueLayer(context, LscapeLayer.SoilMoisture);
+    this.timeInState = getValueLayer(context, LscapeLayer.TimeInState);
+    this.deltaD = getValueLayer(context, LscapeLayer.DeltaD);
+    this.deltaT = getValueLayer(context, LscapeLayer.DeltaT);
+    this.fireCount = getValueLayer(context, LscapeLayer.FireCount);
+    this.oakAge = getValueLayer(context, LscapeLayer.OakAge);
 
     this.nRows = (int) landCoverType.getDimensions().getHeight();
     this.nCols = (int) landCoverType.getDimensions().getWidth();
 
     this.updateDecider = lcsUpdateDecider;
     this.smDiscretiser = smDiscretiser;
+
+    this.schedule = RunEnvironment.getInstance().getCurrentSchedule();
+  }
+
+  private IGridValueLayer getValueLayer(Context<Object> context, LscapeLayer layerId) {
+    IGridValueLayer layer = (IGridValueLayer) context.getValueLayer(layerId.name());
+    if (layer == null) {
+      throw new NullPointerException("No " + layerId + " layer found in context");
+    }
+    return layer;
   }
 
   /**
@@ -76,6 +92,14 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
     return (int) timeInState.get(x, y);
   }
 
+  private double getCellFireFrequency(int x, int y) {
+    return fireCount.get(x, y) / schedule.getTickCount();
+  }
+
+  private int getCellOakAge(int x, int y) {
+    return (int) oakAge.get(x, y);
+  }
+
   @Override
   @ScheduledMethod(start = 1, interval = 1, priority = 0)
   public void updateLandscapeLcs() {
@@ -83,8 +107,10 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
     for (int x = 0; x < nCols; x++) {
       for (int y = 0; y < nRows; y++) {
         CodedEnvrAntecedent prevEnvrState = getCellEnvrState(x, y);
-        updateMsg = updateDecider.getLcsUpdateMsg(prevEnvrState, getCellTimeInState(x, y),
-            getCellTgtState(x, y));
+        EnvrSimState envrSimState = new EnvrSimState(getCellTimeInState(x, y),
+            getCellFireFrequency(x, y), getCellOakAge(x, y));
+        updateMsg =
+            updateDecider.getLcsUpdateMsg(prevEnvrState, envrSimState, getCellTgtState(x, y));
 
         landCoverType.set(updateMsg.getCurrentState().getStartState(), x, y);
         timeInState.set(updateMsg.getTimeInState(), x, y);
