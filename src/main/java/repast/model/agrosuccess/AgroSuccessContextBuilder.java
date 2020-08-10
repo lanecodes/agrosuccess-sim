@@ -40,6 +40,7 @@ import me.ajlane.geo.repast.succession.GraphBasedLcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
+import me.ajlane.geo.repast.succession.OakAgeUpdater;
 import me.ajlane.geo.repast.succession.SeedStateUpdater;
 import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
@@ -123,6 +124,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()), siteData, siteData,
         siteData, envrModelParams.getFireParams());
     context.add(fireManager);
+
+    OakAgeUpdater oakAgeUpdater = initOakAgeUpdater(
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name()),
+        context.getValueLayer(LscapeLayer.Lct.name()));
+    context.add(oakAgeUpdater);
 
     initLctReporters(context, simulationID);
 
@@ -309,6 +315,21 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         windData.getWindDirectionProb(), windData.getWindSpeedProb());
 
     return new FireManager(meanNumFires, fireSpreader, meanNumFires);
+  }
+
+  /**
+   * @param oakAgeLayer Value layer storing the number of years a grid cell has contained a
+   *        land-cover type which includes reproductively mature oak
+   * @param landCoverTypeLayer Value layer storing each cell's current land-cover type
+   * @return {@code OakAgeUpdater} configured with the land-cover types which are considered to
+   *         contain reproductively mature oak vegetation, namely {@code Lct.Oak} and
+   *         {@code Lct.TransForest}
+   */
+  private OakAgeUpdater initOakAgeUpdater(IGridValueLayer oakAgeLayer,
+      ValueLayer landCoverTypeLayer) {
+    Set<Integer> matureVegCodes = new HashSet<>(
+        Arrays.asList(Lct.TransForest.getCode(), Lct.Oak.getCode()));
+    return new OakAgeUpdater(oakAgeLayer, landCoverTypeLayer, matureVegCodes, -1);
   }
 
   /**

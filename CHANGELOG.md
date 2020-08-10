@@ -19,6 +19,8 @@ succession pathway change from regeneration to succession
 - Oak mortality rule S5 logic added to new `SuccessionPathwayUpdater` class
 - `EnvrSimState` class added to contain grid cell data needed for succession
   model but not part of physical state of the grid cell
+- `OakAgeUpdater` class added to increment oak age in cells depending on
+  current land-cover type
 
 #### CHANGED
 
