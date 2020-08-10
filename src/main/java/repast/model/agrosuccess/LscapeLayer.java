@@ -23,8 +23,10 @@ public enum LscapeLayer {
   SoilMoisture ("soil moisture measured in mm"),
   TimeInState ("number of years cell in current land cover state"),
   DeltaD ("target land cover type"),
-  DeltaT ("target state transition time in years");
-  
+  DeltaT ("target state transition time in years"),
+  FireCount ("number of times the cells have been burnt during the simulation"),
+  OakAge ("number of years mature oak has been present in cells");
+
   private final String description;
   
   private LscapeLayer(String s) {

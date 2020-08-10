@@ -1,6 +1,11 @@
 package repast.model.agrosuccess;
 
-import static org.junit.Assert.*;
+import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToArray;
+import static me.ajlane.geo.repast.RepastGridUtils.hashGridValueLayerValues;
+import static me.ajlane.geo.repast.RepastGridUtils.totalGridValueLayerValues;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import java.io.File;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -13,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -23,11 +29,11 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersParser;
 import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.valueLayer.GridValueLayer;
-import static me.ajlane.geo.repast.RepastGridUtils.hashGridValueLayerValues;
-import static me.ajlane.geo.repast.RepastGridUtils.totalGridValueLayerValues;
-import static me.ajlane.geo.repast.RepastGridUtils.gridValueLayerToArray;
-import me.ajlane.neo4j.EmbeddedGraphInstance;
 
+/**
+ * @author Andrew Lane
+ *
+ */
 public class AgroSuccessEnvrIntegrationTest {
 
   final static Logger logger = Logger.getLogger(AgroSuccessEnvrIntegrationTest.class);
@@ -59,7 +65,7 @@ public class AgroSuccessEnvrIntegrationTest {
     ContextBuilder<Object> builder = new AgroSuccessContextBuilder();
     context = builder.build(context);
 
-    // trigger the Heatbug's @ScheduledMethods to be added to the scheduler
+    // trigger the AgroSuccessContextBuilder's @ScheduledMethods to be added to the scheduler
     logger.debug("Scheduling methods...");
     for (Object agent: context.getObjects(Object.class)) {
       logger.debug(schedule.schedule(agent));
@@ -92,6 +98,8 @@ public class AgroSuccessEnvrIntegrationTest {
     assertTrue(context.getValueLayer(LscapeLayer.TimeInState.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.DeltaD.name()) instanceof GridValueLayer);
     assertTrue(context.getValueLayer(LscapeLayer.DeltaT.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.FireCount.name()) instanceof GridValueLayer);
+    assertTrue(context.getValueLayer(LscapeLayer.OakAge.name()) instanceof GridValueLayer);
   }
 
   @Test
@@ -142,6 +150,34 @@ public class AgroSuccessEnvrIntegrationTest {
 
     assertThat("Lct grid should evolve over time, but was unchanged after 5 time steps",
         initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(lct))));
+  }
+
+  @Test
+  public void oakAgeShouldEvolveOverTime() {
+    GridValueLayer oakAge = (GridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name());
+    int[][] initialValues = gridValueLayerToArray(oakAge);
+
+    for (int i=0; i<5; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
+      schedule.execute();
+    }
+
+    assertThat("OakAge grid should evolve over time, but was unchanged after 5 time steps",
+        initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(oakAge))));
+  }
+
+  @Test
+  public void fireCountShouldEvolveOverTime() {
+    GridValueLayer fireCount = (GridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name());
+    int[][] initialValues = gridValueLayerToArray(fireCount);
+
+    for (int i=0; i<5; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
+      schedule.execute();
+    }
+
+    assertThat("FireCount grid should evolve over time, but was unchanged after 5 time steps",
+        initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(fireCount))));
   }
 
   @Test

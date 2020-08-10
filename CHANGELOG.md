@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 14 - Add environmental update rules to AgroSuccessLcsUpdateDecider - 2020-08-10
+
+These correspond to rules S4 and S5 in the thesis, and reflect the ability of
+the transition of a cell to a mature land-cover state, or the occurrence of
+high frequency fire to cause a cell to have juveniles killed, or to have the
+succession pathway change from regeneration to succession
+
+#### ADDED
+
+- `SeedStateUpdater` and `SeedState` classes to implement rule S4
+- Oak mortality rule S5 logic added to new `SuccessionPathwayUpdater` class
+- `EnvrSimState` class added to contain grid cell data needed for succession
+  model but not part of physical state of the grid cell
+- `OakAgeUpdater` class added to increment oak age in cells depending on
+  current land-cover type
+
+#### CHANGED
+
+- `LscapeLayer#FireCount` added. This tracks how many fires occurred in each
+  grid cell during the simulation
+- `LscapeLayer#OakAge` added. This tracks how many continuous years the grid
+  cell has contained reproductively mature oak (i.e. oak or transition forest
+  land-cover)
+- `FireSpreader#burnCellAtPoint` increments `LscapeLayer#FireCount` landscape
+  layer when a fire takes place in a cell.
+- `SuccessionPathwayUpdater`, which is a dependency of
+  `AgroSuccessLcsUpdateDecider`, switches regeneration to succession pathway
+  depending on state of oak vegetation and frequency of fire. Switch to
+  regeneration when oak lct is reached, switch to secondary if fire frequency
+  exceeds level specified in Millington et al. 2009 Statements 7a and 7b. This
+  corresponds to rule S5 in my thesis.
+
 ### 13 - Rule to kill juveniles when mature vegetation transition occurs - 2020-07-06
 
 Here we add a new rule to kill juvenile plants (pine, oak and deciduous seeds)

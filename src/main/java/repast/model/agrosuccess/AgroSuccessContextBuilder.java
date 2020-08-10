@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -39,6 +40,9 @@ import me.ajlane.geo.repast.succession.GraphBasedLcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
+import me.ajlane.geo.repast.succession.OakAgeUpdater;
+import me.ajlane.geo.repast.succession.SeedStateUpdater;
+import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
@@ -117,9 +121,15 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     context.add(lcsUpdater);
 
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
-        (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()), siteData, siteData,
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name()), siteData, siteData,
         siteData, envrModelParams.getFireParams());
     context.add(fireManager);
+
+    OakAgeUpdater oakAgeUpdater = initOakAgeUpdater(
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name()),
+        context.getValueLayer(LscapeLayer.Lct.name()));
+    context.add(oakAgeUpdater);
 
     initLctReporters(context, simulationID);
 
@@ -174,6 +184,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     layerList.add(uniformDefaultLayer(LscapeLayer.DeltaD, -1, gridDimensions, gridOrigin));
     layerList.add(uniformDefaultLayer(LscapeLayer.DeltaT, -1, gridDimensions, gridOrigin));
     layerList.add(uniformDefaultLayer(LscapeLayer.TimeInState, 0, gridDimensions, gridOrigin));
+    layerList.add(uniformDefaultLayer(LscapeLayer.FireCount, 0, gridDimensions, gridOrigin));
+    layerList.add(uniformDefaultLayer(LscapeLayer.OakAge, -1, gridDimensions, gridOrigin));
 
     try {
       layerList.add(siteRasterData.getLctMap());
@@ -262,9 +274,15 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     LcsTransitionMapFactory fac =
         new GraphBasedLcsTransitionMapFactory(graph, graphModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
+
+    // TODO Refactor so oak mortality scaling parameter loaded from graph
+    SuccessionPathwayUpdater successionUpdater = new SuccessionPathwayUpdater(200.);
     // TODO Refactor so set of mature land-cover types loaded from graph
-    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap, new HashSet<Integer>(
-        Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous.getCode())));
+    SeedStateUpdater seedUpdater = new SeedStateUpdater(
+        new HashSet<Integer>(Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous
+            .getCode())));
+    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap, successionUpdater,
+        seedUpdater);
 
     SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(smParams);
 
@@ -277,6 +295,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @param demLayer Digital Elevation Model as a {@code ValueLayer}
    * @param lctLayer Land cover type as a {@code IGridValueLayer}
+   * @param fireCount Number of times each cell has been burnt as a {@code IGridValueLayer}
    * @param windData Site-specific wind speed and direction data
    * @param rasterData Information about site's raster grids, used for cell size
    * @param climateData Site-specific climate data (temperature and precipitation)
@@ -284,8 +303,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return Configured FireManager
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
-      SiteWindData windData, SiteRasterData rasterData, SiteClimateData climateData,
-      FireParams fireParams) {
+      IGridValueLayer fireCount, SiteWindData windData, SiteRasterData rasterData,
+      SiteClimateData climateData, FireParams fireParams) {
     double[] gridCellSize = rasterData.getGridCellPixelSize();
     double aveGridCellSize = (gridCellSize[0] + gridCellSize[1]) / 2;
     LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
@@ -294,10 +313,25 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // Millington et al. 2009 eq 7
     double meanNumFires = fireParams.getClimateIgnitionScalingParam()
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
-    FireSpreader fireSpreader = new FireSpreader(lctLayer, srCalc, wrCalc, lcfGetter.getMap(),
-        windData.getWindDirectionProb(), windData.getWindSpeedProb());
+    FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
+        lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
 
     return new FireManager(meanNumFires, fireSpreader, meanNumFires);
+  }
+
+  /**
+   * @param oakAgeLayer Value layer storing the number of years a grid cell has contained a
+   *        land-cover type which includes reproductively mature oak
+   * @param landCoverTypeLayer Value layer storing each cell's current land-cover type
+   * @return {@code OakAgeUpdater} configured with the land-cover types which are considered to
+   *         contain reproductively mature oak vegetation, namely {@code Lct.Oak} and
+   *         {@code Lct.TransForest}
+   */
+  private OakAgeUpdater initOakAgeUpdater(IGridValueLayer oakAgeLayer,
+      ValueLayer landCoverTypeLayer) {
+    Set<Integer> matureVegCodes = new HashSet<>(
+        Arrays.asList(Lct.TransForest.getCode(), Lct.Oak.getCode()));
+    return new OakAgeUpdater(oakAgeLayer, landCoverTypeLayer, matureVegCodes, -1);
   }
 
   /**

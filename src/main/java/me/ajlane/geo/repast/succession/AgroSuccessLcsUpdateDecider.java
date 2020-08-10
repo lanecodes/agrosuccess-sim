@@ -1,7 +1,5 @@
 package me.ajlane.geo.repast.succession;
 
-import java.util.Set;
-
 /**
  * <p>
  * Implements the ecological succession rules for AgroSuccess.
@@ -16,8 +14,9 @@ import java.util.Set;
  * @author Andrew Lane
  */
 public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
-  CodedLcsTransitionMap transMap;
-  Set<Integer> matureVegCodes;
+  private final CodedLcsTransitionMap transMap;
+  private final SuccessionPathwayUpdater successionUpdater;
+  private final SeedStateUpdater seedUpdater;
 
   /**
    * Note that the integer codes used to encode land-cover types in {@code transMap} must correspond
@@ -28,27 +27,22 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    * @param matureVegMap Maps land-cover type codes to a boolean value indicating whether the
    *        corresponding land-cover type represents a mature vegetation community or not.
    */
-  public AgroSuccessLcsUpdateDecider(CodedLcsTransitionMap transMap, Set<Integer> matureVegCodes) {
+  public AgroSuccessLcsUpdateDecider(CodedLcsTransitionMap transMap,
+      SuccessionPathwayUpdater successionUpdater, SeedStateUpdater seedUpdater) {
     this.transMap = transMap;
-    this.matureVegCodes = matureVegCodes;
+    this.successionUpdater = successionUpdater;
+    this.seedUpdater = seedUpdater;
   }
 
   /**
    * <p>
    * We must first work out whether or not a transition will take place in this timestep, i.e decide
-   * on C(t), using statements 5 and 6. This is because rules 1-4 depend on comparing quantities
-   * /between/ time steps. Calculating C(t) makes it possible to then compare it to C(t-1) allowing
-   * us to calculate ΔT(t) and t_{in}(t). Note that ΔD(t) is determined by the physical state of the
-   * land cover cell. See statements 5 and 6 in
-   * <a href="http://doi.org/10.1016/j.envsoft.2009.03.013">Millington et al. 2009</a>.
+   * on C(t), using S3a and S3b. This is because rules S1a--S1c and S2a--S2e depend on comparing
+   * quantities /between/ time steps. Calculating C(t) makes it possible to then compare it to
+   * C(t-1) allowing us to calculate ΔT(t) and t_{in}(t). Note that ΔD(t) is determined by the
+   * physical state of the land cover cell.
    * </p>
    *
-   * <p>
-   * I have added a condition here not included in Millinton et al. 2009: if the previous time step
-   * did not have a target state because no rule is provided describing its transition out of its
-   * current land cover state with current physical conditions, the cell should remain in the
-   * current land cover state.
-   * </p>
    *
    * @param prevTin Number of years cell had been in current land cover state in the previous
    *        timestep
@@ -61,13 +55,13 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   private Integer getThisLcs(Integer prevTin, Integer prevDeltaT, Integer prevLcs,
       Integer prevDeltaD) {
     if (prevDeltaT == null && prevDeltaD == null) {
-      // statement 7, not present in Millington et al. 2009
+      // S3b (handling null targets not represented in Millington et al. 2009)
       return prevLcs;
     } else if (prevTin < prevDeltaT) {
-      // statement 6
+      // S3b
       return prevLcs;
     } else {
-      // statement 5
+      // S3a
       return prevDeltaD;
     }
   }
@@ -75,13 +69,13 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   /**
    * <p>
    * Here we calculate the time the cell has been in its current state based on whether or not
-   * either a transition has occurred or a new target state has been decided upon. See statements
-   * 1-4 in <a href="http://doi.org/10.1016/j.envsoft.2009.03.013">Millington et al. 2009.</a>
+   * either a transition has occurred or a new target state has been decided upon. See S1a--S1c and
+   * S2a--S2e in thesis.
    * </p>
    *
    * <p>
-   * Note that ~this_delta_D~ is determined based on the transition target implied by the latest
-   * snapshot of the cell's physical state. By contrast ~prev_delta_D~ is the transition target
+   * Note that {@code thisDeltaD} is determined based on the transition target implied by the latest
+   * snapshot of the cell's physical state. By contrast {@code prevDeltaD} is the transition target
    * state the cell was heading towards before its latest physical state was taken into
    * consideration.
    * </p>
@@ -98,14 +92,14 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   private Integer getThisTimeInState(Integer prevTin, Integer prevLcs, Integer thisLcs,
       Integer prevDeltaD, Integer thisDeltaD) {
     if (thisLcs != prevLcs) {
-      // statement 1
+      // S1a
       return 1;
     } else {
       if (thisDeltaD == prevDeltaD) {
-        // statement 2
+        // S1b
         return prevTin + 1;
       } else {
-        // statement 3
+        // S1c
         return 1;
       }
     }
@@ -127,56 +121,17 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
   private Integer getThisDeltaT(Integer prevDeltaD, Integer thisDeltaD, Integer prevLcs,
       Integer thisLcs, Integer prevDeltaT, Integer thisDeltaT) {
     if (prevDeltaT == null && thisDeltaT != null) {
-      // statement 4.1, not in Millington et al. 2009
+      // S2b
       return new Integer((int) Math.round((1 + thisDeltaT) / 2.0));
     } else if (thisDeltaD != prevDeltaD && thisLcs == prevLcs && thisDeltaT != null) {
-      // statement 4'
+      // S2a
       return new Integer((int) Math.round((prevDeltaT + thisDeltaT) / 2.0));
     } else if (thisDeltaD == prevDeltaD && thisLcs == prevLcs) {
-      // statement 4.2, not in Millington et al. 2009
+      // S2c
       return prevDeltaT;
     } else {
+      // TODO Check if this covers both S2d /and/ S2e
       return thisDeltaT;
-    }
-  }
-
-  /**
-   * <p>
-   * If a change in land cover state is to take place in this time step, produce a new
-   * {@code CodedEnvrAntecedent} object which reflects this change, otherwise return the old one.
-   * Accounts for the rule that if a grid cell transitions to a mature land-cover type (e.g. oak,
-   * pine, deciduous), all juvenile individuals in the cell are killed off.
-   * </p>
-   *
-   * <p>
-   * TODO: Refactor {@link #refreshPhysicalEnvrState(CodedEnvrAntecedent, Integer)} for readability,
-   * making explicit the fact that it implements a succession rule.
-   * </p>
-   *
-   * @param physicalEnvrState The physical state of the simulation cell as it was in the last time
-   *        step
-   * @param newLcs Numerical code of the new land cover state determined based on the physical state
-   *        of the simulation cell, and whether or not the cell has been in that state long enough
-   *        for a land cover transition to take place.
-   * @return The physical state of the simulation cell correcting for if a land cover transition has
-   *         taken place in this time step.
-   */
-  private CodedEnvrAntecedent refreshPhysicalEnvrState(CodedEnvrAntecedent physicalEnvrState,
-      Integer newLcs) {
-    if (newLcs != physicalEnvrState.getStartState()) {
-      if (this.matureVegCodes.contains(newLcs)) {
-        physicalEnvrState =
-            new CodedEnvrAntecedent(newLcs, physicalEnvrState.getSuccessionPathway(),
-                physicalEnvrState.getAspect(), 0, 0, 0, physicalEnvrState.getWater());
-      } else {
-        physicalEnvrState = new CodedEnvrAntecedent(newLcs,
-            physicalEnvrState.getSuccessionPathway(), physicalEnvrState.getAspect(),
-            physicalEnvrState.getPineSeeds(), physicalEnvrState.getOakSeeds(),
-            physicalEnvrState.getDeciduousSeeds(), physicalEnvrState.getWater());
-      }
-      return physicalEnvrState;
-    } else {
-      return physicalEnvrState;
     }
   }
 
@@ -184,19 +139,19 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    * TODO Refactor {@link #getLcsUpdateMsg} for readability. There are multiple functions in here.
    */
   @Override
-  public LcsUpdateMsg getLcsUpdateMsg(CodedEnvrAntecedent currentEnvrState, Integer timeInState,
-      CodedEnvrConsequent targetEnvrTrans) {
+  public LcsUpdateMsg getLcsUpdateMsg(CodedEnvrAntecedent currentEnvrState,
+      EnvrSimState envrSimState, CodedEnvrConsequent targetEnvrTrans) {
     // store relevant details about previous state
     Integer prevDeltaT = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTransitionTime();
     Integer prevDeltaD = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTargetState();
     Integer prevLcs = currentEnvrState.getStartState();
 
     // work out land cover state for this timestep and update record of physical state of cell
-    Integer thisLcs = getThisLcs(timeInState, prevDeltaT, prevLcs, prevDeltaD);
-    currentEnvrState = refreshPhysicalEnvrState(currentEnvrState, thisLcs);
+    Integer thisLcs = getThisLcs(envrSimState.getTimeInState(), prevDeltaT, prevLcs, prevDeltaD);
+    CodedEnvrAntecedent nextEnvrState = updatePhysicalState(currentEnvrState, thisLcs, envrSimState);
 
     // target transition state based on cell's physical attributes
-    CodedEnvrConsequent physAttribTrans = transMap.getEnvrConsequent(currentEnvrState);
+    CodedEnvrConsequent physAttribTrans = transMap.getEnvrConsequent(nextEnvrState);
     Integer physAttribDeltaT =
         (physAttribTrans == null) ? null : physAttribTrans.getTransitionTime();
     Integer physAttribDeltaD = (physAttribTrans == null) ? null : physAttribTrans.getTargetState();
@@ -204,7 +159,8 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
     // get updated time in state accounting for if any land cover transitions/ trajectory changes
     // have occurred
     Integer thisTimeInState =
-        getThisTimeInState(timeInState, prevLcs, thisLcs, prevDeltaD, physAttribDeltaD);
+        getThisTimeInState(envrSimState.getTimeInState(), prevLcs, thisLcs, prevDeltaD,
+            physAttribDeltaD);
 
     // get updated target transition time
     Integer thisDeltaT =
@@ -217,7 +173,53 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
       nextTargetState = new CodedEnvrConsequent(physAttribTrans.getTargetState(), thisDeltaT);
     }
 
-    return new LcsUpdateMsg(currentEnvrState, thisTimeInState, nextTargetState);
+    return new LcsUpdateMsg(nextEnvrState, thisTimeInState, nextTargetState);
+  }
+
+  /**
+   * <p>
+   * As well as changes to the land-cover state itself (Shrubland, Pine, etc), there are also rules
+   * in the ecological model that control the presence of seeds in a cell (S4) and whether the cell
+   * is on a secondary or regeneration succession pathway (S5). These processes are closely related
+   * to the land-cover state update because:
+   * </p>
+   *
+   * <ol>
+   * <li>Rule S4 is sensitive to whether a land-cover transition has occurred in the current time
+   * step, as well as the details of the specific land-cover transition undertaken.</li>
+   * <li>The cell's new target state in the next time step is potentially sensitive to the seed
+   * presence and succession pathway updates specified by rules S4 and S5.
+   * </ol>
+   *
+   * <p>
+   * Consequently it is not obvious how to separate the code for updating land-cover state and
+   * target state, and the code for updating other aspects of the physical environment relevant for
+   * ecological succession. This method encapsulates the logic for updating physical attributes
+   * <emph>excluding</emph> the land-cover state itself. The updated environmental state is
+   * evaluated after the new land-cover state is determined, but before the new target state is
+   * assigned.
+   * </p>
+   * @param prevPhysicalState The physical state of the simulation cell as it was in the last time
+   *        step
+   * @param newLcs The numerical code of the land-cover state for the grid cell in the next time
+     *        step as determined by the succession rules
+   * @param envrSimState Simulation state relevant to the physical state update rules
+   * @return Updated environmental state of the simulation cell after applying the environmental update rules
+   *
+   * @see SeedStateUpdater
+   * @see SuccessionPathwayUpdater
+   **/
+  private CodedEnvrAntecedent updatePhysicalState(CodedEnvrAntecedent prevPhysicalState,
+      Integer newLcs, EnvrSimState envrSimState) {
+    SeedState prevSeedState = new SeedState(prevPhysicalState.getPineSeeds(),
+        prevPhysicalState.getOakSeeds(), prevPhysicalState.getDeciduousSeeds());
+    SeedState newSeedState =
+        this.seedUpdater.updatedSeedState(prevSeedState, prevPhysicalState.getStartState(), newLcs);
+    Integer newSuccessionPathway = this.successionUpdater.updatedSuccessionPathway(envrSimState,
+        prevPhysicalState.getSuccessionPathway());
+    return new CodedEnvrAntecedent(newLcs, newSuccessionPathway,
+        prevPhysicalState.getAspect(), newSeedState.getPineSeeds(), newSeedState.getOakSeeds(),
+        newSeedState.getDeciduousSeeds(), prevPhysicalState.getWater());
   }
 
 }

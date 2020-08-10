@@ -32,16 +32,18 @@ public class FireSpreader {
   final static Logger logger = Logger.getLogger(FireSpreader.class);
 
   private IGridValueLayer lct;
+  private IGridValueLayer fireCount;
   private SlopeRiskCalculator srCalc;
   private WindRiskCalculator wrCalc;
   private Map<Lct, Double> lcfMap;
   private EnumeratedDistribution<Direction> windDirSampler;
   private EnumeratedDistribution<WindSpeed> windSpeedSampler;
 
-  public FireSpreader(IGridValueLayer lct, SlopeRiskCalculator srCalc, WindRiskCalculator wrCalc,
-      Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
+  public FireSpreader(IGridValueLayer lct, IGridValueLayer fireCount, SlopeRiskCalculator srCalc,
+      WindRiskCalculator wrCalc, Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
       Map<WindSpeed, Double> windSpeedProbMap) {
     this.lct = lct;
+    this.fireCount = fireCount;
     this.srCalc = srCalc;
     this.wrCalc = wrCalc;
     this.lcfMap = lcfMap;
@@ -81,13 +83,15 @@ public class FireSpreader {
   }
 
   /**
-   * Convert land cover type at {@code gridPoint} to burnt.
+   * Convert land cover type at {@code gridPoint} to burnt. Increment the {@code fireCount} layer.
    *
    * @param lct Land cover type
    * @param gridPoint Point on grid
    */
   private void burnCellAtPoint(GridPoint gridPoint) {
     this.lct.set(Lct.Burnt.getCode(), gridPoint.getX(), gridPoint.getY());
+    int prevBurnCount = (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY());
+    this.fireCount.set(prevBurnCount + 1, gridPoint.getX(), gridPoint.getY());
   }
 
   /**
