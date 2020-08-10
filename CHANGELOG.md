@@ -29,6 +29,14 @@ succession pathway change from regeneration to succession
 - `LscapeLayer#OakAge` added. This tracks how many continuous years the grid
   cell has contained reproductively mature oak (i.e. oak or transition forest
   land-cover)
+- `FireSpreader#burnCellAtPoint` increments `LscapeLayer#FireCount` landscape
+  layer when a fire takes place in a cell.
+- `SuccessionPathwayUpdater`, which is a dependency of
+  `AgroSuccessLcsUpdateDecider`, switches regeneration to succession pathway
+  depending on state of oak vegetation and frequency of fire. Switch to
+  regeneration when oak lct is reached, switch to secondary if fire frequency
+  exceeds level specified in Millington et al. 2009 Statements 7a and 7b. This
+  corresponds to rule S5 in my thesis.
 
 ### 13 - Rule to kill juveniles when mature vegetation transition occurs - 2020-07-06
 

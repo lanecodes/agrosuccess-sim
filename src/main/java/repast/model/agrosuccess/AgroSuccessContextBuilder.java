@@ -121,7 +121,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     context.add(lcsUpdater);
 
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
-        (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()), siteData, siteData,
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name()), siteData, siteData,
         siteData, envrModelParams.getFireParams());
     context.add(fireManager);
 
@@ -294,6 +295,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @param demLayer Digital Elevation Model as a {@code ValueLayer}
    * @param lctLayer Land cover type as a {@code IGridValueLayer}
+   * @param fireCount Number of times each cell has been burnt as a {@code IGridValueLayer}
    * @param windData Site-specific wind speed and direction data
    * @param rasterData Information about site's raster grids, used for cell size
    * @param climateData Site-specific climate data (temperature and precipitation)
@@ -301,8 +303,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @return Configured FireManager
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
-      SiteWindData windData, SiteRasterData rasterData, SiteClimateData climateData,
-      FireParams fireParams) {
+      IGridValueLayer fireCount, SiteWindData windData, SiteRasterData rasterData,
+      SiteClimateData climateData, FireParams fireParams) {
     double[] gridCellSize = rasterData.getGridCellPixelSize();
     double aveGridCellSize = (gridCellSize[0] + gridCellSize[1]) / 2;
     LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
@@ -311,8 +313,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // Millington et al. 2009 eq 7
     double meanNumFires = fireParams.getClimateIgnitionScalingParam()
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
-    FireSpreader fireSpreader = new FireSpreader(lctLayer, srCalc, wrCalc, lcfGetter.getMap(),
-        windData.getWindDirectionProb(), windData.getWindSpeedProb());
+    FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
+        lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
 
     return new FireManager(meanNumFires, fireSpreader, meanNumFires);
   }

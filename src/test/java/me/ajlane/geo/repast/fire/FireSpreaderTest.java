@@ -1,6 +1,8 @@
 package me.ajlane.geo.repast.fire;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -10,16 +12,25 @@ import org.junit.Test;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
+import repast.model.agrosuccess.LscapeLayer;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
+/**
+ * TODO: Add test to check {@link LscapeLayer#FireCount} is incremented
+ *
+ * @author Andrew Lane
+ *
+ */
 public class FireSpreaderTest {
 
   final static Logger logger = Logger.getLogger(FireSpreaderTest.class);
 
   private IGridValueLayer lct;
+  private IGridValueLayer fireCount;
   private final SlopeRiskCalculator srCalc = getTestSlopeRiskCalculator();
   private final WindRiskCalculator wrCalc = new WindRiskCalculator();
   private final Map<Lct, Double> lcfMap = getTestLcfMap();
@@ -70,6 +81,7 @@ public class FireSpreaderTest {
   @Before
   public void setup() {
     this.lct = getTestLct();
+    this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
   }
 
   @After
@@ -79,23 +91,39 @@ public class FireSpreaderTest {
 
   @Test
   public void testInit() {
-    new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap, this.windDirProbMap,
-        this.windSpeedProbMap);
+    new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
+        this.windDirProbMap, this.windSpeedProbMap);
   }
 
   @Test
   public void testGetLct() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap,
-        this.windDirProbMap, this.windSpeedProbMap);
+    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
 
     ValueLayer lctDims = spreader.getLct();
     assertNotNull(lctDims);
   }
 
   @Test
+  public void testFireCountIncremented() {
+    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+
+    logger.debug("FireCount before fire: "
+        + RepastGridUtils.valueLayerToString(this.fireCount) + "\n");
+    GridPoint initialFire = new GridPoint(2, 2);
+    double fuelMoistureFactor = 0.25;
+    spreader.spreadFire(initialFire, fuelMoistureFactor);
+
+    assertEquals(1, (int) this.fireCount.get(2, 2));
+    logger.debug("FireCount after fire: "
+        + RepastGridUtils.valueLayerToString(this.fireCount) + "\n");
+  }
+
+  @Test
   public void testSpreadFire() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.srCalc, this.wrCalc, this.lcfMap,
-        this.windDirProbMap, this.windSpeedProbMap);
+    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);

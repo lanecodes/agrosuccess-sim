@@ -31,8 +31,6 @@ import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.valueLayer.GridValueLayer;
 
 /**
- * TODO: Add test to check {@link LscapeLayer#FireCount} is incremented
- *
  * @author Andrew Lane
  *
  */
@@ -166,6 +164,20 @@ public class AgroSuccessEnvrIntegrationTest {
 
     assertThat("OakAge grid should evolve over time, but was unchanged after 5 time steps",
         initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(oakAge))));
+  }
+
+  @Test
+  public void fireCountShouldEvolveOverTime() {
+    GridValueLayer fireCount = (GridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name());
+    int[][] initialValues = gridValueLayerToArray(fireCount);
+
+    for (int i=0; i<5; i++) {
+      // run 5 timesteps to allow time for some spatial variation to emerge
+      schedule.execute();
+    }
+
+    assertThat("FireCount grid should evolve over time, but was unchanged after 5 time steps",
+        initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(fireCount))));
   }
 
   @Test

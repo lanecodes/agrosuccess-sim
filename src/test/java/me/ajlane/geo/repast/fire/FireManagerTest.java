@@ -1,6 +1,6 @@
 package me.ajlane.geo.repast.fire;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import me.ajlane.geo.repast.RepastGridUtils;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
@@ -27,14 +28,16 @@ public class FireManagerTest {
   private final Map<WindSpeed, Double> windSpeedProbMap = getTestWindSpeedProbMap();
 
   private IGridValueLayer lct;
+  private IGridValueLayer fireCount;
   private FireSpreader fireSpreader;
   private Double fuelMoistureFactor;
 
   @Before
   public void setUp() {
     this.lct = getTestLct();
+    this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
     this.fireSpreader =
-        new FireSpreader(lct, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+        new FireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
     this.fuelMoistureFactor = 0.25;
   }
 
