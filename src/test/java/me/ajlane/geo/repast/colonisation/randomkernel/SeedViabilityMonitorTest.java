@@ -1,12 +1,12 @@
-/**
- *
- */
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import static org.junit.Assert.assertEquals;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import me.ajlane.geo.repast.colonisation.randomkernel.Seed;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityMonitor;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
 
 public class SeedViabilityMonitorTest {
 

@@ -2,8 +2,8 @@ package repast.model.agrosuccess.params;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import me.ajlane.geo.repast.colonisation.SeedDispersalParams;
-import me.ajlane.geo.repast.colonisation.SeedViabilityParams;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 import repast.simphony.parameter.Parameters;
 import repast.model.agrosuccess.params.EnvrModelParams;

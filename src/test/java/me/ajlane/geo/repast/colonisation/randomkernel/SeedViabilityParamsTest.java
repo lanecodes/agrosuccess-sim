@@ -1,7 +1,8 @@
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
 
 public class SeedViabilityParamsTest {
 

@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import me.ajlane.geo.GridUtils;
+import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.random.ArrayUtils;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
@@ -181,7 +182,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser implements LandC
     int row = seed.getRow();
     int col = seed.getCol();
     // check GridValueLayer agrees that there is a seed to remove
-    int currentValue = (int) gvl.get((double) col, (double) row);
+    int currentValue = (int) gvl.get(col, row);
     if (currentValue == 1) {
       gvl.set(0.0, col, row);
     } else {
@@ -201,7 +202,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser implements LandC
     List<Integer> cellIndices = new ArrayList<Integer>();
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        if ((int) seedLayersMap.get(speciesName).get((double) j, (double) i) == 0) {
+        if ((int) seedLayersMap.get(speciesName).get(j, i) == 0) {
           cellIndices.add(GridUtils.spatialCoordsToIndex(i, j, width));
         }
       }
@@ -221,7 +222,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser implements LandC
 
     for (Integer cellID : targetCells) {
 
-      int[] coords = GridUtils.indexToSpatialCoords((int) cellID, width, height);
+      int[] coords = GridUtils.indexToSpatialCoords(cellID, width, height);
       int row = coords[0];
       int col = coords[1];
 

@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;

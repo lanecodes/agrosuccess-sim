@@ -1,9 +1,10 @@
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
 import me.ajlane.geo.DummySeedLayer3x3;
+import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;

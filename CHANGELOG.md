@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 15 - Refactor seeddispersal package to be called colonisation - 2020-12-10
+### 15 - Refactor seeddispersal package to be called colonisation - 2020-08-12
 
 During the course of model development we have decided that the process we
 previously referred to as 'seed dispersal' is better described as 'land-cover
@@ -30,6 +30,8 @@ Mediterranean. Oxford: Oxford University Press.
   modelled process it implements
 - `LandCoverColoniser#updateSeedLayers` renamed to
   `LandCoverColoniser#updateJuvenilePresenceLayers`
+- Classes used to implement random kernel seed distribution model moved to new
+  `colonisation.randomkernel` package
 
 ### 14 - Add environmental update rules to AgroSuccessLcsUpdateDecider - 2020-08-10
 

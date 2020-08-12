@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.colonisation;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 /**
  * <p>
