@@ -1,12 +1,9 @@
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-
 import me.ajlane.geo.DummyLandCoverTypeLayer3x3;
 import me.ajlane.geo.DummySeedLayer3x3;
-import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
-import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -39,13 +36,13 @@ public class SpatiallyRandomSeedDisperserTest {
 
 		Context<Object> context = new DefaultContext<Object>();
 
-		context.addValueLayer((GridValueLayer)(
+		context.addValueLayer((
 		    new DummyLandCoverTypeLayer3x3(LscapeLayer.Lct.name(), "pine, oak and burnt")));
-		context.addValueLayer((GridValueLayer)(
+		context.addValueLayer((
 		    new DummySeedLayer3x3(LscapeLayer.Pine.name(), "no seeds")));
-		context.addValueLayer((GridValueLayer)(
+		context.addValueLayer((
 		    new DummySeedLayer3x3(LscapeLayer.Oak.name(), "no seeds")));
-		context.addValueLayer((GridValueLayer)(
+		context.addValueLayer((
 		    new DummySeedLayer3x3(LscapeLayer.Deciduous.name(), "no seeds")));
 
 

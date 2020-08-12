@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation;
 
 /**
  * <p>

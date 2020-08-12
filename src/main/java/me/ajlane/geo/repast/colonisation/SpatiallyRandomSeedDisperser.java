@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,7 +248,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
    * Step time forwards one step, remove dead seeds and add new ones according to the spatially
    * random seed dispersal protocol.
    *
-   * @see me.ajlane.geo.repast.seeddispersal.SeedDisperser#updateSeedLayers()
+   * @see me.ajlane.geo.repast.colonisation.SeedDisperser#updateSeedLayers()
    */
   @Override
   @ScheduledMethod(start = 1, interval = 1, priority = 1)

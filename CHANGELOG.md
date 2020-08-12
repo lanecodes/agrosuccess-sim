@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 15 - Refactor seeddispersal package to be called colonisation - 2020-12-10
+
+During the course of model development we have decided that the process we
+previously referred to as 'seed dispersal' is better described as 'land-cover
+colonisation'. Colonisation in this sense refers to the combined effect of seed
+dispersal, seed germination, seedling establishment, and seedling survival
+(Thompson, 2005). This refactoring and change of package name reflects this
+change in the name of the relevant classes.
+
+Thompson, J. D. (2005). Plant Evolution in the Mediterranean. Oxford: Oxford
+University Press.Thompson, J. D. (2005). Plant Evolution in the
+Mediterranean. Oxford: Oxford University Press.
+
+#### CHANGED
+
+- `seeddispersal` package renamed to `colonisation` to better reflect the
+  modelled process it implements
+
 ### 14 - Add environmental update rules to AgroSuccessLcsUpdateDecider - 2020-08-10
 
 These correspond to rules S4 and S5 in the thesis, and reflect the ability of
