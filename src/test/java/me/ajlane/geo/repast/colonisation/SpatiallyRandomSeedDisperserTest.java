@@ -53,7 +53,7 @@ public class SpatiallyRandomSeedDisperserTest {
 		int oakSeedLifetime = 2;
 		int deciduousSeedLifetime = 2;
 
-		SeedDisperser disperser = new SpatiallyRandomSeedDisperser(gridCellSizeXDim,
+		LandCoverColoniser disperser = new SpatiallyRandomSeedDisperser(gridCellSizeXDim,
 		    gridCellSizeYDim,
 		    new SeedViabilityParams(oakSeedLifetime, pineSeedLifetime, deciduousSeedLifetime),
 		    new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100),
@@ -67,17 +67,17 @@ public class SpatiallyRandomSeedDisperserTest {
 		logger.debug("pine seeds");
 		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 
-		disperser.updateSeedLayers();
+		disperser.updateJuvenilePresenceLayers();
 		logger.debug("t=1");
 		logger.debug("pine seeds");
 		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 
-		disperser.updateSeedLayers();
+		disperser.updateJuvenilePresenceLayers();
 		logger.debug("t=2");
 		logger.debug("pine seeds");
 		printGridValueLayer((GridValueLayer)context.getValueLayer(LscapeLayer.Pine.name()));
 
-		disperser.updateSeedLayers();
+		disperser.updateJuvenilePresenceLayers();
 		logger.debug("t=3");
 		logger.debug("pine seeds");
 

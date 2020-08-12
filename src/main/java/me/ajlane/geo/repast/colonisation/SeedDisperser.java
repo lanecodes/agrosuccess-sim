@@ -154,6 +154,6 @@ public abstract class SeedDisperser {
 		cellSize = geometricMean(xCellSize, yCellSize);
 	}
 
-	abstract void updateSeedLayers();
+	abstract void updateJuvenilePresenceLayers();
 
 }

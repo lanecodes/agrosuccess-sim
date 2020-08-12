@@ -24,7 +24,7 @@ import repast.simphony.valueLayer.GridValueLayer;
  * @author Andrew Lane
  *
  */
-public class SpatiallyRandomSeedDisperser extends SeedDisperser {
+public class SpatiallyRandomSeedDisperser extends SeedDisperser implements LandCoverColoniser {
 
   final static Logger logger = Logger.getLogger(SpatiallyRandomSeedDisperser.class);
 
@@ -248,11 +248,11 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser {
    * Step time forwards one step, remove dead seeds and add new ones according to the spatially
    * random seed dispersal protocol.
    *
-   * @see me.ajlane.geo.repast.colonisation.SeedDisperser#updateSeedLayers()
+   * @see me.ajlane.geo.repast.colonisation.LandCoverColoniser#updateJuvenilePresenceLayers()
    */
   @Override
   @ScheduledMethod(start = 1, interval = 1, priority = 1)
-  public void updateSeedLayers() {
+  public void updateJuvenilePresenceLayers() {
     time++;
     removeDeadSeeds();
     String seedTypes[] = {"pine", "deciduous", "oak"};

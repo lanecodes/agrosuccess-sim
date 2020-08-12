@@ -19,10 +19,17 @@ Thompson, J. D. (2005). Plant Evolution in the Mediterranean. Oxford: Oxford
 University Press.Thompson, J. D. (2005). Plant Evolution in the
 Mediterranean. Oxford: Oxford University Press.
 
+#### ADDED
+
+- `LandCoverColoniser` abstraction representing the inferface for
+  `SeedDisperser` and `SpatiallyRandomSeedDisperser`.
+
 #### CHANGED
 
 - `seeddispersal` package renamed to `colonisation` to better reflect the
   modelled process it implements
+- `LandCoverColoniser#updateSeedLayers` renamed to
+  `LandCoverColoniser#updateJuvenilePresenceLayers`
 
 ### 14 - Add environmental update rules to AgroSuccessLcsUpdateDecider - 2020-08-10
 
