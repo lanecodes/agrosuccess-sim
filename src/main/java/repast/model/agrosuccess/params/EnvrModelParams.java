@@ -1,7 +1,6 @@
 package repast.model.agrosuccess.params;
 
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
+import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 
@@ -12,16 +11,9 @@ import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 public interface EnvrModelParams {
 
   /**
-   * @return Parameters specifying the probability distributions which control how seeds are
-   *         dispersed in the model.
+   * @return Parameters needed for the land-cover colonisation model
    */
-  public SeedDispersalParams getSeedDispersalParams();
-
-  /**
-   * @return Parameters specifying how long different types of seeds survive in the seed bank after
-   *         being deposited.
-   */
-  public SeedViabilityParams getSeedViabilityParams();
+  public CompletelySpatiallyRandomParams getLandCoverColoniserParams();
 
   /**
    * @return Parameters needed to determine how to discretise continuous soil moisture values into

@@ -1,39 +1,20 @@
 package repast.model.agrosuccess.params;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
+import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
-import repast.simphony.parameter.Parameters;
-import repast.model.agrosuccess.params.EnvrModelParams;
-import repast.model.agrosuccess.params.ModelParamsRepastParser;
 import repast.simphony.parameter.DefaultParameters;
+import repast.simphony.parameter.Parameters;
 
 public class ModelParamsRepastParserTest {
 
   private DefaultParameters buildCorrectParameters(DefaultParameters params) {
-    // seed lifetime parameters
-    params.addParameter("oakSeedLifetime", "Oak seed lifetime", java.lang.Integer.class, 3, true);
-    params.addParameter("pineSeedLifetime", "Pine seed lifetime", java.lang.Integer.class, 7, true);
-    params.addParameter("deciduousSeedLifetime", "Deciduous seed lifetime",
-        java.lang.Integer.class, 5, true);
-
-    // Oak dispersal parameters
-    params.addParameter("acornLocationParam", "Acorn location parameter", java.lang.Double.class,
-        3.844, true);
-    params.addParameter("acornScaleParam", "Acorn scale parameter", java.lang.Double.class,
-        0.851, true);
-    params.addParameter("acornMaxLognormalDist", "Max lognormal acorn dispersal distance",
-        java.lang.Double.class, 550.0, true);
-
-    // Wind dispersal parameters
-    params.addParameter("windDistDecreaseParam", "Wind distance decrease parameter",
-        java.lang.Double.class, 5.0, true);
-    params.addParameter("windMinExpDist", "Wind minimum exponential dispersal probability distance",
-        java.lang.Double.class, 75.0, true);
-    params.addParameter("windMaxExpDist", "Wind maximum exponential dispersal probability distance",
-        java.lang.Double.class, 100.0, true);
+    // Land-cover colonisation parameters
+    params.addParameter("landCoverColonisationBaseRate", "Rate of colonisation from outside grid",
+        java.lang.Double.class, 0.05, true);
+    params.addParameter("landCoverColonisationSpreadRate", "Rate of colonisation from within grid",
+        java.lang.Double.class, 0.2, true);
 
     // Soil moisture parameters
     params.addParameter("mesicThreshold", "Mesic soil moisture threshold",
@@ -44,15 +25,13 @@ public class ModelParamsRepastParserTest {
     return params;
   }
 
-
   @Test
   public void correctRepastParamsShouldYieldCorrectParamObjects() {
     Parameters repastParams = buildCorrectParameters(new DefaultParameters());
     EnvrModelParams envrModelParams = new ModelParamsRepastParser(repastParams);
 
-    assertEquals(new SeedViabilityParams(3, 7, 5), envrModelParams.getSeedViabilityParams());
-    assertEquals(new SeedDispersalParams(3.844, 0.851, 550, 5, 75, 100),
-        envrModelParams.getSeedDispersalParams());
+    assertEquals(new CompletelySpatiallyRandomParams(0.05, 0.2), envrModelParams
+        .getLandCoverColoniserParams());
     assertEquals(new SoilMoistureParams(500, 1000), envrModelParams.getSoilMoistureParams());
   }
 

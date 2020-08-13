@@ -10,12 +10,13 @@ import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
+import me.ajlane.geo.CartesianGridDouble2D;
+import me.ajlane.geo.WriteableCartesianGridDouble2D;
 import me.ajlane.geo.repast.GridValueLayerAdapter;
 import me.ajlane.geo.repast.ValueLayerAdapter;
 import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
-import me.ajlane.geo.repast.colonisation.randomkernel.SpatiallyRandomSeedDisperser;
+import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomColoniser;
+import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
@@ -108,9 +109,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     initGridValueLayers(context, siteData);
 
-    LandCoverColoniser seedDisperser = initSeedDisperser(context, siteData,
-        envrModelParams.getSeedDispersalParams(), envrModelParams.getSeedViabilityParams());
-    context.add(seedDisperser);
+    LandCoverColoniser landCoverColoniser = initSeedDisperser(context, siteData,
+        envrModelParams.getLandCoverColoniserParams());
+    context.add(landCoverColoniser);
 
     SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context);
     IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
@@ -221,18 +222,25 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @param context Simulation context object
    * @param siteRasterData Raster data for study site
-   * @param sdParams Seed dispersal parameters
-   * @param svParams Seed viability parameters
-   * @returns Configured SeedDisperser
+   * @param colonisationParams Parameters for the land-cover colonisation model
+   * @returns Configured land-cover coloniser model
    */
-  private LandCoverColoniser initSeedDisperser(Context<Object> context, SiteRasterData siteRasterData,
-      SeedDispersalParams sdParams, SeedViabilityParams svParams) {
+  private LandCoverColoniser initSeedDisperser(Context<Object> context,
+      SiteRasterData siteRasterData,
+      CompletelySpatiallyRandomParams colonisationParams) {
 
-    double[] gridPixelSize = siteRasterData.getGridCellPixelSize();
-    LandCoverColoniser seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0],
-        gridPixelSize[1], svParams, sdParams, context);
+    CartesianGridDouble2D landCoverType = new GridValueLayerAdapter((IGridValueLayer) context
+        .getValueLayer(LscapeLayer.Lct.name()));
+    WriteableCartesianGridDouble2D juvenilePine = new GridValueLayerAdapter(
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.Pine.name()));
+    WriteableCartesianGridDouble2D juvenileOak = new GridValueLayerAdapter((IGridValueLayer) context
+        .getValueLayer(LscapeLayer.Oak.name()));
+    WriteableCartesianGridDouble2D juvenileDeciduous = new GridValueLayerAdapter(
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.Deciduous.name()));
+    LandCoverColoniser landCoverColoniser = new CompletelySpatiallyRandomColoniser(landCoverType,
+        juvenilePine, juvenileOak, juvenileDeciduous, colonisationParams);
 
-    return seedDisperser;
+    return landCoverColoniser;
   }
 
   /**
