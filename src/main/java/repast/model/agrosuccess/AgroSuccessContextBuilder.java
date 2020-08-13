@@ -12,6 +12,10 @@ import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import me.ajlane.geo.repast.GridValueLayerAdapter;
 import me.ajlane.geo.repast.ValueLayerAdapter;
+import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
+import me.ajlane.geo.repast.colonisation.randomkernel.SpatiallyRandomSeedDisperser;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
@@ -19,10 +23,6 @@ import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
 import me.ajlane.geo.repast.fire.WindRiskCalculator;
-import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
-import me.ajlane.geo.repast.seeddispersal.SeedDisperser;
-import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
-import me.ajlane.geo.repast.seeddispersal.SpatiallyRandomSeedDisperser;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
 import me.ajlane.geo.repast.soilmoisture.DefaultFlowDirectionMap;
 import me.ajlane.geo.repast.soilmoisture.JgraphtLandscapeFlow;
@@ -108,7 +108,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     initGridValueLayers(context, siteData);
 
-    SeedDisperser seedDisperser = initSeedDisperser(context, siteData,
+    LandCoverColoniser seedDisperser = initSeedDisperser(context, siteData,
         envrModelParams.getSeedDispersalParams(), envrModelParams.getSeedViabilityParams());
     context.add(seedDisperser);
 
@@ -225,11 +225,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param svParams Seed viability parameters
    * @returns Configured SeedDisperser
    */
-  private SeedDisperser initSeedDisperser(Context<Object> context, SiteRasterData siteRasterData,
+  private LandCoverColoniser initSeedDisperser(Context<Object> context, SiteRasterData siteRasterData,
       SeedDispersalParams sdParams, SeedViabilityParams svParams) {
 
     double[] gridPixelSize = siteRasterData.getGridCellPixelSize();
-    SeedDisperser seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0],
+    LandCoverColoniser seedDisperser = new SpatiallyRandomSeedDisperser(gridPixelSize[0],
         gridPixelSize[1], svParams, sdParams, context);
 
     return seedDisperser;

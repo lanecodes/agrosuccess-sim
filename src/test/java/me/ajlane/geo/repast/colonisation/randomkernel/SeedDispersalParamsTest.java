@@ -1,11 +1,12 @@
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
 
 public class SeedDispersalParamsTest {
 
@@ -27,8 +28,8 @@ public class SeedDispersalParamsTest {
     String expStr = "SeedDispersalParams[acornLocationParam=3.844, acornScaleParam=0.851, "
         + "acornMaxLognormalDist=550.000, windDistDecreaseParam=5.000, windMinExpDist=75.000, "
         + "windMaxExpDist=100.000]";
-        
-    assertEquals(expStr,  sdp.toString());   
+
+    assertEquals(expStr,  sdp.toString());
   }
 
 }

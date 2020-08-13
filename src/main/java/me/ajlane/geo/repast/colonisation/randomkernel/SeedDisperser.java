@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -154,6 +154,6 @@ public abstract class SeedDisperser {
 		cellSize = geometricMean(xCellSize, yCellSize);
 	}
 
-	abstract void updateSeedLayers();
+	abstract void updateJuvenilePresenceLayers();
 
 }

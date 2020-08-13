@@ -1,7 +1,7 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 /**
  * Class required to initialise the {@code SpatiallyRandomSeedDisperser}. This will not be necessary 

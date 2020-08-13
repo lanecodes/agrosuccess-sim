@@ -1,10 +1,11 @@
-package me.ajlane.geo.repast.seeddispersal;
+package me.ajlane.geo.repast.colonisation.randomkernel;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
 
 public class SeedViabilityParamsTest {
-  
+
   @Test
   public void constructorWithOneValueShouldWork() {
     SeedViabilityParams svp = new SeedViabilityParams(7);

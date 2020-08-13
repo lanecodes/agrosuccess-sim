@@ -1,8 +1,8 @@
 package repast.model.agrosuccess.params;
 
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
+import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
 import me.ajlane.geo.repast.fire.FireParams;
-import me.ajlane.geo.repast.seeddispersal.SeedDispersalParams;
-import me.ajlane.geo.repast.seeddispersal.SeedViabilityParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 
 /**
