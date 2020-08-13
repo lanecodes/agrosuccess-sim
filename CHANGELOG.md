@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 16 - Replace land-cover colonisation model with CompletelySpatiallyRandomColoniser - 2020-08-13
+
+We decided to use a simpler implementation of spatially random seed
+distribution than was originally planned. We now don't incorporate any
+information about the location of seed sources in the model of where seeds end
+up being located.
+
+#### ADDED
+
+- `colonisation.csr` package
+- `CompletelySpatiallyRandomColoniser` class implementing the new land-cover
+  colonisation model
+- `CompletelySpatiallyRandomParams` class for containing parameters for this
+  model
+
 ### 15 - Refactor seeddispersal package to be called colonisation - 2020-08-12
 
 During the course of model development we have decided that the process we
