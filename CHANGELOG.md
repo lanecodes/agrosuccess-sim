@@ -21,6 +21,14 @@ up being located.
 - `CompletelySpatiallyRandomParams` class for containing parameters for this
   model
 
+#### CHANGED
+
+- Updated `AgroSuccessContextBuilder` to use
+  `CompletelySpatiallyRandomColoniser` rather than
+  `SpatiallyRandomSeedDisperser`
+- Updated `ModelParamsRepastParser` to generate default parameters for
+  completely spatially random coloniser model
+
 ### 15 - Refactor seeddispersal package to be called colonisation - 2020-08-12
 
 During the course of model development we have decided that the process we

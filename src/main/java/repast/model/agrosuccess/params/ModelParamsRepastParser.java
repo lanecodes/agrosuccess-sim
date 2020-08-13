@@ -3,8 +3,7 @@ package repast.model.agrosuccess.params;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedDispersalParams;
-import me.ajlane.geo.repast.colonisation.randomkernel.SeedViabilityParams;
+import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.LcfReplicate;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
@@ -24,32 +23,11 @@ import repast.simphony.parameter.Parameters;
  * </p>
  *
  * <p>
- * <b>Seed longevity parameters</b>
+ * <b>Land-cover colonisation parameters</b>
  * </p>
  * <ul>
- * <li>{@code oakSeedLifetime} (Oak seed lifetime)</li>
- * <li>{@code pineSeedLifetime} (Pine seed lifetime)</li>
- * <li>{@code deciduousSeedLifetime} (Deciduous seed lifetime)</li>
- * </ul>
- *
- * <p>
- * <b>Seed dispersal parameters</b>
- * </p>
- * <ul>
- * <li>{@code acornLocationParam} (Acorn location parameter)</li>
- * <li>{@code acornScaleParam} (Acorn scale parameter)</li>
- * <li>{@code acornMaxLognormalDist} (Max lognormal acorn dispersal distance)</li>
- * <li>{@code windDistDecreaseParam} (Wind distance decrease parameter)</li>
- * <li>{@code windMinExpDist} (Wind minimum exponential dispersal probability distance)</li>
- * <li>{@code windMaxExpDist} (Wind maximum exponential dispersal probability distance)</li>
- * </ul>
- *
- * <p>
- * <b>Soil moisture parameters</b>
- * </p>
- * <ul>
- * <li>{@code mesicThreshold} (Mesic soil moisture threshold)</li>
- * <li>{@code hydricThreshold} (Hydric soil moisture threshold)</li>
+ * <li>{@code landCoverColonisationBaseRate} (rate of colonisation from outside grid)</li>
+ * <li>{@code landCoverColonisationSpreadRate} (rate of colonisation from inside grid)</li>
  * </ul>
  *
  * TODO In future it might be useful to have this class -- or a descendent of it -- implement
@@ -66,8 +44,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   final static Logger logger = Logger.getLogger(ModelParamsRepastParser.class);
 
   private Parameters rp;
-  private Map<String, Integer> defaultSvParams = getDefaultSeedViabilityParams();
-  private Map<String, Double> defaultSdParams = getDefaultSeedDispersalParams();
+  private Map<String, Double> defaultColonisationParams = getDefaultLandCoverColonisationParams();
   private Map<String, Integer> defaultSmParams = getDefaultSoilMoistureParams();
   private Map<String, Object> defaultFireParams = getDefaultFireParams();
 
@@ -75,22 +52,11 @@ public class ModelParamsRepastParser implements EnvrModelParams {
     this.rp = repastParams;
   }
 
-  private Map<String, Integer> getDefaultSeedViabilityParams() {
-    Map<String, Integer> m = new HashMap<>();
-    m.put("oakSeedLifetime", 7);
-    m.put("pineSeedLifetime", 7);
-    m.put("deciduousSeedLifetime", 7);
-    return m;
-  }
-
-  private Map<String, Double> getDefaultSeedDispersalParams() {
+  private Map<String, Double> getDefaultLandCoverColonisationParams() {
+    // TODO Review default land-cover colonisation model parameters
     Map<String, Double> m = new HashMap<>();
-    m.put("acornLocationParam", 3.844);
-    m.put("acornScaleParam", 0.851);
-    m.put("acornMaxLognormalDist", 550.0);
-    m.put("windDistDecreaseParam", 5.0);
-    m.put("windMinExpDist", 75.0);
-    m.put("windMaxExpDist", 100.0);
+    m.put("landCoverColonisationBaseRate", 0.05);
+    m.put("landCoverColonisationSpreadRate", 0.2);
     return m;
   }
 
@@ -108,30 +74,13 @@ public class ModelParamsRepastParser implements EnvrModelParams {
     return m;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public SeedViabilityParams getSeedViabilityParams() {
-    return new SeedViabilityParams(
-        getIntegerParam("oakSeedLifetime", this.defaultSvParams.get("oakSeedLifetime")),
-        getIntegerParam("pineSeedLifetime", this.defaultSvParams.get("pineSeedLifetime")),
-        getIntegerParam("deciduousSeedLifetime",
-            this.defaultSvParams.get("deciduousSeedLifetime")));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public SeedDispersalParams getSeedDispersalParams() {
-    return new SeedDispersalParams(
-        getDoubleParam("acornLocationParam", this.defaultSdParams.get("acornLocationParam")),
-        getDoubleParam("acornScaleParam", this.defaultSdParams.get("acornScaleParam")),
-        getDoubleParam("acornMaxLognormalDist", this.defaultSdParams.get("acornMaxLognormalDist")),
-        getDoubleParam("windDistDecreaseParam", this.defaultSdParams.get("windDistDecreaseParam")),
-        getDoubleParam("windMinExpDist", this.defaultSdParams.get("windMinExpDist")),
-        getDoubleParam("windMaxExpDist", this.defaultSdParams.get("windMaxExpDist")));
+  public CompletelySpatiallyRandomParams getLandCoverColoniserParams() {
+    return new CompletelySpatiallyRandomParams(
+        getDoubleParam("landCoverColonisationBaseRate", this.defaultColonisationParams.get(
+            "landCoverColonisationBaseRate")),
+        getDoubleParam("landCoverColonisationSpreadRate", this.defaultColonisationParams.get(
+            "landCoverColonisationSpreadRate")));
   }
 
   /**

@@ -13,6 +13,7 @@ import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.SeedPresence;
 import repast.model.agrosuccess.LscapeLayer;
+import repast.simphony.engine.schedule.ScheduledMethod;
 
 /**
  * Implements the completely spatially random land-cover colonisation model.
@@ -88,6 +89,9 @@ public class CompletelySpatiallyRandomColoniser implements LandCoverColoniser {
   }
 
   @Override
+  @ScheduledMethod(start = 1, interval = 1, priority = 1)
+  // TODO To remove dependency on repast, consider scheduling this action in some other way.
+  // E.g. follow the pattern in {@link SoilMoistureUpdateAction}
   public void updateJuvenilePresenceLayers() {
     for (Map.Entry<LscapeLayer, WriteableCartesianGridDouble2D> e : juvenilePresenceLayerMap
         .entrySet()) {
