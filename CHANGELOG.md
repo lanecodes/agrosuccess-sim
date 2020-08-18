@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 18 - Add `FireReporter` - 2020-08-23
+
+#### ADDED
+
+- `FireEvent` class with `tick`, `ignitionCell`, `burntCells` private methods
+  with getters, as well as public method `size()`
+
 ### 17 - Refactor `FireManager` - 2020-08-23
 
 #### ADDED
