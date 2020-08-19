@@ -17,9 +17,10 @@ import me.ajlane.geo.repast.ValueLayerAdapter;
 import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
-import me.ajlane.geo.repast.fire.FireManager;
+import me.ajlane.geo.repast.fire.DefaultFireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
+import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
@@ -299,7 +300,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
   /**
-   * Create a FireManager pseudo-agent and configure it to run the fire regime in the simulation.
+   * Create a DefaultFireManager pseudo-agent and configure it to run the fire regime in the simulation.
    *
    * @param demLayer Digital Elevation Model as a {@code ValueLayer}
    * @param lctLayer Land cover type as a {@code IGridValueLayer}
@@ -308,7 +309,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param rasterData Information about site's raster grids, used for cell size
    * @param climateData Site-specific climate data (temperature and precipitation)
    * @param fireParams Parameters needed to specify the fire ignition and spread model
-   * @return Configured FireManager
+   * @return Configured DefaultFireManager
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
       IGridValueLayer fireCount, SiteWindData windData, SiteRasterData rasterData,
@@ -324,7 +325,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
         lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
 
-    return new FireManager(meanNumFires, fireSpreader, meanNumFires);
+    return new DefaultFireManager(meanNumFires, fireSpreader, meanNumFires);
   }
 
   /**

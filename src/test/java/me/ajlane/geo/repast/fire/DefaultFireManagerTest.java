@@ -2,7 +2,6 @@ package me.ajlane.geo.repast.fire;
 
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -12,14 +11,13 @@ import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
-import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
-public class FireManagerTest {
+public class DefaultFireManagerTest {
 
-  final static Logger logger = Logger.getLogger(FireManagerTest.class);
+  final static Logger logger = Logger.getLogger(DefaultFireManagerTest.class);
 
   private final SlopeRiskCalculator srCalc = getTestSlopeRiskCalculator();
   private final WindRiskCalculator wrCalc = new WindRiskCalculator();
@@ -92,12 +90,12 @@ public class FireManagerTest {
   @Test
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
-    new FireManager(meanNumFiresPerYear, this.fireSpreader, this.fuelMoistureFactor);
+    new DefaultFireManager(meanNumFiresPerYear, this.fireSpreader, this.fuelMoistureFactor);
   }
 
   @Test
   public void testNumFires() {
-    FireManager fireManager = new FireManager(10.1, this.fireSpreader, this.fuelMoistureFactor);
+    DefaultFireManager fireManager = new DefaultFireManager(10.1, this.fireSpreader, this.fuelMoistureFactor);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -105,15 +103,13 @@ public class FireManagerTest {
 
   @Test
   public void testFiresInitiated() {
-    FireManager fireManager = new FireManager(5.0, this.fireSpreader, this.fuelMoistureFactor);
+    FireManager fireManager = new DefaultFireManager(5.0, this.fireSpreader, this.fuelMoistureFactor);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.error("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
-
-    List<GridPoint> ignitionPoints = fireManager.startFires();
-    logger.error("Ignition points: " + ignitionPoints);
+    fireManager.startFires();
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.error("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 17 - Refactor `FireManager` - 2020-08-23
+
+#### ADDED
+
+- New `FireManager` interface has a void `FireManager#startFires()` method
+- `DefaultFireManager` updated to implement `FireManager`
+
+#### CHANGED
+
+- `FireManager` is now an interface and the old class of the same name is now
+  called `DefaultFireManager`
+
 ### 16 - Replace land-cover colonisation model with CompletelySpatiallyRandomColoniser - 2020-08-13
 
 We decided to use a simpler implementation of spatially random seed
