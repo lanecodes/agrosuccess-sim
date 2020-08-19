@@ -31,7 +31,7 @@ public class DefaultFireManager implements FireManager {
     this.fuelMoistureFactor = fuelMoistureFactor;
   }
 
-  public int numFires() {
+  int numFires() {
     return distr.nextInt();
   }
 
