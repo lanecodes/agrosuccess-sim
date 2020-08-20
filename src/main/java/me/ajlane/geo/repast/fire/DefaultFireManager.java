@@ -10,22 +10,27 @@ import repast.simphony.space.Dimensions;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.ValueLayer;
 
+/**
+ * Runs the AgroSuccess wildfire model for a simulation time step
+ *
+ * @author Andrew Lane
+ */
 public class DefaultFireManager implements FireManager {
 
   final static Logger logger = Logger.getLogger(DefaultFireManager.class);
 
-  private FireSpreader fireSpreader;
-  private Poisson distr;
-  private Double fuelMoistureFactor;
+  private final FireSpreader fireSpreader;
   private final FlammabilityChecker<GridPoint> flammabilityChecker;
+  private final Poisson distr;
+  private final Double vegetationMoistureParam;
 
   /**
    * @param fireSpreader Object used to spread fire given an initial ignition
    * @param flammabilityChecker Object that indicates whether or not grid cells are flammable (e.g.
    *        depending on land-cover type)
    * @param meanNumFiresPerYear Expected number of fires in the landscape in a year
-   * @param vegetationMoistureParam Dimensionless quantity parameterising the amount of moisture in the
-   *        fuel at the time of the fire
+   * @param vegetationMoistureParam Dimensionless quantity parameterising the amount of moisture in
+   *        the fuel at the time of the fire
    */
   public DefaultFireManager(FireSpreader fireSpreader,
       FlammabilityChecker<GridPoint> flammabilityChecker,
@@ -36,20 +41,16 @@ public class DefaultFireManager implements FireManager {
     this.vegetationMoistureParam = vegetationMoistureParam;
   }
 
-  int numFires() {
-    return distr.nextInt();
-  }
-
   /**
-   * Attempts to find a flammable grid cell for each of the numFiresToStart 1000 times.
-   * After this many attempts to find a flammable cell it gives up.
+   * Attempts to find a flammable grid cell for each of the numFiresToStart 1000 times. After this
+   * many attempts to find a flammable cell it gives up.
    */
   @Override
   @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void startFires() {
     List<GridPoint> firesStarted = new ArrayList<GridPoint>();
     int numFiresToStart = numFires();
-    for (int i=0; i<numFiresToStart; i++) {
+    for (int i = 0; i < numFiresToStart; i++) {
       int attemptCounter = 0;
       while (attemptCounter < 1000) {
         GridPoint randomPoint = randomGridPoint(this.fireSpreader.getLct());
@@ -66,8 +67,16 @@ public class DefaultFireManager implements FireManager {
             + i + "of" + numFiresToStart);
       }
     }
-   // return firesStarted;
 
+  }
+
+  /**
+   * Generates the number of fires that will be started in the current simulated year
+   *
+   * @return The number of fires to start
+   */
+  int numFires() {
+    return distr.nextInt();
   }
 
   private GridPoint randomGridPoint(ValueLayer layer) {
