@@ -11,6 +11,7 @@ import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
+import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
@@ -28,6 +29,7 @@ public class DefaultFireManagerTest {
   private IGridValueLayer lct;
   private IGridValueLayer fireCount;
   private FireSpreader fireSpreader;
+  private FlammabilityChecker<GridPoint> flamChecker;
   private Double fuelMoistureFactor;
 
   @Before
@@ -36,6 +38,7 @@ public class DefaultFireManagerTest {
     this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
     this.fireSpreader =
         new FireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+    this.flamChecker = new DefaultFlammabilityChecker(this.lct);
     this.fuelMoistureFactor = 0.25;
   }
 
@@ -90,12 +93,14 @@ public class DefaultFireManagerTest {
   @Test
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
-    new DefaultFireManager(meanNumFiresPerYear, this.fireSpreader, this.fuelMoistureFactor);
+    new DefaultFireManager(this.fireSpreader, this.flamChecker, meanNumFiresPerYear,
+        this.fuelMoistureFactor);
   }
 
   @Test
   public void testNumFires() {
-    DefaultFireManager fireManager = new DefaultFireManager(10.1, this.fireSpreader, this.fuelMoistureFactor);
+    DefaultFireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
+        10.1, this.fuelMoistureFactor);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -103,7 +108,8 @@ public class DefaultFireManagerTest {
 
   @Test
   public void testFiresInitiated() {
-    FireManager fireManager = new DefaultFireManager(5.0, this.fireSpreader, this.fuelMoistureFactor);
+    FireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker, 5.0,
+        this.fuelMoistureFactor);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);

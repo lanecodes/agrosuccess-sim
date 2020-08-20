@@ -18,9 +18,11 @@ import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.fire.DefaultFireManager;
+import me.ajlane.geo.repast.fire.DefaultFlammabilityChecker;
+import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
 import me.ajlane.geo.repast.fire.FireSpreader;
-import me.ajlane.geo.repast.fire.FireManager;
+import me.ajlane.geo.repast.fire.FlammabilityChecker;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
@@ -67,6 +69,7 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -300,7 +303,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
   }
 
   /**
-   * Create a DefaultFireManager pseudo-agent and configure it to run the fire regime in the simulation.
+   * Creates a DefaultFireManager pseudo-agent and configure it to run the fire regime in the
+   * simulation.
+   *
+   * TODO Refactor this method into a {@code AgroSuccessFireManagerBuilder} to encapsulate this
+   * complexity
    *
    * @param demLayer Digital Elevation Model as a {@code ValueLayer}
    * @param lctLayer Land cover type as a {@code IGridValueLayer}
@@ -322,10 +329,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // Millington et al. 2009 eq 7
     double meanNumFires = fireParams.getClimateIgnitionScalingParam()
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
+    double vegetationMoistureParam = meanNumFires; // lambda parameterises fuel moisture as well as
+                                                   // number of fires
     FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
         lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
-
-    return new DefaultFireManager(meanNumFires, fireSpreader, meanNumFires);
+    FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
+    return new DefaultFireManager(fireSpreader, flamChecker, meanNumFires, vegetationMoistureParam);
   }
 
   /**

@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `FireManager` is now an interface and the old class of the same name is now
   called `DefaultFireManager`
 - `DefaultFireManager#numFires()` now package protected
+- `DefaultFireManager` now accepts a `FlammabilityChecker` in its constructor
 
 ### 16 - Replace land-cover colonisation model with CompletelySpatiallyRandomColoniser - 2020-08-13
 
