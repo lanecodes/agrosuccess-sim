@@ -1,14 +1,11 @@
 package me.ajlane.geo.repast.fire;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import cern.jet.random.Poisson;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.grid.GridPoint;
-import repast.simphony.valueLayer.ValueLayer;
 
 /**
  * Runs the AgroSuccess wildfire model for a simulation time step
@@ -42,32 +39,31 @@ public class DefaultFireManager implements FireManager {
   }
 
   /**
-   * Attempts to find a flammable grid cell for each of the numFiresToStart 1000 times. After this
-   * many attempts to find a flammable cell it gives up.
+   * Runs the fire model for a simulated time step
+   *
+   * <p>
+   * Draws {@code numFiresToStart} from a poisson distribution with parameter provided to the class
+   * constructor at the beginning of the simulation. Then sets that many fires, using a
+   * {@link FireSpreader} to determine where those fires spread. If it takes more than 1000 attempts
+   * to randomly draw a flammable cell at random, the algorithm ends.
+   * <p>
    */
   @Override
   @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void startFires() {
-    List<GridPoint> firesStarted = new ArrayList<GridPoint>();
+    // List<GridPoint> firesStarted = new ArrayList<GridPoint>();
+    Dimensions gridDims = this.fireSpreader.getLct().getDimensions();
     int numFiresToStart = numFires();
     for (int i = 0; i < numFiresToStart; i++) {
-      int attemptCounter = 0;
-      while (attemptCounter < 1000) {
-        GridPoint randomPoint = randomGridPoint(this.fireSpreader.getLct());
-        if (this.flammabilityChecker.isFlammable(randomPoint)) {
-          firesStarted.add(randomPoint);
-          this.fireSpreader.spreadFire(randomPoint, this.vegetationMoistureParam);
-          break;
-        } else {
-          attemptCounter++;
-        }
+      GridPoint initialIgnitionPoint = findFlammablePoint(gridDims);
+      if (initialIgnitionPoint == null) {
+        logger.warn("Could not find a flammable cell to initialise fire " + i + "of"
+            + numFiresToStart);
+        break;
       }
-      if (attemptCounter == 1000) {
-        logger.warn("Could not find a flammable cell to initialise fire "
-            + i + "of" + numFiresToStart);
-      }
+      // firesStarted.add(initialIgnitionPoint);
+      this.fireSpreader.spreadFire(initialIgnitionPoint, this.vegetationMoistureParam);
     }
-
   }
 
   /**
@@ -79,10 +75,37 @@ public class DefaultFireManager implements FireManager {
     return distr.nextInt();
   }
 
-  private GridPoint randomGridPoint(ValueLayer layer) {
-    Dimensions dims = layer.getDimensions();
-    int xCoord = RandomHelper.nextIntFromTo(0, (int) dims.getWidth() - 1);
-    int yCoord = RandomHelper.nextIntFromTo(0, (int) dims.getHeight() - 1);
+  /**
+   * Draws random grid points until a flammable grid cell is found
+   *
+   * <p>
+   * If no flammable cell is found after 1000 random draws, return {@code null}.
+   * </p>
+   *
+   * @param gridDims Dimensions of the simulation grid
+   * @return Randomly drawn flammable grid cell, or {@code null} if no flammable cell could be found
+   */
+  private GridPoint findFlammablePoint(Dimensions gridDims) {
+    int attemptCounter = 0;
+    while (attemptCounter < 1000) {
+      GridPoint randomPoint = randomGridPoint(gridDims);
+      if (this.flammabilityChecker.isFlammable(randomPoint)) {
+        return randomPoint;
+      }
+      attemptCounter++;
+    }
+    return null;
+  }
+
+  /**
+   * Draws a grid cell at random
+   *
+   * @param gridDims Dimensions of the simulation grid
+   * @return Randomly selected cell
+   */
+  private static GridPoint randomGridPoint(Dimensions gridDims) {
+    int xCoord = RandomHelper.nextIntFromTo(0, (int) gridDims.getWidth() - 1);
+    int yCoord = RandomHelper.nextIntFromTo(0, (int) gridDims.getHeight() - 1);
     return new GridPoint(xCoord, yCoord);
   }
 
