@@ -334,7 +334,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
         lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
     FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
-    return new DefaultFireManager(fireSpreader, flamChecker, meanNumFires, vegetationMoistureParam);
+    return new DefaultFireManager(fireSpreader, flamChecker, lctLayer.getDimensions(),
+        meanNumFires, vegetationMoistureParam);
   }
 
   /**

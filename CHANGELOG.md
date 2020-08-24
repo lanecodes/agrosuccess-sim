@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 19 - Refactor `FireSpreader` - 20202-08-24
+#### CHANGED
+
+- `DefaultFireManager` receives grid dimensions in its constructor rather than
+  needing to reference them through a `FireSpreader`, simplifying the
+  `FireSpreader` interface
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED

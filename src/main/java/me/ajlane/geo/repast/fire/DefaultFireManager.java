@@ -18,6 +18,7 @@ public class DefaultFireManager implements FireManager {
 
   private final FireSpreader fireSpreader;
   private final FlammabilityChecker<GridPoint> flammabilityChecker;
+  private final Dimensions gridDims;
   private final Poisson distr;
   private final Double vegetationMoistureParam;
 
@@ -25,15 +26,17 @@ public class DefaultFireManager implements FireManager {
    * @param fireSpreader Object used to spread fire given an initial ignition
    * @param flammabilityChecker Object that indicates whether or not grid cells are flammable (e.g.
    *        depending on land-cover type)
+   * @param gridDims Grid dimensions
    * @param meanNumFiresPerYear Expected number of fires in the landscape in a year
    * @param vegetationMoistureParam Dimensionless quantity parameterising the amount of moisture in
    *        the fuel at the time of the fire
    */
   public DefaultFireManager(FireSpreader fireSpreader,
-      FlammabilityChecker<GridPoint> flammabilityChecker,
+      FlammabilityChecker<GridPoint> flammabilityChecker, Dimensions gridDims,
       Double meanNumFiresPerYear, Double vegetationMoistureParam) {
     this.fireSpreader = fireSpreader;
     this.flammabilityChecker = flammabilityChecker;
+    this.gridDims = gridDims;
     this.distr = RandomHelper.createPoisson(meanNumFiresPerYear);
     this.vegetationMoistureParam = vegetationMoistureParam;
   }
@@ -52,10 +55,9 @@ public class DefaultFireManager implements FireManager {
   @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void startFires() {
     // List<GridPoint> firesStarted = new ArrayList<GridPoint>();
-    Dimensions gridDims = this.fireSpreader.getLct().getDimensions();
     int numFiresToStart = numFires();
     for (int i = 0; i < numFiresToStart; i++) {
-      GridPoint initialIgnitionPoint = findFlammablePoint(gridDims);
+      GridPoint initialIgnitionPoint = findFlammablePoint(this.gridDims);
       if (initialIgnitionPoint == null) {
         logger.warn("Could not find a flammable cell to initialise fire " + i + "of"
             + numFiresToStart);
