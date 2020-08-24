@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   fuelMoistureRisk calculation rather than implementing the method itself
 - Remove `DefaultFireSpreader#getLct` method as this violates encapsulation and
   was introduced previously as a hack
+- `FireSpreader#spreadFire(GridPoint ignitionPoint)` returns `List<GridPoint>`
 
 ### 18 - Add `FireReporter` - 2020-08-23
 

@@ -3,13 +3,16 @@ package me.ajlane.geo.repast.fire;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
+import me.ajlane.geo.repast.RepastGridUtils.GridPointIterable;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
@@ -35,7 +38,7 @@ public class DefaultFireSpreaderTest {
   private final Map<Lct, Double> lcfMap = getTestLcfMap();
   private final Map<Direction, Double> windDirProbMap = getTestWindDirProbMap();
   private final Map<WindSpeed, Double> windSpeedProbMap = getTestWindSpeedProbMap();
-  private final double vegetationMoistureParam = 0.5; // lambda in thesis notation
+  private final double vegetationMoistureParam = 0.25; // lambda in thesis notation
 
   private static Map<Direction, Double> getTestWindDirProbMap() {
     Map<Direction, Double> m = new HashMap<>();
@@ -87,6 +90,7 @@ public class DefaultFireSpreaderTest {
   @After
   public void tearDown() {
     this.lct = null;
+    this.fireCount = null;
   }
 
   @Test
@@ -97,7 +101,8 @@ public class DefaultFireSpreaderTest {
 
   @Test
   public void testFireCountIncremented() {
-    FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc,
         this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
         this.vegetationMoistureParam);
 
@@ -113,7 +118,8 @@ public class DefaultFireSpreaderTest {
 
   @Test
   public void testSpreadFire() {
-    FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc,
         this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
         this.vegetationMoistureParam);
 
@@ -128,6 +134,31 @@ public class DefaultFireSpreaderTest {
     logger.debug("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
     assertTrue(finalPropBurnt > initPropBurnt);
+  }
+
+  @Test
+  public void testFireEventReturned() {
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc,
+        this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
+        this.vegetationMoistureParam);
+
+    GridPoint initialFire = new GridPoint(2, 2);
+    List<GridPoint> burntCells = spreader.spreadFire(initialFire);
+
+    // System.out.println(RepastGridUtils.valueLayerToString(this.fireCount));
+    // System.out.println(burntCells);
+
+    Consumer<GridPoint> testBurntCellsMatchFireCount = gridPoint -> {
+      if (burntCells.contains(gridPoint)) {
+        assertEquals(1, (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY()));
+      } else {
+        assertEquals(0, (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY()));
+      }
+    };
+
+    Iterable<GridPoint> gridCells = new GridPointIterable(this.lct);
+    gridCells.forEach(testBurntCellsMatchFireCount);
   }
 
 }

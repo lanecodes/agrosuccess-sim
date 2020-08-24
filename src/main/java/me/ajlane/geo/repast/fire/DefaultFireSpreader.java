@@ -27,7 +27,7 @@ import repast.simphony.valueLayer.ValueLayer;
  * @author Andrew Lane
  *
  */
-public class DefaultFireSpreader implements FireSpreader {
+public class DefaultFireSpreader implements FireSpreader<GridPoint> {
 
   final static Logger logger = Logger.getLogger(DefaultFireSpreader.class);
 
@@ -71,19 +71,23 @@ public class DefaultFireSpreader implements FireSpreader {
    * @param ignitionPoint Point in the landscape where the fire starts
    */
   @Override
-  public void spreadFire(GridPoint ignitionPoint) {
+  public List<GridPoint> spreadFire(GridPoint ignitionPoint) {
     // Sample concrete wind speed and direction from PMF
     WindSpeed wSpeed = this.windSpeedSampler.sample();
     Direction wDir = this.windDirSampler.sample();
 
+    List<GridPoint> allBurntCells = new ArrayList<>();
     Queue<GridPoint> activeFires = new LinkedList<>();
     activeFires.add(ignitionPoint);
 
     for (GridPoint currentFirePoint; (currentFirePoint = activeFires.poll()) != null;) {
       burnCellAtPoint(currentFirePoint);
+      allBurntCells.add(currentFirePoint);
       spreadFireToNeighbours(currentFirePoint, wSpeed, wDir,
           this.fuelMoistureRiskFactor, activeFires);
     }
+
+    return allBurntCells;
   }
 
   /**
@@ -115,7 +119,9 @@ public class DefaultFireSpreader implements FireSpreader {
       GridPointMove fireFront = new GridPointKingMove(currentFirePoint, fireSpreadDir);
       boolean targetIsInGrid =
           RepastGridUtils.pointInValueLayer2D(fireFront.getEndPoint(), this.lct);
-      if (targetIsInGrid && isFlammable(this.lct, fireFront.getEndPoint())) {
+      boolean targetIsInActiveFires = activeFires.contains(fireFront.getEndPoint());
+      if (targetIsInGrid && isFlammable(this.lct, fireFront.getEndPoint())
+          && !targetIsInActiveFires) {
         Double probFireSpread = probFireSpread(fireFront, wSpeed, wDir, fuelMoistureRiskFactor);
         if (probFireSpread > RandomHelper.nextDouble()) {
           activeFires.add(fireFront.getEndPoint());
