@@ -16,7 +16,7 @@ public class DefaultFireManager implements FireManager {
 
   final static Logger logger = Logger.getLogger(DefaultFireManager.class);
 
-  private final FireSpreader fireSpreader;
+  private final FireSpreader<GridPoint> fireSpreader;
   private final FlammabilityChecker<GridPoint> flammabilityChecker;
   private final Dimensions gridDims;
   private final Poisson distr;
@@ -28,7 +28,7 @@ public class DefaultFireManager implements FireManager {
    * @param gridDims Grid dimensions
    * @param meanNumFiresPerYear Expected number of fires in the landscape in a year
    */
-  public DefaultFireManager(FireSpreader fireSpreader,
+  public DefaultFireManager(FireSpreader<GridPoint> fireSpreader,
       FlammabilityChecker<GridPoint> flammabilityChecker, Dimensions gridDims,
       Double meanNumFiresPerYear) {
     this.fireSpreader = fireSpreader;
