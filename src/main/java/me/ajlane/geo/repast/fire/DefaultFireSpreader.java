@@ -197,8 +197,4 @@ public class DefaultFireSpreader implements FireSpreader {
     return correctLct;
   }
 
-  public ValueLayer getLct() {
-    return this.lct;
-  }
-
 }

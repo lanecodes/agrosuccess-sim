@@ -28,6 +28,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   longer needed by the code in this class
 - `DefaultFireSpreader` uses `AgroSuccessFuelMoistureRiskTable` to do
   fuelMoistureRisk calculation rather than implementing the method itself
+- Remove `DefaultFireSpreader#getLct` method as this violates encapsulation and
+  was introduced previously as a hack
+
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED

@@ -1,7 +1,6 @@
 package me.ajlane.geo.repast.fire;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,16 +93,6 @@ public class DefaultFireSpreaderTest {
   public void testInit() {
     new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
         this.windDirProbMap, this.windSpeedProbMap, vegetationMoistureParam);
-  }
-
-  @Test
-  public void testGetLct() {
-    DefaultFireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
-        this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
-        this.vegetationMoistureParam);
-
-    ValueLayer lctDims = spreader.getLct();
-    assertNotNull(lctDims);
   }
 
   @Test
