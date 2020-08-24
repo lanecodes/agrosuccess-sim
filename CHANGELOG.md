@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `DefaultFireManager` receives grid dimensions in its constructor rather than
   needing to reference them through a `FireSpreader`, simplifying the
   `FireSpreader` interface
+- `FireSpreader` is now an interface, old `FireSpreader` class now called
+  `DefaultFireSpreader`
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED

@@ -25,9 +25,9 @@ import repast.simphony.valueLayer.ValueLayer;
  * @author Andrew Lane
  *
  */
-public class FireSpreaderTest {
+public class DefaultFireSpreaderTest {
 
-  final static Logger logger = Logger.getLogger(FireSpreaderTest.class);
+  final static Logger logger = Logger.getLogger(DefaultFireSpreaderTest.class);
 
   private IGridValueLayer lct;
   private IGridValueLayer fireCount;
@@ -91,13 +91,14 @@ public class FireSpreaderTest {
 
   @Test
   public void testInit() {
-    new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
+    new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
         this.windDirProbMap, this.windSpeedProbMap);
   }
 
   @Test
   public void testGetLct() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+    DefaultFireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
+        this.wrCalc,
         this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
 
     ValueLayer lctDims = spreader.getLct();
@@ -106,7 +107,8 @@ public class FireSpreaderTest {
 
   @Test
   public void testFireCountIncremented() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+    FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
+        this.wrCalc,
         this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
 
     logger.debug("FireCount before fire: "
@@ -122,7 +124,8 @@ public class FireSpreaderTest {
 
   @Test
   public void testSpreadFire() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+    FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
+        this.wrCalc,
         this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
