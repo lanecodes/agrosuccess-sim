@@ -16,7 +16,6 @@ import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.IGridValueLayer;
-import repast.simphony.valueLayer.ValueLayer;
 
 /**
  * Given an ignition point, consider wind direction and speed, slope, land cover flammability and
@@ -35,6 +34,7 @@ public class DefaultFireSpreader implements FireSpreader<GridPoint> {
   private IGridValueLayer fireCount;
   private SlopeRiskCalculator srCalc;
   private WindRiskCalculator wrCalc;
+  private FlammabilityChecker<GridPoint> flammabilityChecker;
   private Map<Lct, Double> lcfMap;
   private final double fuelMoistureRiskFactor;
   private EnumeratedDistribution<Direction> windDirSampler;
@@ -42,12 +42,14 @@ public class DefaultFireSpreader implements FireSpreader<GridPoint> {
 
   public DefaultFireSpreader(IGridValueLayer lct, IGridValueLayer fireCount,
       SlopeRiskCalculator srCalc,
-      WindRiskCalculator wrCalc, Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
+      WindRiskCalculator wrCalc, FlammabilityChecker<GridPoint> flammabilityChecker,
+      Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
       Map<WindSpeed, Double> windSpeedProbMap, double vegetationMoistureParam) {
     this.lct = lct;
     this.fireCount = fireCount;
     this.srCalc = srCalc;
     this.wrCalc = wrCalc;
+    this.flammabilityChecker = flammabilityChecker;
     this.lcfMap = lcfMap;
     this.fuelMoistureRiskFactor = AgroSuccessFuelMoistureRiskTable.fromVegetationMoistureParam(
         vegetationMoistureParam);
@@ -120,7 +122,7 @@ public class DefaultFireSpreader implements FireSpreader<GridPoint> {
       boolean targetIsInGrid =
           RepastGridUtils.pointInValueLayer2D(fireFront.getEndPoint(), this.lct);
       boolean targetIsInActiveFires = activeFires.contains(fireFront.getEndPoint());
-      if (targetIsInGrid && isFlammable(this.lct, fireFront.getEndPoint())
+      if (targetIsInGrid && this.flammabilityChecker.isFlammable(fireFront.getEndPoint())
           && !targetIsInActiveFires) {
         Double probFireSpread = probFireSpread(fireFront, wSpeed, wDir, fuelMoistureRiskFactor);
         if (probFireSpread > RandomHelper.nextDouble()) {
@@ -128,26 +130,6 @@ public class DefaultFireSpreader implements FireSpreader<GridPoint> {
         }
       }
     }
-  }
-
-  /**
-   * @param lctLayer {@code ValueLayer} encoding land cover types
-   * @param gridPoint Point on grid to query for flammability.
-   * @return {@code true} if the cell at {@code gridPoint} has a flammable land cover type.
-   */
-  private static boolean isFlammable(ValueLayer lctLayer, GridPoint gridPoint) {
-    int lctCode = (int) lctLayer.get(gridPoint.getX(), gridPoint.getY());
-    return isFlammable(lctCode);
-  }
-
-  /**
-   * @param lctCode Code for land cover type
-   * @return {@code true} if {@code lctCode} corresponds to a flammable land cover type.
-   */
-  private static boolean isFlammable(int lctCode) {
-    boolean isWaterQuarry = Lct.WaterQuarry.getCode() == lctCode;
-    boolean isBurnt = Lct.Burnt.getCode() == lctCode;
-    return !(isWaterQuarry || isBurnt); // true if neither water/quarry or burnt
   }
 
   /**

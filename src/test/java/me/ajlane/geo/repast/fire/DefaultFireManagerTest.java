@@ -16,6 +16,11 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
+/**
+ * This is mainly an integration test
+ *
+ * @author Andrew Lane
+ */
 public class DefaultFireManagerTest {
 
   final static Logger logger = Logger.getLogger(DefaultFireManagerTest.class);
@@ -28,7 +33,7 @@ public class DefaultFireManagerTest {
 
   private IGridValueLayer lct;
   private IGridValueLayer fireCount;
-  private FireSpreader fireSpreader;
+  private FireSpreader<GridPoint> fireSpreader;
   private FlammabilityChecker<GridPoint> flamChecker;
   private Double vegetationMoistureParam;
 
@@ -37,11 +42,10 @@ public class DefaultFireManagerTest {
     this.lct = getTestLct();
     this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
     this.vegetationMoistureParam = 0.5; // lambda in thesis notation
-    this.fireSpreader =
-        new DefaultFireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap,
-            windSpeedProbMap, vegetationMoistureParam);
     this.flamChecker = new DefaultFlammabilityChecker(this.lct);
-
+    this.fireSpreader =
+        new DefaultFireSpreader(lct, fireCount, srCalc, wrCalc, flamChecker, lcfMap,
+            windDirProbMap, windSpeedProbMap, vegetationMoistureParam);
   }
 
   private static IGridValueLayer getTestLct() {

@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove `DefaultFireSpreader#getLct` method as this violates encapsulation and
   was introduced previously as a hack
 - `FireSpreader#spreadFire(GridPoint ignitionPoint)` returns `List<GridPoint>`
+- `DefaultFireSpreader` uses a `FlammabilityChecker` to evaluate cell flammability
 
 ### 18 - Add `FireReporter` - 2020-08-23
 
