@@ -20,7 +20,6 @@ public class DefaultFireManager implements FireManager {
   private final FlammabilityChecker<GridPoint> flammabilityChecker;
   private final Dimensions gridDims;
   private final Poisson distr;
-  private final Double vegetationMoistureParam;
 
   /**
    * @param fireSpreader Object used to spread fire given an initial ignition
@@ -28,17 +27,14 @@ public class DefaultFireManager implements FireManager {
    *        depending on land-cover type)
    * @param gridDims Grid dimensions
    * @param meanNumFiresPerYear Expected number of fires in the landscape in a year
-   * @param vegetationMoistureParam Dimensionless quantity parameterising the amount of moisture in
-   *        the fuel at the time of the fire
    */
   public DefaultFireManager(FireSpreader fireSpreader,
       FlammabilityChecker<GridPoint> flammabilityChecker, Dimensions gridDims,
-      Double meanNumFiresPerYear, Double vegetationMoistureParam) {
+      Double meanNumFiresPerYear) {
     this.fireSpreader = fireSpreader;
     this.flammabilityChecker = flammabilityChecker;
     this.gridDims = gridDims;
     this.distr = RandomHelper.createPoisson(meanNumFiresPerYear);
-    this.vegetationMoistureParam = vegetationMoistureParam;
   }
 
   /**

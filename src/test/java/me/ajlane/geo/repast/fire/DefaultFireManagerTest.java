@@ -96,13 +96,13 @@ public class DefaultFireManagerTest {
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
     new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), meanNumFiresPerYear, this.vegetationMoistureParam);
+        this.lct.getDimensions(), meanNumFiresPerYear);
   }
 
   @Test
   public void testNumFires() {
     DefaultFireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), 10.1, this.vegetationMoistureParam);
+        this.lct.getDimensions(), 10.1);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -111,7 +111,7 @@ public class DefaultFireManagerTest {
   @Test
   public void testFiresInitiated() {
     FireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), 5.0, this.vegetationMoistureParam);
+        this.lct.getDimensions(), 5.0);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);

@@ -337,7 +337,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         vegetationMoistureParam);
     FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
     return new DefaultFireManager(fireSpreader, flamChecker, lctLayer.getDimensions(),
-        meanNumFires, vegetationMoistureParam);
+        meanNumFires);
   }
 
   /**

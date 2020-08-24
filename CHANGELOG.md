@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   vegetationMoistureParam)` changed to `FireSpreader#spreadFire(GridPoint
   ignitionPoint)`
 - vegetationMoistureParam passed to `FireSpreader` through constructor
+- vegetationMoistureParam removed from `FireManager` constructor as it's no
+  longer needed by the code in this class
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED
