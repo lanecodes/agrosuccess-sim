@@ -49,7 +49,8 @@ public class DefaultFireSpreader implements FireSpreader {
     this.srCalc = srCalc;
     this.wrCalc = wrCalc;
     this.lcfMap = lcfMap;
-    this.fuelMoistureRiskFactor = moistureClassToFuelMoistureRisk(vegetationMoistureParam);
+    this.fuelMoistureRiskFactor = AgroSuccessFuelMoistureRiskTable.fromVegetationMoistureParam(
+        vegetationMoistureParam);
     this.windDirSampler = probMapToEnumeratedDistribution(windDirProbMap);
     this.windSpeedSampler = probMapToEnumeratedDistribution(windSpeedProbMap);
   }
@@ -194,27 +195,6 @@ public class DefaultFireSpreader implements FireSpreader {
       throw new RuntimeException("Lct code unexpectedly didn't match Lct enumeration constant.");
     }
     return correctLct;
-  }
-
-  /**
-   * @param moisture
-   * @return Fuel moisture risk corresponding to {@code moisture} after <a
-   *         href"https://doi.org/10.1016/j.envsoft.2009.03.013">Millintgon et al. 2009</a> Table 4.
-   */
-  private static double moistureClassToFuelMoistureRisk(double moisture) {
-    double risk;
-    if (moisture < 0.2) {
-      risk = 0.8;
-    } else if (moisture < 0.3) {
-      risk = 0.9;
-    } else if (moisture < 0.5) {
-      risk = 1.0;
-    } else if (moisture < 0.6) {
-      risk = 1.1;
-    } else {
-      risk = 1.2;
-    }
-    return risk;
   }
 
   public ValueLayer getLct() {

@@ -6,11 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 19 - Refactor `FireSpreader` - 20202-08-24
+### 19 - Refactor `FireSpreader` - 2020-08-24
+
 #### ADDED
 
 - `AgroSuccessFuelMoistureRiskTable` to convert vegetationMoistureParam to
-  fuelMoistureRisk rather than implementing this logic in `FireSpreader`
+  fuelMoistureRiskFactor
 
 #### CHANGED
 
@@ -25,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - vegetationMoistureParam passed to `FireSpreader` through constructor
 - vegetationMoistureParam removed from `FireManager` constructor as it's no
   longer needed by the code in this class
+- `DefaultFireSpreader` uses `AgroSuccessFuelMoistureRiskTable` to do
+  fuelMoistureRisk calculation rather than implementing the method itself
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED
