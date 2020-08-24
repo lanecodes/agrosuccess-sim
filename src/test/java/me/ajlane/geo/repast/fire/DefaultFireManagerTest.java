@@ -30,16 +30,18 @@ public class DefaultFireManagerTest {
   private IGridValueLayer fireCount;
   private FireSpreader fireSpreader;
   private FlammabilityChecker<GridPoint> flamChecker;
-  private Double fuelMoistureFactor;
+  private Double vegetationMoistureParam;
 
   @Before
   public void setUp() {
     this.lct = getTestLct();
     this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
+    this.vegetationMoistureParam = 0.5; // lambda in thesis notation
     this.fireSpreader =
-        new DefaultFireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+        new DefaultFireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap,
+            windSpeedProbMap, vegetationMoistureParam);
     this.flamChecker = new DefaultFlammabilityChecker(this.lct);
-    this.fuelMoistureFactor = 0.25;
+
   }
 
   private static IGridValueLayer getTestLct() {
@@ -87,20 +89,20 @@ public class DefaultFireManagerTest {
   public void tearDown() {
     this.fireSpreader = null;
     this.lct = null;
-    this.fuelMoistureFactor = null;
+    this.vegetationMoistureParam = null;
   }
 
   @Test
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
     new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), meanNumFiresPerYear, this.fuelMoistureFactor);
+        this.lct.getDimensions(), meanNumFiresPerYear, this.vegetationMoistureParam);
   }
 
   @Test
   public void testNumFires() {
     DefaultFireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), 10.1, this.fuelMoistureFactor);
+        this.lct.getDimensions(), 10.1, this.vegetationMoistureParam);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -109,7 +111,7 @@ public class DefaultFireManagerTest {
   @Test
   public void testFiresInitiated() {
     FireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
-        this.lct.getDimensions(), 5.0, this.fuelMoistureFactor);
+        this.lct.getDimensions(), 5.0, this.vegetationMoistureParam);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);

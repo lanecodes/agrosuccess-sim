@@ -64,7 +64,7 @@ public class DefaultFireManager implements FireManager {
         break;
       }
       // firesStarted.add(initialIgnitionPoint);
-      this.fireSpreader.spreadFire(initialIgnitionPoint, this.vegetationMoistureParam);
+      this.fireSpreader.spreadFire(initialIgnitionPoint);
     }
   }
 

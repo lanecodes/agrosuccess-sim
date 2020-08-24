@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `FireSpreader` interface
 - `FireSpreader` is now an interface, old `FireSpreader` class now called
   `DefaultFireSpreader`
+- `FireSpreader#spreadFire(GridPoint ignitionPoint), double
+  vegetationMoistureParam)` changed to `FireSpreader#spreadFire(GridPoint
+  ignitionPoint)`
+- vegetationMoistureParam passed to `FireSpreader` through constructor
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED

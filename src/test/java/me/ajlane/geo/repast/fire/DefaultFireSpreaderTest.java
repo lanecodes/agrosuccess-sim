@@ -36,6 +36,7 @@ public class DefaultFireSpreaderTest {
   private final Map<Lct, Double> lcfMap = getTestLcfMap();
   private final Map<Direction, Double> windDirProbMap = getTestWindDirProbMap();
   private final Map<WindSpeed, Double> windSpeedProbMap = getTestWindSpeedProbMap();
+  private final double vegetationMoistureParam = 0.5; // lambda in thesis notation
 
   private static Map<Direction, Double> getTestWindDirProbMap() {
     Map<Direction, Double> m = new HashMap<>();
@@ -92,14 +93,14 @@ public class DefaultFireSpreaderTest {
   @Test
   public void testInit() {
     new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
-        this.windDirProbMap, this.windSpeedProbMap);
+        this.windDirProbMap, this.windSpeedProbMap, vegetationMoistureParam);
   }
 
   @Test
   public void testGetLct() {
     DefaultFireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
-        this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+        this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
+        this.vegetationMoistureParam);
 
     ValueLayer lctDims = spreader.getLct();
     assertNotNull(lctDims);
@@ -108,14 +109,13 @@ public class DefaultFireSpreaderTest {
   @Test
   public void testFireCountIncremented() {
     FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
-        this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+        this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
+        this.vegetationMoistureParam);
 
     logger.debug("FireCount before fire: "
         + RepastGridUtils.valueLayerToString(this.fireCount) + "\n");
     GridPoint initialFire = new GridPoint(2, 2);
-    double fuelMoistureFactor = 0.25;
-    spreader.spreadFire(initialFire, fuelMoistureFactor);
+    spreader.spreadFire(initialFire);
 
     assertEquals(1, (int) this.fireCount.get(2, 2));
     logger.debug("FireCount after fire: "
@@ -125,16 +125,15 @@ public class DefaultFireSpreaderTest {
   @Test
   public void testSpreadFire() {
     FireSpreader spreader = new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc,
-        this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+        this.wrCalc, this.lcfMap, this.windDirProbMap, this.windSpeedProbMap,
+        this.vegetationMoistureParam);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
     GridPoint initialFire = new GridPoint(2, 2);
-    double fuelMoistureFactor = 0.25;
-    spreader.spreadFire(initialFire, fuelMoistureFactor);
+    spreader.spreadFire(initialFire);
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");

@@ -36,17 +36,20 @@ public class DefaultFireSpreader implements FireSpreader {
   private SlopeRiskCalculator srCalc;
   private WindRiskCalculator wrCalc;
   private Map<Lct, Double> lcfMap;
+  private final double fuelMoistureRiskFactor;
   private EnumeratedDistribution<Direction> windDirSampler;
   private EnumeratedDistribution<WindSpeed> windSpeedSampler;
 
-  public DefaultFireSpreader(IGridValueLayer lct, IGridValueLayer fireCount, SlopeRiskCalculator srCalc,
+  public DefaultFireSpreader(IGridValueLayer lct, IGridValueLayer fireCount,
+      SlopeRiskCalculator srCalc,
       WindRiskCalculator wrCalc, Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
-      Map<WindSpeed, Double> windSpeedProbMap) {
+      Map<WindSpeed, Double> windSpeedProbMap, double vegetationMoistureParam) {
     this.lct = lct;
     this.fireCount = fireCount;
     this.srCalc = srCalc;
     this.wrCalc = wrCalc;
     this.lcfMap = lcfMap;
+    this.fuelMoistureRiskFactor = moistureClassToFuelMoistureRisk(vegetationMoistureParam);
     this.windDirSampler = probMapToEnumeratedDistribution(windDirProbMap);
     this.windSpeedSampler = probMapToEnumeratedDistribution(windSpeedProbMap);
   }
@@ -65,11 +68,9 @@ public class DefaultFireSpreader implements FireSpreader {
    * inspiration behind the fire spread mechanism.
    *
    * @param ignitionPoint Point in the landscape where the fire starts
-   * @param fuelMoistureFactor Dimensionless factor parameterising the amount of moisture in the
-   *        fuel at the time of the fire
    */
   @Override
-  public void spreadFire(GridPoint ignitionPoint, double fuelMoistureFactor) {
+  public void spreadFire(GridPoint ignitionPoint) {
     // Sample concrete wind speed and direction from PMF
     WindSpeed wSpeed = this.windSpeedSampler.sample();
     Direction wDir = this.windDirSampler.sample();
@@ -79,7 +80,8 @@ public class DefaultFireSpreader implements FireSpreader {
 
     for (GridPoint currentFirePoint; (currentFirePoint = activeFires.poll()) != null;) {
       burnCellAtPoint(currentFirePoint);
-      spreadFireToNeighbours(currentFirePoint, wSpeed, wDir, fuelMoistureFactor, activeFires);
+      spreadFireToNeighbours(currentFirePoint, wSpeed, wDir,
+          this.fuelMoistureRiskFactor, activeFires);
     }
   }
 
@@ -102,18 +104,18 @@ public class DefaultFireSpreader implements FireSpreader {
    * @param currentFirePoint Point which is currently burning
    * @param wSpeed Wind speed
    * @param wDir Wind direction
-   * @param fuelMoistureFactor
+   * @param fuelMoistureRiskFactor Multiplicative factor reflecting fire spread risk
    * @param activeFires List of currently active fires. If the fire spreads to new cells these will
    *        be added to this list.
    */
   private void spreadFireToNeighbours(GridPoint currentFirePoint, WindSpeed wSpeed, Direction wDir,
-      double fuelMoistureFactor, Queue<GridPoint> activeFires) {
+      double fuelMoistureRiskFactor, Queue<GridPoint> activeFires) {
     for (Direction fireSpreadDir : Direction.values()) {
       GridPointMove fireFront = new GridPointKingMove(currentFirePoint, fireSpreadDir);
       boolean targetIsInGrid =
           RepastGridUtils.pointInValueLayer2D(fireFront.getEndPoint(), this.lct);
       if (targetIsInGrid && isFlammable(this.lct, fireFront.getEndPoint())) {
-        Double probFireSpread = probFireSpread(fireFront, wSpeed, wDir, fuelMoistureFactor);
+        Double probFireSpread = probFireSpread(fireFront, wSpeed, wDir, fuelMoistureRiskFactor);
         if (probFireSpread > RandomHelper.nextDouble()) {
           activeFires.add(fireFront.getEndPoint());
         }
@@ -149,20 +151,19 @@ public class DefaultFireSpreader implements FireSpreader {
    *        its neighbours.
    * @param wSpeed Wind speed
    * @param wDir Wind direction
-   * @param fuelMoistureFactor Dimensionless factor parameterising the amount of moisture in the
+   * @param fuelMoistureRiskFactor Dimensionless factor parameterising the amount of moisture in the
    *        fuel at the time of the fire
    *
    * @return Probability of a fire spreading along the {@code fireFront}.
    */
   private Double probFireSpread(GridPointMove fireFront, WindSpeed wSpeed, Direction wDir,
-      double fuelMoistureFactor) {
+      double fuelMoistureRiskFactor) {
     // TODO consider having a local map between int codes and enums.
     Lct endPointLct = lctForGridPoint(fireFront.getEndPoint());
     Double landCoverFlammability = this.lcfMap.get(endPointLct);
     Double slopeRisk =
         this.srCalc.getSlopeRisk(fireFront.getStartPoint(), fireFront.getDirection());
     Double windRisk = this.wrCalc.getRisk(wSpeed, wDir, fireFront.getDirection());
-    Double fuelMoistureRisk = moistureClassToFuelMoistureRisk(fuelMoistureFactor);
     if (landCoverFlammability == null) {
       throw new RuntimeException("landCoverFlammability unexpectedly null");
     }
@@ -173,7 +174,7 @@ public class DefaultFireSpreader implements FireSpreader {
       throw new RuntimeException("windRisk unexpectedly null");
     }
 
-    return landCoverFlammability * slopeRisk * fuelMoistureRisk * windRisk;
+    return landCoverFlammability * slopeRisk * fuelMoistureRiskFactor * windRisk;
   }
 
   private Lct lctForGridPoint(GridPoint gridPoint) {
@@ -200,7 +201,7 @@ public class DefaultFireSpreader implements FireSpreader {
    * @return Fuel moisture risk corresponding to {@code moisture} after <a
    *         href"https://doi.org/10.1016/j.envsoft.2009.03.013">Millintgon et al. 2009</a> Table 4.
    */
-  private double moistureClassToFuelMoistureRisk(double moisture) {
+  private static double moistureClassToFuelMoistureRisk(double moisture) {
     double risk;
     if (moisture < 0.2) {
       risk = 0.8;

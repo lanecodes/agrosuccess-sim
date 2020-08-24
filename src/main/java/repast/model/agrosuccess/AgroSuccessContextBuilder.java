@@ -333,7 +333,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     double vegetationMoistureParam = meanNumFires; // lambda parameterises fuel moisture as well as
                                                    // number of fires
     FireSpreader fireSpreader = new DefaultFireSpreader(lctLayer, fireCount, srCalc, wrCalc,
-        lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
+        lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb(),
+        vegetationMoistureParam);
     FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
     return new DefaultFireManager(fireSpreader, flamChecker, lctLayer.getDimensions(),
         meanNumFires, vegetationMoistureParam);
