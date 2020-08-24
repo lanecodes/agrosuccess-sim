@@ -63,7 +63,7 @@ import repast.model.agrosuccess.AgroSuccessCodeAliases.Water;
  * <p>
  * It is important that the numerical codes used to represent land-cover states in the ecological
  * succession model are consistent with those used to refer to different land-cover states in the
- * different packages which comprise the overall model (e.g. in {@code FireManager#isFlammable}). To
+ * different packages which comprise the overall model (e.g. in {@code DefaultFireManager#isFlammable}). To
  * achieve this we use the enumeration {@link AgroSuccessCodeAliases.Lct#getCode()} as the single
  * source of truth for these values. We similarly use enumerations to supply numerical encodings for
  * succession pathway, aspect, seed presence, and soil moisture maps (see implementation below). We

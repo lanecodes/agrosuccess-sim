@@ -2,7 +2,6 @@ package me.ajlane.geo.repast.fire;
 
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -17,9 +16,9 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
-public class FireManagerTest {
+public class DefaultFireManagerTest {
 
-  final static Logger logger = Logger.getLogger(FireManagerTest.class);
+  final static Logger logger = Logger.getLogger(DefaultFireManagerTest.class);
 
   private final SlopeRiskCalculator srCalc = getTestSlopeRiskCalculator();
   private final WindRiskCalculator wrCalc = new WindRiskCalculator();
@@ -30,6 +29,7 @@ public class FireManagerTest {
   private IGridValueLayer lct;
   private IGridValueLayer fireCount;
   private FireSpreader fireSpreader;
+  private FlammabilityChecker<GridPoint> flamChecker;
   private Double fuelMoistureFactor;
 
   @Before
@@ -38,6 +38,7 @@ public class FireManagerTest {
     this.fireCount = new GridValueLayer("FireCount", 0, true, 5, 5);
     this.fireSpreader =
         new FireSpreader(lct, fireCount, srCalc, wrCalc, lcfMap, windDirProbMap, windSpeedProbMap);
+    this.flamChecker = new DefaultFlammabilityChecker(this.lct);
     this.fuelMoistureFactor = 0.25;
   }
 
@@ -92,12 +93,14 @@ public class FireManagerTest {
   @Test
   public void testInit() {
     double meanNumFiresPerYear = 32.0;
-    new FireManager(meanNumFiresPerYear, this.fireSpreader, this.fuelMoistureFactor);
+    new DefaultFireManager(this.fireSpreader, this.flamChecker, meanNumFiresPerYear,
+        this.fuelMoistureFactor);
   }
 
   @Test
   public void testNumFires() {
-    FireManager fireManager = new FireManager(10.1, this.fireSpreader, this.fuelMoistureFactor);
+    DefaultFireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker,
+        10.1, this.fuelMoistureFactor);
     int n = fireManager.numFires();
     logger.debug("Num fires sampled: " + n);
     assertTrue(n > 0);
@@ -105,15 +108,14 @@ public class FireManagerTest {
 
   @Test
   public void testFiresInitiated() {
-    FireManager fireManager = new FireManager(5.0, this.fireSpreader, this.fuelMoistureFactor);
+    FireManager fireManager = new DefaultFireManager(this.fireSpreader, this.flamChecker, 5.0,
+        this.fuelMoistureFactor);
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.error("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
-
-    List<GridPoint> ignitionPoints = fireManager.startFires();
-    logger.error("Ignition points: " + ignitionPoints);
+    fireManager.startFires();
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.error("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
