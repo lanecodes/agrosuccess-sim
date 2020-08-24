@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### 19 - Refactor `FireSpreader` - 20202-08-24
+#### ADDED
+
+- `AgroSuccessFuelMoistureRiskTable` to convert vegetationMoistureParam to
+  fuelMoistureRisk rather than implementing this logic in `FireSpreader`
+
 #### CHANGED
 
 - `DefaultFireManager` receives grid dimensions in its constructor rather than
