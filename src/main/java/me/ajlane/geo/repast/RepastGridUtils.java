@@ -2,6 +2,7 @@ package me.ajlane.geo.repast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.GridUtils;
@@ -12,6 +13,11 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
+/**
+ * Utility methods and classes for working with Repast grids
+ *
+ * @author Andrew Lane
+ */
 public class RepastGridUtils extends GridUtils {
 
   /**
@@ -298,6 +304,56 @@ public class RepastGridUtils extends GridUtils {
       }
     }
     return runningTotal;
+  }
+
+  /**
+   * Iterable over the {@code GridPoint}s contained in a 2-dimensional {@link ValueLayer}
+   */
+  public static class GridPointIterable implements Iterable<GridPoint> {
+    final Dimensions gridDims;
+
+    /**
+     * @param valueLayer Value layer whose {@code GridPoint}s will be iterated over
+     */
+    public GridPointIterable(ValueLayer valueLayer) {
+      this.gridDims = valueLayer.getDimensions();
+    }
+
+    @Override
+    public Iterator<GridPoint> iterator() {
+      return new GridPointIterator();
+    }
+
+    private class GridPointIterator implements Iterator<GridPoint> {
+
+      private int x, y;
+
+      private GridPointIterator() {
+        this.x = 0;
+        this.y = 0;
+      }
+
+      @Override
+      public boolean hasNext() {
+        if (this.x < gridDims.getWidth() && this.y < gridDims.getHeight()) {
+          return true;
+        }
+        return false;
+      }
+
+      @Override
+      public GridPoint next() {
+        GridPoint nextPoint = new GridPoint(this.x, this.y);
+        if (this.x < gridDims.getWidth() - 1) {
+          this.x += 1;
+        } else {
+          this.x = 0;
+          this.y += 1;
+        }
+        return nextPoint;
+      }
+
+    }
   }
 
 }

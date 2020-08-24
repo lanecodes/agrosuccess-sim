@@ -1,8 +1,16 @@
 package me.ajlane.geo.repast;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.junit.Test;
 import me.ajlane.geo.Direction;
+import me.ajlane.geo.repast.RepastGridUtils.GridPointIterable;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.grid.StrictBorders;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -146,6 +154,24 @@ public class RepastGridUtilsTest {
     assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, testLayerDefaultOrigin));
     assertFalse(RepastGridUtils.pointInValueLayer2D(testPoint, testLayerCustomOrigin));
 
+  }
+
+  @Test
+  public void testGridPointIterable() {
+    ValueLayer test3x3 = new GridValueLayer("3x3 layer", 0, true, new int[] {3, 3});
+    Iterable<GridPoint> points3x3 = new GridPointIterable(test3x3);
+    List<GridPoint> list3x3 = StreamSupport.stream(points3x3.spliterator(), false)
+        .collect(Collectors.toList());
+    assertEquals(9, list3x3.size());
+    assertTrue(list3x3.contains(new GridPoint(0, 0)));
+    assertTrue(list3x3.contains(new GridPoint(2, 2)));
+    assertFalse(list3x3.contains(new GridPoint(3, 2)));
+
+    ValueLayer test50x30 = new GridValueLayer("50x30 layer", 0, true, new int[] {50, 30});
+    Iterable<GridPoint> points50x30 = new GridPointIterable(test50x30);
+    List<GridPoint> list50x30 = StreamSupport.stream(points50x30.spliterator(), false)
+        .collect(Collectors.toList());
+    assertEquals(1500, list50x30.size());
   }
 
 }
