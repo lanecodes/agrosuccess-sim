@@ -22,10 +22,12 @@ import me.ajlane.geo.repast.fire.DefaultFireSpreader;
 import me.ajlane.geo.repast.fire.DefaultFlammabilityChecker;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
+import me.ajlane.geo.repast.fire.FireReporter;
 import me.ajlane.geo.repast.fire.FireSpreader;
 import me.ajlane.geo.repast.fire.FlammabilityChecker;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
+import me.ajlane.geo.repast.fire.ReportingRepastFireSpreader;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
 import me.ajlane.geo.repast.fire.WindRiskCalculator;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
@@ -126,11 +128,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         envrModelParams.getSoilMoistureParams());
     context.add(lcsUpdater);
 
+    FireReporter<GridPoint> fireReporter = new FireReporter<>();
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name()), siteData, siteData,
-        siteData, envrModelParams.getFireParams());
+        siteData, envrModelParams.getFireParams(), fireReporter, schedule);
     context.add(fireManager);
+    context.add(fireReporter);
 
     OakAgeUpdater oakAgeUpdater = initOakAgeUpdater(
         (IGridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name()),
@@ -317,11 +321,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param rasterData Information about site's raster grids, used for cell size
    * @param climateData Site-specific climate data (temperature and precipitation)
    * @param fireParams Parameters needed to specify the fire ignition and spread model
+   * @param fireReporter
+   * @param schedule
    * @return Configured DefaultFireManager
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
       IGridValueLayer fireCount, SiteWindData windData, SiteRasterData rasterData,
-      SiteClimateData climateData, FireParams fireParams) {
+      SiteClimateData climateData, FireParams fireParams, FireReporter<GridPoint> fireReporter,
+      ISchedule schedule) {
     double[] gridCellSize = rasterData.getGridCellPixelSize();
     double aveGridCellSize = (gridCellSize[0] + gridCellSize[1]) / 2;
     LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
@@ -333,11 +340,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
     double vegetationMoistureParam = meanNumFires; // lambda parameterises fuel moisture as well as
                                                    // number of fires
-    FireSpreader<GridPoint> fireSpreader = new DefaultFireSpreader(lctLayer, fireCount, srCalc,
+    FireSpreader<GridPoint> baseFireSpreader = new DefaultFireSpreader(lctLayer, fireCount, srCalc,
         wrCalc, flamChecker, lcfGetter.getMap(), windData.getWindDirectionProb(),
         windData.getWindSpeedProb(), vegetationMoistureParam);
+    FireSpreader<GridPoint> reportingFireSpreader =
+        new ReportingRepastFireSpreader(baseFireSpreader, fireReporter, schedule);
 
-    return new DefaultFireManager(fireSpreader, flamChecker, lctLayer.getDimensions(),
+    return new DefaultFireManager(reportingFireSpreader, flamChecker, lctLayer.getDimensions(),
         meanNumFires);
   }
 

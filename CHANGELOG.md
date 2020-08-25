@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 21 - Add Fire Size data set file sink to Repast model - 2020-08-05
+
+#### ADDED
+
+- `FireSizeDataSource` class
+
+#### CHANGED
+
+- fire spreader specified in `AgroSuccessContextBuilder` is now a
+  `ReportingRepastFireSpreader`
+- `FireReporter` added to context
+- Repast Simphony configured to use `FireSizeDataSource`
+- Model documentation on configuring custom data sources updated
+
 ### 20 - Add `ReportingRepastFireSpreader` - 2020-08-25
 
 #### ADDED
