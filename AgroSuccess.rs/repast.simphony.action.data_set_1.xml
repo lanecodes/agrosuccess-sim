@@ -1,0 +1,30 @@
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+  <name>Fire Size</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>me.ajlane.neo4j.EmbeddedGraphInstance$1</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>10.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-980505952</hashCode>
+  </scheduleParams>
+  <atEnd>true</atEnd>
+  <methodDataSources class="linked-hash-map"/>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map">
+    <entry>
+      <string>Fire occurrence and size</string>
+      <repast.simphony.data2.engine.CustomDataSourceDefinition>
+        <id>Fire occurrence and size</id>
+        <dsClassName>me.ajlane.geo.repast.fire.FireSizeDataSource</dsClassName>
+      </repast.simphony.data2.engine.CustomDataSourceDefinition>
+    </entry>
+  </customNADataSources>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

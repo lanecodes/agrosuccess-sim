@@ -1,5 +1,5 @@
-<repast.simphony.visualization.engine.CartesianDisplayDescriptor simphonyVersion="2.6.0">
-  <name>SoilMoisture</name>
+<repast.simphony.visualization.engine.CartesianDisplayDescriptor simphonyVersion="2.7.0">
+  <name>Lct</name>
   <type>2D</type>
   <styles/>
   <editedStyles/>
@@ -13,7 +13,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>920113444</hashCode>
+    <hashCode>-1739559599</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Agent Grid</layoutProjection>
@@ -48,7 +48,7 @@
               </entry>
               <entry>
                 <string>SHOW</string>
-                <boolean>true</boolean>
+                <boolean>false</boolean>
               </entry>
             </map>
           </entry>
@@ -63,9 +63,8 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayerStyleName>repast.simphony.visualization.editedStyle.EditedValueLayerStyle2D</valueLayerStyleName>
-  <valueLayerEditedStyleName>SoilMoisture.style_0.xml</valueLayerEditedStyleName>
+  <valueLayerStyleName>repast.model.agrosuccess.LctLayerStyle</valueLayerStyleName>
   <valueLayers>
-    <string>SoilMoisture</string>
+    <string>Lct</string>
   </valueLayers>
 </repast.simphony.visualization.engine.CartesianDisplayDescriptor>
