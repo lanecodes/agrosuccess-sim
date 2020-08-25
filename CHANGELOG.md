@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 20 - Add `ReportingRepastFireSpreader` - 2020-08-25
+
+#### ADDED
+
+- New `ReportingRepastFireSpreader` class whose instances communicate
+  `FireEvents` to a `FireReporter` once fire spread is complete
+
 ### 19 - Refactor `FireSpreader` - 2020-08-24
 
 #### ADDED
