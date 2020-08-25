@@ -18,6 +18,7 @@ import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
 import me.ajlane.geo.repast.fire.DefaultFireManager;
+import me.ajlane.geo.repast.fire.DefaultFireSpreader;
 import me.ajlane.geo.repast.fire.DefaultFlammabilityChecker;
 import me.ajlane.geo.repast.fire.FireManager;
 import me.ajlane.geo.repast.fire.FireParams;
@@ -326,15 +327,18 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     LcfMapGetter lcfGetter = new LcfMapGetterHardCoded(fireParams.getLcfReplicate());
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(demLayer, aveGridCellSize);
     WindRiskCalculator wrCalc = new WindRiskCalculator();
+    FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
     // Millington et al. 2009 eq 7
     double meanNumFires = fireParams.getClimateIgnitionScalingParam()
         * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
     double vegetationMoistureParam = meanNumFires; // lambda parameterises fuel moisture as well as
                                                    // number of fires
-    FireSpreader fireSpreader = new FireSpreader(lctLayer, fireCount, srCalc, wrCalc,
-        lcfGetter.getMap(), windData.getWindDirectionProb(), windData.getWindSpeedProb());
-    FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
-    return new DefaultFireManager(fireSpreader, flamChecker, meanNumFires, vegetationMoistureParam);
+    FireSpreader<GridPoint> fireSpreader = new DefaultFireSpreader(lctLayer, fireCount, srCalc,
+        wrCalc, flamChecker, lcfGetter.getMap(), windData.getWindDirectionProb(),
+        windData.getWindSpeedProb(), vegetationMoistureParam);
+
+    return new DefaultFireManager(fireSpreader, flamChecker, lctLayer.getDimensions(),
+        meanNumFires);
   }
 
   /**

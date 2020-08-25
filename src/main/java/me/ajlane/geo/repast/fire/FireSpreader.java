@@ -1,222 +1,28 @@
 package me.ajlane.geo.repast.fire;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import org.apache.commons.math3.distribution.EnumeratedDistribution;
-import org.apache.commons.math3.util.Pair;
-import org.apache.log4j.Logger;
-import me.ajlane.geo.Direction;
-import me.ajlane.geo.repast.GridPointKingMove;
-import me.ajlane.geo.repast.GridPointMove;
-import me.ajlane.geo.repast.RepastGridUtils;
-import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.grid.GridPoint;
-import repast.simphony.valueLayer.IGridValueLayer;
-import repast.simphony.valueLayer.ValueLayer;
+
 
 /**
- * Given an ignition point, consider wind direction and speed, slope, land cover flammability and
- * fuel moisture to spread a fire mechanistically.
- *
- * @see #spreadFire
+ * Modifies grid layers to simulate the spread of a wildfire given an ignition point
  *
  * @author Andrew Lane
- *
+ * @param <T> Type of object used to specify the address of a grid cell
  */
-public class FireSpreader {
-
-  final static Logger logger = Logger.getLogger(FireSpreader.class);
-
-  private IGridValueLayer lct;
-  private IGridValueLayer fireCount;
-  private SlopeRiskCalculator srCalc;
-  private WindRiskCalculator wrCalc;
-  private Map<Lct, Double> lcfMap;
-  private EnumeratedDistribution<Direction> windDirSampler;
-  private EnumeratedDistribution<WindSpeed> windSpeedSampler;
-
-  public FireSpreader(IGridValueLayer lct, IGridValueLayer fireCount, SlopeRiskCalculator srCalc,
-      WindRiskCalculator wrCalc, Map<Lct, Double> lcfMap, Map<Direction, Double> windDirProbMap,
-      Map<WindSpeed, Double> windSpeedProbMap) {
-    this.lct = lct;
-    this.fireCount = fireCount;
-    this.srCalc = srCalc;
-    this.wrCalc = wrCalc;
-    this.lcfMap = lcfMap;
-    this.windDirSampler = probMapToEnumeratedDistribution(windDirProbMap);
-    this.windSpeedSampler = probMapToEnumeratedDistribution(windSpeedProbMap);
-  }
-
-  private static <T> EnumeratedDistribution<T> probMapToEnumeratedDistribution(Map<T, Double> map) {
-    List<Pair<T, Double>> pairList = new ArrayList<>();
-    for (Map.Entry<T, Double> entry : map.entrySet()) {
-      pairList.add(new Pair<>(entry.getKey(), entry.getValue()));
-    }
-    return new EnumeratedDistribution<T>(pairList);
-  }
+public interface FireSpreader<T> {
 
   /**
-   * Spread a fire around the landscape from a starting point. See
-   * <a href="https://doi.org/10.1016/j.envsoft.2009.03.013"> Millington et al. 2009</a> for the
+   * Spread a fire around the landscape from a starting point
+   *
+   * <p>
+   * See <a href="https://doi.org/10.1016/j.envsoft.2009.03.013"> Millington et al. 2009</a> for the
    * inspiration behind the fire spread mechanism.
+   * </p>
    *
    * @param ignitionPoint Point in the landscape where the fire starts
-   * @param fuelMoistureFactor Dimensionless factor parameterising the amount of moisture in the
-   *        fuel at the time of the fire
+   * @return An object specifying the cells burnt during the fire
    */
-  public void spreadFire(GridPoint ignitionPoint, double fuelMoistureFactor) {
-    // Sample concrete wind speed and direction from PMF
-    WindSpeed wSpeed = this.windSpeedSampler.sample();
-    Direction wDir = this.windDirSampler.sample();
-
-    Queue<GridPoint> activeFires = new LinkedList<>();
-    activeFires.add(ignitionPoint);
-
-    for (GridPoint currentFirePoint; (currentFirePoint = activeFires.poll()) != null;) {
-      burnCellAtPoint(currentFirePoint);
-      spreadFireToNeighbours(currentFirePoint, wSpeed, wDir, fuelMoistureFactor, activeFires);
-    }
-  }
-
-  /**
-   * Convert land cover type at {@code gridPoint} to burnt. Increment the {@code fireCount} layer.
-   *
-   * @param lct Land cover type
-   * @param gridPoint Point on grid
-   */
-  private void burnCellAtPoint(GridPoint gridPoint) {
-    this.lct.set(Lct.Burnt.getCode(), gridPoint.getX(), gridPoint.getY());
-    int prevBurnCount = (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY());
-    this.fireCount.set(prevBurnCount + 1, gridPoint.getX(), gridPoint.getY());
-  }
-
-  /**
-   * For a single point in the landscape which is currently burning, survey its neighbours and
-   * spread the fire to them with a probability determined by wind speed, slope and land cover type.
-   *
-   * @param currentFirePoint Point which is currently burning
-   * @param wSpeed Wind speed
-   * @param wDir Wind direction
-   * @param fuelMoistureFactor
-   * @param activeFires List of currently active fires. If the fire spreads to new cells these will
-   *        be added to this list.
-   */
-  private void spreadFireToNeighbours(GridPoint currentFirePoint, WindSpeed wSpeed, Direction wDir,
-      double fuelMoistureFactor, Queue<GridPoint> activeFires) {
-    for (Direction fireSpreadDir : Direction.values()) {
-      GridPointMove fireFront = new GridPointKingMove(currentFirePoint, fireSpreadDir);
-      boolean targetIsInGrid =
-          RepastGridUtils.pointInValueLayer2D(fireFront.getEndPoint(), this.lct);
-      if (targetIsInGrid && isFlammable(this.lct, fireFront.getEndPoint())) {
-        Double probFireSpread = probFireSpread(fireFront, wSpeed, wDir, fuelMoistureFactor);
-        if (probFireSpread > RandomHelper.nextDouble()) {
-          activeFires.add(fireFront.getEndPoint());
-        }
-      }
-    }
-  }
-
-  /**
-   * @param lctLayer {@code ValueLayer} encoding land cover types
-   * @param gridPoint Point on grid to query for flammability.
-   * @return {@code true} if the cell at {@code gridPoint} has a flammable land cover type.
-   */
-  private static boolean isFlammable(ValueLayer lctLayer, GridPoint gridPoint) {
-    int lctCode = (int) lctLayer.get(gridPoint.getX(), gridPoint.getY());
-    return isFlammable(lctCode);
-  }
-
-  /**
-   * @param lctCode Code for land cover type
-   * @return {@code true} if {@code lctCode} corresponds to a flammable land cover type.
-   */
-  private static boolean isFlammable(int lctCode) {
-    boolean isWaterQuarry = Lct.WaterQuarry.getCode() == lctCode;
-    boolean isBurnt = Lct.Burnt.getCode() == lctCode;
-    return !(isWaterQuarry || isBurnt); // true if neither water/quarry or burnt
-  }
-
-  /**
-   * Calculate the probability of a fire spreading from a cell to a specific neighbour. This
-   * corresponds to Eq. (8) in Millington et al. 2009.
-   *
-   * @param fireFront Point at which the fire has the possibility of spreading from a cell to one of
-   *        its neighbours.
-   * @param wSpeed Wind speed
-   * @param wDir Wind direction
-   * @param fuelMoistureFactor Dimensionless factor parameterising the amount of moisture in the
-   *        fuel at the time of the fire
-   *
-   * @return Probability of a fire spreading along the {@code fireFront}.
-   */
-  private Double probFireSpread(GridPointMove fireFront, WindSpeed wSpeed, Direction wDir,
-      double fuelMoistureFactor) {
-    // TODO consider having a local map between int codes and enums.
-    Lct endPointLct = lctForGridPoint(fireFront.getEndPoint());
-    Double landCoverFlammability = this.lcfMap.get(endPointLct);
-    Double slopeRisk =
-        this.srCalc.getSlopeRisk(fireFront.getStartPoint(), fireFront.getDirection());
-    Double windRisk = this.wrCalc.getRisk(wSpeed, wDir, fireFront.getDirection());
-    Double fuelMoistureRisk = moistureClassToFuelMoistureRisk(fuelMoistureFactor);
-    if (landCoverFlammability == null) {
-      throw new RuntimeException("landCoverFlammability unexpectedly null");
-    }
-    if (slopeRisk == null) {
-      throw new RuntimeException("slopeRisk unexpectedly null");
-    }
-    if (windRisk == null) {
-      throw new RuntimeException("windRisk unexpectedly null");
-    }
-
-    return landCoverFlammability * slopeRisk * fuelMoistureRisk * windRisk;
-  }
-
-  private Lct lctForGridPoint(GridPoint gridPoint) {
-    return lctCodeToEnumConst((int) this.lct.get(gridPoint.getX(), gridPoint.getY()));
-  }
-
-  private static Lct lctCodeToEnumConst(int lctCode) {
-    Lct correctLct = null;
-    for (Lct lct : Lct.values()) {
-      if (lct.getCode() == lctCode) {
-        correctLct = lct;
-        break;
-      }
-    }
-
-    if (correctLct == null) {
-      throw new RuntimeException("Lct code unexpectedly didn't match Lct enumeration constant.");
-    }
-    return correctLct;
-  }
-
-  /**
-   * @param moisture
-   * @return Fuel moisture risk corresponding to {@code moisture} after <a
-   *         href"https://doi.org/10.1016/j.envsoft.2009.03.013">Millintgon et al. 2009</a> Table 4.
-   */
-  private double moistureClassToFuelMoistureRisk(double moisture) {
-    double risk;
-    if (moisture < 0.2) {
-      risk = 0.8;
-    } else if (moisture < 0.3) {
-      risk = 0.9;
-    } else if (moisture < 0.5) {
-      risk = 1.0;
-    } else if (moisture < 0.6) {
-      risk = 1.1;
-    } else {
-      risk = 1.2;
-    }
-    return risk;
-  }
-
-  public ValueLayer getLct() {
-    return this.lct;
-  }
+  List<T> spreadFire(GridPoint ignitionPoint);
 
 }

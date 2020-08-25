@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 19 - Refactor `FireSpreader` - 2020-08-24
+
+#### ADDED
+
+- `AgroSuccessFuelMoistureRiskTable` to convert vegetationMoistureParam to
+  fuelMoistureRiskFactor
+- `GridPointIterable` class added to `RepastGridUtils`
+
+#### CHANGED
+
+- `DefaultFireManager` receives grid dimensions in its constructor rather than
+  needing to reference them through a `FireSpreader`, simplifying the
+  `FireSpreader` interface
+- `FireSpreader` is now an interface, old `FireSpreader` class now called
+  `DefaultFireSpreader`
+- `FireSpreader#spreadFire(GridPoint ignitionPoint), double
+  vegetationMoistureParam)` changed to `FireSpreader#spreadFire(GridPoint
+  ignitionPoint)`
+- vegetationMoistureParam passed to `FireSpreader` through constructor
+- vegetationMoistureParam removed from `FireManager` constructor as it's no
+  longer needed by the code in this class
+- `DefaultFireSpreader` uses `AgroSuccessFuelMoistureRiskTable` to do
+  fuelMoistureRisk calculation rather than implementing the method itself
+- Remove `DefaultFireSpreader#getLct` method as this violates encapsulation and
+  was introduced previously as a hack
+- `FireSpreader#spreadFire(GridPoint ignitionPoint)` returns `List<GridPoint>`
+- `DefaultFireSpreader` uses a `FlammabilityChecker` to evaluate cell flammability
+
 ### 18 - Add `FireReporter` - 2020-08-23
 
 #### ADDED

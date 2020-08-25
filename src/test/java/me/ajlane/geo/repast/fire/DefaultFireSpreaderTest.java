@@ -1,16 +1,27 @@
 package me.ajlane.geo.repast.fire;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.apache.log4j.Logger;
+import org.easymock.EasyMockRule;
+import org.easymock.IAnswer;
+import org.easymock.Mock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.RepastGridUtils;
+import me.ajlane.geo.repast.RepastGridUtils.GridPointIterable;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.model.agrosuccess.reporting.LctProportionAggregator;
@@ -25,9 +36,9 @@ import repast.simphony.valueLayer.ValueLayer;
  * @author Andrew Lane
  *
  */
-public class FireSpreaderTest {
+public class DefaultFireSpreaderTest {
 
-  final static Logger logger = Logger.getLogger(FireSpreaderTest.class);
+  final static Logger logger = Logger.getLogger(DefaultFireSpreaderTest.class);
 
   private IGridValueLayer lct;
   private IGridValueLayer fireCount;
@@ -36,6 +47,26 @@ public class FireSpreaderTest {
   private final Map<Lct, Double> lcfMap = getTestLcfMap();
   private final Map<Direction, Double> windDirProbMap = getTestWindDirProbMap();
   private final Map<WindSpeed, Double> windSpeedProbMap = getTestWindSpeedProbMap();
+  private final double vegetationMoistureParam = 0.25; // lambda in thesis notation
+
+  @Rule
+  public EasyMockRule rule = new EasyMockRule(this);
+
+  @Mock
+  private FlammabilityChecker<GridPoint> flammabilityChecker;
+
+  // Mocks logic for identifying flammable grid cells
+  private IAnswer<Boolean> flammableCellRule = new IAnswer<Boolean>() {
+    @Override
+    public Boolean answer() throws Throwable {
+      GridPoint pt = (GridPoint) getCurrentArguments()[0];
+      int lctCode = (int) lct.get(pt.getX(), pt.getY());
+      if (lctCode == Lct.WaterQuarry.getCode() || lctCode == Lct.Burnt.getCode()) {
+        return false;
+      }
+      return true;
+    }
+  };
 
   private static Map<Direction, Double> getTestWindDirProbMap() {
     Map<Direction, Double> m = new HashMap<>();
@@ -87,56 +118,94 @@ public class FireSpreaderTest {
   @After
   public void tearDown() {
     this.lct = null;
+    this.fireCount = null;
   }
 
   @Test
   public void testInit() {
-    new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc, this.lcfMap,
-        this.windDirProbMap, this.windSpeedProbMap);
-  }
-
-  @Test
-  public void testGetLct() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
-
-    ValueLayer lctDims = spreader.getLct();
-    assertNotNull(lctDims);
+    new DefaultFireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
+        this.flammabilityChecker,
+        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap, vegetationMoistureParam);
   }
 
   @Test
   public void testFireCountIncremented() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc, this.wrCalc, this.flammabilityChecker, this.lcfMap, this.windDirProbMap,
+        this.windSpeedProbMap, this.vegetationMoistureParam);
+
+    expect(this.flammabilityChecker.isFlammable(anyObject(GridPoint.class)))
+        .andAnswer(flammableCellRule).atLeastOnce();
+
+    replay(this.flammabilityChecker);
 
     logger.debug("FireCount before fire: "
         + RepastGridUtils.valueLayerToString(this.fireCount) + "\n");
     GridPoint initialFire = new GridPoint(2, 2);
-    double fuelMoistureFactor = 0.25;
-    spreader.spreadFire(initialFire, fuelMoistureFactor);
+    spreader.spreadFire(initialFire);
 
     assertEquals(1, (int) this.fireCount.get(2, 2));
     logger.debug("FireCount after fire: "
         + RepastGridUtils.valueLayerToString(this.fireCount) + "\n");
+
+    verify(this.flammabilityChecker);
   }
 
   @Test
   public void testSpreadFire() {
-    FireSpreader spreader = new FireSpreader(this.lct, this.fireCount, this.srCalc, this.wrCalc,
-        this.lcfMap, this.windDirProbMap, this.windSpeedProbMap);
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc, this.wrCalc, this.flammabilityChecker, this.lcfMap, this.windDirProbMap,
+        this.windSpeedProbMap, this.vegetationMoistureParam);
+
+    expect(this.flammabilityChecker.isFlammable(anyObject(GridPoint.class)))
+        .andAnswer(flammableCellRule).atLeastOnce();
 
     LctProportionAggregator propAggregator = new LctProportionAggregator(this.lct);
     double initPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("Before fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
+    replay(this.flammabilityChecker);
+
     GridPoint initialFire = new GridPoint(2, 2);
-    double fuelMoistureFactor = 0.25;
-    spreader.spreadFire(initialFire, fuelMoistureFactor);
+    spreader.spreadFire(initialFire);
 
     double finalPropBurnt = propAggregator.getLctProportions().get(Lct.Burnt);
     logger.debug("After fire: " + RepastGridUtils.valueLayerToString(this.lct) + "\n");
 
     assertTrue(finalPropBurnt > initPropBurnt);
+
+    verify(this.flammabilityChecker);
+  }
+
+  @Test
+  public void testFireEventReturned() {
+    FireSpreader<GridPoint> spreader = new DefaultFireSpreader(this.lct, this.fireCount,
+        this.srCalc, this.wrCalc, this.flammabilityChecker, this.lcfMap, this.windDirProbMap,
+        this.windSpeedProbMap, this.vegetationMoistureParam);
+
+    expect(this.flammabilityChecker.isFlammable(anyObject(GridPoint.class)))
+        .andAnswer(flammableCellRule).atLeastOnce();
+
+    replay(this.flammabilityChecker);
+
+    GridPoint initialFire = new GridPoint(2, 2);
+    List<GridPoint> burntCells = spreader.spreadFire(initialFire);
+
+    // System.out.println(RepastGridUtils.valueLayerToString(this.fireCount));
+    // System.out.println(burntCells);
+
+    Consumer<GridPoint> testBurntCellsMatchFireCount = gridPoint -> {
+      if (burntCells.contains(gridPoint)) {
+        assertEquals(1, (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY()));
+      } else {
+        assertEquals(0, (int) this.fireCount.get(gridPoint.getX(), gridPoint.getY()));
+      }
+    };
+
+    Iterable<GridPoint> gridCells = new GridPointIterable(this.lct);
+    gridCells.forEach(testBurntCellsMatchFireCount);
+
+    verify(this.flammabilityChecker);
   }
 
 }
