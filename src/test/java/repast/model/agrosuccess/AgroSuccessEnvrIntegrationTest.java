@@ -56,6 +56,10 @@ public class AgroSuccessEnvrIntegrationTest {
     ParametersParser pp = new ParametersParser(paramsFile);
     Parameters params = pp.getParameters();
 
+    // Ensure simulations run for sufficiently long for all of the tests, irrespective of
+    // default value in parameters.xml
+    params.setValue("nTicks", 100);
+
     params.setValue("useDummyData", new Boolean(true));
 
     schedule = new Schedule();
