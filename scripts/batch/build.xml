@@ -5,8 +5,9 @@
 	<!-- model.dir is passed in -->
 	<property name="working.lib" location="${working.dir}/lib" />
 	<property name="working.data" location="${working.dir}/data" />
-	<property name="model.dir.bin" location="${model.dir}/bin" />
+	<property name="model.dir.bin" location="${model.dir}/target/classes" />
 	<property name="model.dir.lib" location="${model.dir}/lib" />
+	<property name="model.maven.lib" location="${model.dir}/target/dependency" />
 	<property name="model.data" location="${model.dir}/data" />
 	<property name="message.center.props" location="${model.dir}/MessageCenter.log4j.properties" />
 
@@ -74,7 +75,7 @@
 			<fileset file="${config.props.file}" />
 		</copy>
 
-		<copy todir="${working.dir}/bin">
+		<copy todir="${working.dir}/target/classes">
 			<resources>
 				<javaresource name="fake_jar_to_avoid_watcher_init_warnings.jar" />
 			</resources>
@@ -184,6 +185,10 @@
 				<include name="*.jar" />
 			</fileset>
 
+			<fileset dir="${model.maven.lib}">
+				<include name="*.jar" />
+			</fileset>
+			
 			<fileset file="${groovy.home}" />
 			<fileset file="${saf.v3d}" />
 		</copy>

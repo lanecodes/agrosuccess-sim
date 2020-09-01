@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 22 - Add custom build.xml - 2020-09-01
+
+We add a custom build script for generating standalone model jars using Repast
+Simphony. This is done to account for differences in project strucure between
+AgroSuccess (which uses Maven) and a conventional Repast Simphony project.
+
+#### ADDED
+
+- `scripts/batch/build.xml` file containing a custom build script to be copied
+  into the Repast Simphony plugin
+- `scripts/batch/copy-build-script.sh` that inserts the custom build script into
+  the Repast Simhony plugin
+- `scripts/batch/README.md` containing an explanation of what the new build
+  script does
+
+#### CHANGED
+
+- Update project-level `README.md` to document additional steps needed to build
+  the project correctly resulting from the work described above
+
 ### 21 - Add Fire Size data set file sink to Repast model - 2020-08-05
 
 #### ADDED
