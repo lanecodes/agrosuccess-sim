@@ -1,5 +1,7 @@
 package me.ajlane.geo.repast.succession;
 
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
 import repast.model.agrosuccess.AgroSuccessLcsUpdater;
 
 /**

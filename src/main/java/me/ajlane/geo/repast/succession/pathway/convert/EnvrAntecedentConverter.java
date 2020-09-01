@@ -1,7 +1,10 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
+
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
 
 /**
  * Convert a CodedEnvrAntecedent to an AliasedEnvrAntecedent or vice versa

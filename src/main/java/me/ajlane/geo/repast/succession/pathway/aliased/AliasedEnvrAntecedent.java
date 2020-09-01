@@ -1,4 +1,6 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.aliased;
+
+import me.ajlane.geo.repast.succession.pathway.EnvrAntecedent;
 
 public class AliasedEnvrAntecedent
     extends EnvrAntecedent<String, String, String, String, String, String, String> {

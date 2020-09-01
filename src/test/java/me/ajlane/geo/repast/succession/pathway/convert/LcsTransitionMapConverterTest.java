@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.After;
@@ -6,6 +6,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
+import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.convert.LcsTransitionMapConverter;
 
 public class LcsTransitionMapConverterTest {
 

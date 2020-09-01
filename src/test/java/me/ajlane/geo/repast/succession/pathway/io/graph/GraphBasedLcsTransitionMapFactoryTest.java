@@ -1,10 +1,16 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.io.graph;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
+import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapFactory;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
+import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapFactory;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 /**

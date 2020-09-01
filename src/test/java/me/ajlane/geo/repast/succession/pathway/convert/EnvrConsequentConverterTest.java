@@ -1,7 +1,11 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.convert.EnvrConsequentConverter;
 
 public class EnvrConsequentConverterTest {
 

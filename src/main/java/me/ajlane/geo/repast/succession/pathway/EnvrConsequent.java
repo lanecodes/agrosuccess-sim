@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway;
 
 /**
  * Stores the information about the target state resulting from a particular combination of
@@ -7,7 +7,7 @@ package me.ajlane.geo.repast.succession;
  * @param <T> type of the start state specifier (e.g Integer or String)
  * @author Andrew Lane
  */
-class EnvrConsequent<T1, T2> {
+public class EnvrConsequent<T1, T2> {
 
   private T1 targetState; // the land cover state this consequent represents
   private T2 transitionTime; // the number of years taken to transition to targetState

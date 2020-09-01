@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 23 - Reorganise land-cover succession code into subpackages - 2020-09-01
+
+#### CHANGED
+
+- Introduced various new packages under
+  `me.ajlane.geo.repast.succession.pathway` to contain code used for loading
+  and representing succession pathway models
+
 ### 22 - Add custom build.xml - 2020-09-01
 
 We add a custom build script for generating standalone model jars using Repast

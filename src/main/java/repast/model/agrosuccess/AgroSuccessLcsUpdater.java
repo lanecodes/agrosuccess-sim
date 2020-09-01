@@ -1,12 +1,12 @@
 package repast.model.agrosuccess;
 
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
-import me.ajlane.geo.repast.succession.CodedEnvrAntecedent;
-import me.ajlane.geo.repast.succession.CodedEnvrConsequent;
 import me.ajlane.geo.repast.succession.EnvrSimState;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdateMsg;
 import me.ajlane.geo.repast.succession.LcsUpdater;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;

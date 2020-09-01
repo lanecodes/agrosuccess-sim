@@ -1,4 +1,4 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.aliased;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,29 +7,29 @@ import java.util.Set;
 /**
  * Simple map between sets of possible environmental conditions, and the succession trajectories
  * resulting from those sets of conditions.
- * 
+ *
  * @author Andrew Lane
  */
 public class AliasedLcsTransitionMap {
   private Map<AliasedEnvrAntecedent, AliasedEnvrConsequent> transMap;
 
-  AliasedLcsTransitionMap() {
+  public AliasedLcsTransitionMap() {
     this.transMap = new HashMap<>();
   }
 
-  AliasedEnvrConsequent getEnvrConsequent(AliasedEnvrAntecedent ante) {
+  public AliasedEnvrConsequent getEnvrConsequent(AliasedEnvrAntecedent ante) {
     return transMap.get(ante);
   }
 
-  void put(AliasedEnvrAntecedent ante, AliasedEnvrConsequent cons) {
+  public void put(AliasedEnvrAntecedent ante, AliasedEnvrConsequent cons) {
     this.transMap.put(ante, cons);
   }
-  
-  int size() {
+
+  public int size() {
     return this.transMap.size();
   }
-  
-  Set<Map.Entry<AliasedEnvrAntecedent, AliasedEnvrConsequent>> entrySet() {
+
+  public Set<Map.Entry<AliasedEnvrAntecedent, AliasedEnvrConsequent>> entrySet() {
     return this.transMap.entrySet();
   }
 

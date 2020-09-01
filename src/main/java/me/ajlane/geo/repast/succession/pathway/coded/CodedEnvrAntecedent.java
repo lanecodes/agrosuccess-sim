@@ -1,4 +1,6 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.coded;
+
+import me.ajlane.geo.repast.succession.pathway.EnvrAntecedent;
 
 public class CodedEnvrAntecedent
     extends EnvrAntecedent<Integer, Integer, Integer, Integer, Integer, Integer, Integer> {

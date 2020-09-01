@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
 
 import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
@@ -72,9 +72,9 @@ import repast.model.agrosuccess.AgroSuccessCodeAliases.Water;
  * </p>
  *
  * @author Andrew Lane
- * @see me.ajlane.geo.repast.succession.EnvrStateAliasTranslator#numericalValueFromAlias(String,
+ * @see me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator#numericalValueFromAlias(String,
  *      String)
- * @see me.ajlane.geo.repast.succession.EnvrStateAliasTranslator#aliasFromNumericalValue(String,
+ * @see me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator#aliasFromNumericalValue(String,
  *      int)
  *
  */

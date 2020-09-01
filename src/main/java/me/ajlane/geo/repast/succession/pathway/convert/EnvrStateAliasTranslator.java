@@ -1,7 +1,7 @@
 /**
  *
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +33,9 @@ public abstract class EnvrStateAliasTranslator {
   }
 
   // Go from an integer state value to a human readable alias
-  String aliasFromNumericalValue(String envStateName, int value) {
+  public String aliasFromNumericalValue(String envStateName, int value) {
     try {
-      return (String) envStateMap.get(envStateName).inverseBidiMap().get(value);
+      return envStateMap.get(envStateName).inverseBidiMap().get(value);
     } catch (NullPointerException e) {
       logger.error(unmappableErrorMessage(envStateName, value), e);
       throw e;
@@ -43,9 +43,9 @@ public abstract class EnvrStateAliasTranslator {
   }
 
   // Go from human readable alias to an integer state value
-  int numericalValueFromAlias(String envStateName, String alias) {
+  public int numericalValueFromAlias(String envStateName, String alias) {
     try {
-      return (int) envStateMap.get(envStateName).get(alias);
+      return envStateMap.get(envStateName).get(alias);
     } catch (NullPointerException e) {
       logger.error(unmappableErrorMessage(envStateName, alias), e);
       throw e;

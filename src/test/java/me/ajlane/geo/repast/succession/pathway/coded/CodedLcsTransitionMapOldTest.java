@@ -1,8 +1,11 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.coded;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import me.ajlane.geo.repast.succession.pathway.EnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.EnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMapOld;
 
 public class CodedLcsTransitionMapOldTest {
 

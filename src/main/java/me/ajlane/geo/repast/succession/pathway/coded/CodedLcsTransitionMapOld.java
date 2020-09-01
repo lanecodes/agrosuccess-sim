@@ -1,10 +1,13 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.coded;
 
 import static java.lang.Math.toIntExact;
 import java.util.HashMap;
 import java.util.Map;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import me.ajlane.geo.repast.succession.pathway.EnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.EnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 /**

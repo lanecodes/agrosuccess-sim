@@ -1,7 +1,10 @@
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.io.graph;
 
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
 import static java.lang.Math.toIntExact;
 import java.util.HashMap;
 import java.util.Map;

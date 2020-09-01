@@ -1,10 +1,12 @@
 /**
  *
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
 
 /**
  * @author andrew

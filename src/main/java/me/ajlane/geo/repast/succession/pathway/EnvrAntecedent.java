@@ -1,12 +1,12 @@
 /**
- * 
+ *
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway;
 
 /**
  * Stores the combination of environmental conditions which might lead to an environmental
  * transition resulting in an EnvironmentalConsequent
- * 
+ *
  * @param <T1> type of start state specifier
  * @param <T2> type of succession pathway (i.e. succession or regeneration) specifier
  * @param <T3> type of aspect (northern or southern) specifier
@@ -14,11 +14,11 @@ package me.ajlane.geo.repast.succession;
  * @param <T5> type of oak seed presence (true or false) specifier
  * @param <T6> type of deciduous seed presence (true or false) specifier
  * @param <T7> type of soil moisture (e.g. xeric, mesic, hydric) specifier
- * 
+ *
  * @author Andrew Lane
  *
  */
-class EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> {
+public class EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> {
 
   private T1 startState;
   private T2 successionPathway;

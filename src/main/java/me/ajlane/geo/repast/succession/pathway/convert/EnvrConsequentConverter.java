@@ -1,7 +1,10 @@
 /**
  * 
  */
-package me.ajlane.geo.repast.succession;
+package me.ajlane.geo.repast.succession.pathway.convert;
+
+import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
 
 /**
  * Convert a CodedEnvrConsequent to an AliasedEnvrConsequent or vice versa
