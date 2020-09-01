@@ -49,7 +49,7 @@ import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
-import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapFactory;
+import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapReader;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
@@ -289,7 +289,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
     LcsTransitionMapFactory fac =
-        new GraphBasedLcsTransitionMapFactory(graph, graphModelID, translator);
+        new GraphBasedLcsTransitionMapReader(graph, graphModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
 
     // TODO Refactor so oak mortality scaling parameter loaded from graph

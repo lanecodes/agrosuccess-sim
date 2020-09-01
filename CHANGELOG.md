@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Introduced various new packages under
   `me.ajlane.geo.repast.succession.pathway` to contain code used for loading
   and representing succession pathway models
+- Rename `GraphBasedLcsTransitionMapFactory` to
+  `GraphBasedLcsTransitionMapReader`
 
 ### 22 - Add custom build.xml - 2020-09-01
 
