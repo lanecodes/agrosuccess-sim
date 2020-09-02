@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 26 - Read serialized land-cover transition map - 2020-09-07
+
+Originally land-cover transition rules were read from a graph database. However
+this led to errors when simulations were run in parallel because multiple
+processes were attempting to access the graph store simultaneously. As a
+workaround for this we add a class to read a serialised copy of the
+`CodedLcsTransitionMap` that ultimately represents the land-cover transition
+rules in the simulation from disk.
+
+#### ADDED
+
+- `SerialisedCodedLcsTransitionMapReader` class that reads the serialised
+  transition rules file from disk
+
 ### 25 - Separate integration tests with and without fire - 2020-09-07
 
 Creates a new class for tests that need to be run in isolation from the fire
