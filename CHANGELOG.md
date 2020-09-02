@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and representing succession pathway models
 - Rename `GraphBasedLcsTransitionMapFactory` to
   `GraphBasedLcsTransitionMapReader`
+- Rename `LcsTransitionMapFactory` interface to `LcsTransitionMapReader`
 
 ### 22 - Add custom build.xml - 2020-09-01
 

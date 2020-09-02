@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapFactory;
+import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapReader;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
@@ -52,7 +52,7 @@ public class GraphBasedLcsTransitionMapReaderTest {
 
   @Test
   public void retrievesAliasedLcsTransitionMapFromGraph() {
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapReader(graph);
+    LcsTransitionMapReader fac = new GraphBasedLcsTransitionMapReader(graph);
     assertEquals(fac.getAliasedLcsTransitionMap().getClass(), AliasedLcsTransitionMap.class);
   }
 
@@ -60,7 +60,7 @@ public class GraphBasedLcsTransitionMapReaderTest {
   public void throwsExceptionIfCodedMapRequestedWhenTranslatorNotProvided() {
     System.out.println("Output from "
         + "GraphBasedLcsTransitionMapReaderTest.throwsExceptionIfCodedMapRequestedWhenTranslatorNotProvided:");
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapReader(graph);
+    LcsTransitionMapReader fac = new GraphBasedLcsTransitionMapReader(graph);
     try {
       fac.getCodedLcsTransitionMap();
     } catch (Exception e) {
@@ -71,27 +71,27 @@ public class GraphBasedLcsTransitionMapReaderTest {
   @Test
   public void retrievesCodedLcsTransitionMapFromGraph() {
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapReader(graph, translator);
+    LcsTransitionMapReader fac = new GraphBasedLcsTransitionMapReader(graph, translator);
     assertEquals(fac.getCodedLcsTransitionMap().getClass(), CodedLcsTransitionMap.class);
   }
 
   @Test
   public void shouldBeAbleToSpecifyAModelId() {
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapReader(graph, correctModelID);
+    LcsTransitionMapReader fac = new GraphBasedLcsTransitionMapReader(graph, correctModelID);
     assertEquals(fac.getAliasedLcsTransitionMap().getClass(), AliasedLcsTransitionMap.class);
   }
 
   @Test
   public void shouldBeAbleToSpecifyAModelIdAndTranslator() {
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac =
+    LcsTransitionMapReader fac =
         new GraphBasedLcsTransitionMapReader(graph, correctModelID, translator);
     assertEquals(fac.getCodedLcsTransitionMap().getClass(), CodedLcsTransitionMap.class);
   }
 
   @Test
   public void shouldHaveCorrectNumberOfRulesInAliasedMap() {
-    LcsTransitionMapFactory fac = new GraphBasedLcsTransitionMapReader(graph, correctModelID);
+    LcsTransitionMapReader fac = new GraphBasedLcsTransitionMapReader(graph, correctModelID);
     AliasedLcsTransitionMap aliasedMap = fac.getAliasedLcsTransitionMap();
     assertEquals(aliasedMap.size(), numTransRulesInGraph);
   }
@@ -99,7 +99,7 @@ public class GraphBasedLcsTransitionMapReaderTest {
   @Test
   public void shouldHaveCorrectNumberOfRulesInCodedMap() {
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac =
+    LcsTransitionMapReader fac =
         new GraphBasedLcsTransitionMapReader(graph, correctModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
     assertEquals(codedMap.size(), numTransRulesInGraph);

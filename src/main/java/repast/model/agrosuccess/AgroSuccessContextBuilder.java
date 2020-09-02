@@ -45,7 +45,7 @@ import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.geo.repast.succession.OakAgeUpdater;
 import me.ajlane.geo.repast.succession.SeedStateUpdater;
 import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
-import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapFactory;
+import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapReader;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
@@ -288,7 +288,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       String graphModelID, SoilMoistureParams smParams) {
 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac =
+    LcsTransitionMapReader fac =
         new GraphBasedLcsTransitionMapReader(graph, graphModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
 

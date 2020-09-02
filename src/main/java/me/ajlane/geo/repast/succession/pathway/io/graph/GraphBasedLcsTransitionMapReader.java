@@ -2,13 +2,13 @@ package me.ajlane.geo.repast.succession.pathway.io.graph;
 
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
-import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapFactory;
+import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapReader;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.LcsTransitionMapConverter;
 
-public class GraphBasedLcsTransitionMapReader implements LcsTransitionMapFactory {
+public class GraphBasedLcsTransitionMapReader implements LcsTransitionMapReader {
 
   final static Logger logger = Logger.getLogger(GraphBasedLcsTransitionMapReader.class);
 
