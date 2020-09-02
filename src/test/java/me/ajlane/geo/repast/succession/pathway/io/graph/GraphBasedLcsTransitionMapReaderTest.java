@@ -5,11 +5,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import me.ajlane.geo.repast.succession.pathway.LcsTransitionMapReader;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.io.LcsTransitionMapReader;
 import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapReader;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 

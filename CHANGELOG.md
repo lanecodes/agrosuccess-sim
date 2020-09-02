@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `GraphBasedLcsTransitionMapReader`
 - Rename `LcsTransitionMapFactory` interface to `LcsTransitionMapReader`
 - Make `CodedLcsTransitionMap` and `AliasedLcsTransitionMap` serializable
+- Refactor `LcsTransitionMapReader` so it extends new
+  `CodedLcsTransitionMapReader` and `AliasedLcsTransitionMapReader` interfaces
+  (complies with interface segregation principle).
 
 ### 22 - Add custom build.xml - 2020-09-01
 
