@@ -3,6 +3,8 @@
  */
 package me.ajlane.geo.repast.succession.pathway;
 
+import java.io.Serializable;
+
 /**
  * Stores the combination of environmental conditions which might lead to an environmental
  * transition resulting in an EnvironmentalConsequent
@@ -18,8 +20,8 @@ package me.ajlane.geo.repast.succession.pathway;
  * @author Andrew Lane
  *
  */
-public class EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> {
-
+public class EnvrAntecedent<T1, T2, T3, T4, T5, T6, T7> implements Serializable {
+  private static final long serialVersionUID = 4736252446767508157L;
   private T1 startState;
   private T2 successionPathway;
   private T3 aspect;

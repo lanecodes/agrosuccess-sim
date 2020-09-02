@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 23 - Reorganise land-cover succession code into subpackages - 2020-09-01
+### 23 - Refactor land-cover succession code - 2020-09-02
 
 #### CHANGED
 
@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Rename `GraphBasedLcsTransitionMapFactory` to
   `GraphBasedLcsTransitionMapReader`
 - Rename `LcsTransitionMapFactory` interface to `LcsTransitionMapReader`
+- Make `CodedLcsTransitionMap` and `AliasedLcsTransitionMap` serializable
 
 ### 22 - Add custom build.xml - 2020-09-01
 
