@@ -19,6 +19,8 @@ rules in the simulation from disk.
 
 - `SerialisedCodedLcsTransitionMapReader` class that reads the serialised
   transition rules file from disk
+- `GraphBasedLcsTransitionMapSerializer` reads succession rules from graph
+  database and writes them to serialised `CodedLcsTransitionMap` object
 
 ### 25 - Separate integration tests with and without fire - 2020-09-07
 
