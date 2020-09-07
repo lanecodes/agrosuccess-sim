@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 25 - Separate integration tests with and without fire - 2020-09-07
+
+Creates a new class for tests that need to be run in isolation from the fire
+regime. This lets us test that land-cover state is updated due to the
+succession rules on their own as expected.
+
+#### ADDED
+
+- `AgroSuccessNoFireIntegrationTest` class containing integration tests without
+  the fire regime
+
+#### CHANGED
+
+-  `AgroSuccessEnvrIntegrationTest#landCoverStateShouldEvolveOverTime` moved to
+  new `AgroSuccessNoFireIntegrationTest` class
+
 ### 24 - Fix reference equality bug in AgroSuccessLcsUpdateDecider - 2020-09-07
 
 #### CHANGED

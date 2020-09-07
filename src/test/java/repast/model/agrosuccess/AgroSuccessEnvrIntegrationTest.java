@@ -62,6 +62,9 @@ public class AgroSuccessEnvrIntegrationTest {
 
     params.setValue("useDummyData", new Boolean(true));
 
+    // Boost climateIgnitionScalingParameter to ensure fires take place for testing purposes
+    params.setValue("climateIgnitionScalingParam", 24);
+
     schedule = new Schedule();
     RunEnvironment.init(schedule, null, params, true);
 
@@ -71,16 +74,17 @@ public class AgroSuccessEnvrIntegrationTest {
 
     // trigger the AgroSuccessContextBuilder's @ScheduledMethods to be added to the scheduler
     logger.debug("Scheduling methods...");
-    for (Object agent: context.getObjects(Object.class)) {
-      logger.debug(schedule.schedule(agent));
+    for (Object agent : context.getObjects(Object.class)) {
+      logger.debug("Scheduling " + agent);
+      schedule.schedule(agent);
     }
     logger.debug("Finished scheduling methods");
   }
 
   @After
   public void tearDown() throws Exception {
-    for (Object graph: context.getObjects(EmbeddedGraphInstance.class)) {
-      ((GraphDatabaseService)graph).shutdown();
+    for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
+      ((GraphDatabaseService) graph).shutdown();
     }
     context = null;
     schedule = null;
@@ -111,13 +115,13 @@ public class AgroSuccessEnvrIntegrationTest {
     ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
     GridValueLayer sm = (GridValueLayer) context.getValueLayer(LscapeLayer.SoilMoisture.name());
     int startHash = hashGridValueLayerValues(sm);
-    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));
+    // System.out.println(RepastGridUtils.gridValueLayerToString(sm));
 
-    for (int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
-    //System.out.println(RepastGridUtils.gridValueLayerToString(sm));
+    // System.out.println(RepastGridUtils.gridValueLayerToString(sm));
     assertNotEquals("Soil moisture values haven't changed from initial consitions, indicating "
         + "grid is not updating.", startHash, hashGridValueLayerValues(sm));
   }
@@ -129,7 +133,7 @@ public class AgroSuccessEnvrIntegrationTest {
     GridValueLayer oSeeds = (GridValueLayer) context.getValueLayer(LscapeLayer.Oak.name());
     GridValueLayer dSeeds = (GridValueLayer) context.getValueLayer(LscapeLayer.Deciduous.name());
 
-    for (int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
@@ -143,25 +147,11 @@ public class AgroSuccessEnvrIntegrationTest {
   }
 
   @Test
-  public void landCoverStateShouldEvolveOverTime() {
-    GridValueLayer lct = (GridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
-    int[][] initialValues = gridValueLayerToArray(lct);
-
-    for (int i=0; i<5; i++) {
-      // run 5 timesteps to allow time for some spatial variation to emerge
-      schedule.execute();
-    }
-
-    assertThat("Lct grid should evolve over time, but was unchanged after 5 time steps",
-        initialValues, IsNot.not(IsEqual.equalTo(gridValueLayerToArray(lct))));
-  }
-
-  @Test
   public void oakAgeShouldEvolveOverTime() {
     GridValueLayer oakAge = (GridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name());
     int[][] initialValues = gridValueLayerToArray(oakAge);
 
-    for (int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
@@ -175,7 +165,7 @@ public class AgroSuccessEnvrIntegrationTest {
     GridValueLayer fireCount = (GridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name());
     int[][] initialValues = gridValueLayerToArray(fireCount);
 
-    for (int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
       // run 5 timesteps to allow time for some spatial variation to emerge
       schedule.execute();
     }
@@ -186,6 +176,8 @@ public class AgroSuccessEnvrIntegrationTest {
 
   @Test
   public void modelShouldRunSuccessfullyFor20TimeSteps() {
-    for (int i=0; i<20; i++) { schedule.execute(); }
+    for (int i = 0; i < 20; i++) {
+      schedule.execute();
+    }
   }
 }
