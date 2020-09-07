@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 27 - Remove reference to graph database from context builder - 2020-09-07
+
+#### CHANGED
+
+- Whereas previously a GraphDatabaseService object was added to the simulation
+  context in the class `AgroSuccessContextBuilder`, this is now avoided.
+
 ### 26 - Read serialized land-cover transition map - 2020-09-07
 
 Originally land-cover transition rules were read from a graph database. However

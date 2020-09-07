@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-import org.neo4j.graphdb.GraphDatabaseService;
 import me.ajlane.geo.CartesianGridDouble2D;
 import me.ajlane.geo.WriteableCartesianGridDouble2D;
 import me.ajlane.geo.repast.GridValueLayerAdapter;
@@ -46,10 +45,7 @@ import me.ajlane.geo.repast.succession.OakAgeUpdater;
 import me.ajlane.geo.repast.succession.SeedStateUpdater;
 import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
-import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
-import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFactory;
-import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
 import repast.model.agrosuccess.empirical.SiteAllDataFactory;
@@ -102,11 +98,6 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     EnvrModelParams envrModelParams = new ModelParamsRepastParser(params);
 
-    File databaseDir = new File((String) params.getValue("graphPath"), "graph.db");
-    GraphDatabaseService graph = new EmbeddedGraphInstance(databaseDir.getAbsolutePath());
-    // make the context aware of the graph database service
-    context.add(graph);
-
     SiteAllData siteData = siteAllData(params);
 
     GridBuilderParameters<Object> gridParams = new GridBuilderParameters<>(new StrictBorders(),
@@ -123,16 +114,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
     schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateSM);
 
-    boolean useGraphForLcsModel = false;
-    if (useGraphForLcsModel) {
-      LcsUpdater lcsUpdater = initLcsUpdater(context, graph, params.getString("graphModelID"),
-          envrModelParams.getSoilMoistureParams());
-      context.add(lcsUpdater);
-    } else {
-      LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
-          envrModelParams.getSoilMoistureParams());
-      context.add(lcsUpdater);
-    }
+    LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
+        envrModelParams.getSoilMoistureParams());
+    context.add(lcsUpdater);
 
     FireReporter<GridPoint> fireReporter = new FireReporter<>();
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
@@ -285,43 +269,6 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * Initialise the land cover state updater (take account of evolving environmental state variables
    * and update land cover in response) and make it aware of the Repast context.
    *
-   * <p>
-   * TODO Refactor this method and {@link #initLcsUpdater(Context, File, SoilMoistureParams)} into a
-   * builder class
-   * </p>
-   *
-   * @param context Simulation context
-   * @param graph Graph database service containing model configuration
-   * @param graphModelID ID of model stored in the graph
-   * @return Configured LcsUpdater object
-   */
-  private LcsUpdater initLcsUpdater(Context<Object> context, GraphDatabaseService graph,
-      String graphModelID, SoilMoistureParams smParams) {
-
-    EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    CodedLcsTransitionMap codedMap = new CodedLcsTransitionMapReaderFactory()
-        .getCodedLcsTransitionMapReader(graph, graphModelID, translator)
-        .getCodedLcsTransitionMap();
-
-    // TODO Refactor so oak mortality scaling parameter loaded from graph
-    SuccessionPathwayUpdater successionUpdater = new SuccessionPathwayUpdater(200.);
-    // TODO Refactor so set of mature land-cover types loaded from graph
-    SeedStateUpdater seedUpdater = new SeedStateUpdater(
-        new HashSet<Integer>(Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous
-            .getCode())));
-    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap, successionUpdater,
-        seedUpdater);
-
-    SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(smParams);
-
-    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
-    return lcsUpdater;
-  }
-
-  /**
-   * Initialise the land cover state updater (take account of evolving environmental state variables
-   * and update land cover in response) and make it aware of the Repast context.
-   *
    * @param context Simulation context
    * @param lcsTransMapFile The file containing the coded land-cover state transition pathway map
    * @return Configured LcsUpdater object
@@ -450,15 +397,6 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   public void finaliseSimulation(Context<Object> context, RecordWriter<Lct, Double> lctWriter) {
     logger.info("End of the simulation");
-    for (Object graph : context.getObjects(EmbeddedGraphInstance.class)) {
-      ((GraphDatabaseService) graph).shutdown();
-    }
-
-    try {
-      lctWriter.flush();
-    } catch (IOException e) {
-      throw new RuntimeException("Could not flush land cover type writer");
-    }
   }
 
   /**
