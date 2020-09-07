@@ -125,6 +125,18 @@ enable the production copy to be modified without interfering with the tests.
 
 [agrosuccess-graph]: https://ajlane50@bitbucket.org/ajlane50/agrosuccess-graph
 
+## Serialize graph database
+
+Run the script
+
+```bash
+./scripts/serialize_lcs_transitions.sh
+```
+
+to read the copy of the graph database generated above and write a serialised
+`CodedLcsTransitionMap` containing the transition rules to the file
+`data/succession/agrosuccess.codedlcstrans`.
+
 ## Compile source code and install Maven dependencies
 
 First compile sources
