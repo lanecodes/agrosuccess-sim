@@ -24,6 +24,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
+				<parameter name="lcsTransMapFile" displayName="Path to file specify land-cover state transition rules" type="java.lang.String" 
+						defaultValue="data/succession/agrosuccess.codedlcstrans" 
+						isReadOnly="true" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
 				<parameter name="siteDataRoot" displayName="Study site data root directory" type="java.lang.String" 
 						defaultValue="data/study-sites" 
 						isReadOnly="true" 

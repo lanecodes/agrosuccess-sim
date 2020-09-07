@@ -48,8 +48,7 @@ import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
-import me.ajlane.geo.repast.succession.pathway.io.LcsTransitionMapReader;
-import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapReader;
+import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFactory;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
@@ -124,9 +123,16 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
     schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateSM);
 
-    LcsUpdater lcsUpdater = initLcsUpdater(context, graph, params.getString("graphModelID"),
-        envrModelParams.getSoilMoistureParams());
-    context.add(lcsUpdater);
+    boolean useGraphForLcsModel = false;
+    if (useGraphForLcsModel) {
+      LcsUpdater lcsUpdater = initLcsUpdater(context, graph, params.getString("graphModelID"),
+          envrModelParams.getSoilMoistureParams());
+      context.add(lcsUpdater);
+    } else {
+      LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
+          envrModelParams.getSoilMoistureParams());
+      context.add(lcsUpdater);
+    }
 
     FireReporter<GridPoint> fireReporter = new FireReporter<>();
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
@@ -279,6 +285,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * Initialise the land cover state updater (take account of evolving environmental state variables
    * and update land cover in response) and make it aware of the Repast context.
    *
+   * <p>
+   * TODO Refactor this method and {@link #initLcsUpdater(Context, File, SoilMoistureParams)} into a
+   * builder class
+   * </p>
+   *
    * @param context Simulation context
    * @param graph Graph database service containing model configuration
    * @param graphModelID ID of model stored in the graph
@@ -288,13 +299,41 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       String graphModelID, SoilMoistureParams smParams) {
 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapReader fac =
-        new GraphBasedLcsTransitionMapReader(graph, graphModelID, translator);
-    CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
+    CodedLcsTransitionMap codedMap = new CodedLcsTransitionMapReaderFactory()
+        .getCodedLcsTransitionMapReader(graph, graphModelID, translator)
+        .getCodedLcsTransitionMap();
 
     // TODO Refactor so oak mortality scaling parameter loaded from graph
     SuccessionPathwayUpdater successionUpdater = new SuccessionPathwayUpdater(200.);
     // TODO Refactor so set of mature land-cover types loaded from graph
+    SeedStateUpdater seedUpdater = new SeedStateUpdater(
+        new HashSet<Integer>(Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous
+            .getCode())));
+    LcsUpdateDecider updateDecider = new AgroSuccessLcsUpdateDecider(codedMap, successionUpdater,
+        seedUpdater);
+
+    SoilMoistureDiscretiser smDiscretiser = new AgroSuccessSoilMoistureDiscretiser(smParams);
+
+    LcsUpdater lcsUpdater = new AgroSuccessLcsUpdater(context, updateDecider, smDiscretiser);
+    return lcsUpdater;
+  }
+
+  /**
+   * Initialise the land cover state updater (take account of evolving environmental state variables
+   * and update land cover in response) and make it aware of the Repast context.
+   *
+   * @param context Simulation context
+   * @param lcsTransMapFile The file containing the coded land-cover state transition pathway map
+   * @return Configured LcsUpdater object
+   */
+  private LcsUpdater initLcsUpdater(Context<Object> context, File lcsTransMapFile,
+      SoilMoistureParams smParams) {
+
+    CodedLcsTransitionMap codedMap = new CodedLcsTransitionMapReaderFactory()
+        .getCodedLcsTransitionMapReader(lcsTransMapFile)
+        .getCodedLcsTransitionMap();
+
+    SuccessionPathwayUpdater successionUpdater = new SuccessionPathwayUpdater(200.);
     SeedStateUpdater seedUpdater = new SeedStateUpdater(
         new HashSet<Integer>(Arrays.asList(Lct.Pine.getCode(), Lct.Oak.getCode(), Lct.Deciduous
             .getCode())));

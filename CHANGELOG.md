@@ -24,6 +24,13 @@ rules in the simulation from disk.
 - `CodedLcsTransitionMapReaderFactory` to select class used to read coded
   land-cover state transition map
 
+#### CHANGED
+
+- Land-cover state transition map now read into the context builder using the
+  `CodedLcsTransitionMapReaderFactory`
+- Context builder uses land-cover transition rules loaded from the file
+  `data/succession/agrosuccess.codedlcstrans`
+
 ### 25 - Separate integration tests with and without fire - 2020-09-07
 
 Creates a new class for tests that need to be run in isolation from the fire
