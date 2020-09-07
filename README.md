@@ -125,6 +125,33 @@ enable the production copy to be modified without interfering with the tests.
 
 [agrosuccess-graph]: https://ajlane50@bitbucket.org/ajlane50/agrosuccess-graph
 
+## Compile source code and install Maven dependencies
+
+First compile sources
+
+```bash
+mvn clean compile
+```
+
+Install Maven dependencies into local directory
+
+```bash
+mvn dependency:copy-dependencies
+```
+
+## Copy custom build.xml script for batch runs
+
+To account for differences in project strucutre between a standard Repast
+Simphony project and AgroSuccess we make some changes to the the default Repast
+Simphony build script. See `scripts/batch/README.md` for details.
+
+To copy this script into the Repast Simphony plugin, run
+
+```bash
+./scripts/batch/copy-build-script.sh
+```
+
+
 ## Repository layout
 
 ```
