@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 24 - Fix reference equality bug in AgroSuccessLcsUpdateDecider - 2020-09-07
+
+#### CHANGED
+
+- There was a bug caused by doing reference comparison rather than value
+  comparison on land-cover state values in `AgroSuccessLcsUpdateDecider`.
+- This is now corrected by using primitive `int` values to represent land-cover
+  states, time in state, and transition times internally within the class
+
 ### 23 - Refactor land-cover succession code - 2020-09-02
 
 #### CHANGED

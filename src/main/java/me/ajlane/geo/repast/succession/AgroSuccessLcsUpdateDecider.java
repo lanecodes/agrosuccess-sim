@@ -55,10 +55,10 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    * @param prevLcs The cell's land cover type in the previous timestep
    * @param prevDeltaD The cell's expected target state in the previous time step
    * @return The cell's land cover type in the next timestep
+   * @implNote We consistently use -1 to encode 'no value' in this method
    */
-  private Integer getThisLcs(Integer prevTin, Integer prevDeltaT, Integer prevLcs,
-      Integer prevDeltaD) {
-    if (prevDeltaT == null && prevDeltaD == null) {
+  private Integer getThisLcs(int prevTin, int prevDeltaT, int prevLcs, int prevDeltaD) {
+    if (prevDeltaT == -1 && prevDeltaD == -1) {
       // S3b (handling null targets not represented in Millington et al. 2009)
       return prevLcs;
     } else if (prevTin < prevDeltaT) {
@@ -92,9 +92,10 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    * @param prevDeltaD The cell's expected target state in the previous time step
    * @param thisDeltaD The cell's target state for the next timestep
    * @return Get the amount of time cell will have been in its state in the next timestep
+   * @implNote We consistently use -1 to encode 'no value' in this method
    */
-  private Integer getThisTimeInState(Integer prevTin, Integer prevLcs, Integer thisLcs,
-      Integer prevDeltaD, Integer thisDeltaD) {
+  private int getThisTimeInState(int prevTin, int prevLcs, int thisLcs,
+      int prevDeltaD, int thisDeltaD) {
     if (thisLcs != prevLcs) {
       // S1a
       return 1;
@@ -121,15 +122,16 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    *        timestep
    * @param thisDeltaT The cell's land cover type in the next timestep
    * @return Total time until land cover transition takes place expected in the next timestep
+   * @implNote We consistently use -1 to encode 'no value' in this method
    */
-  private Integer getThisDeltaT(Integer prevDeltaD, Integer thisDeltaD, Integer prevLcs,
-      Integer thisLcs, Integer prevDeltaT, Integer thisDeltaT) {
-    if (prevDeltaT == null && thisDeltaT != null) {
+  private int getThisDeltaT(int prevDeltaD, int thisDeltaD, int prevLcs,
+      int thisLcs, int prevDeltaT, int thisDeltaT) {
+    if (prevDeltaT == -1 && thisDeltaT != -1) {
       // S2b
-      return new Integer((int) Math.round((1 + thisDeltaT) / 2.0));
-    } else if (thisDeltaD != prevDeltaD && thisLcs == prevLcs && thisDeltaT != null) {
+      return (int) Math.round((1 + thisDeltaT) / 2.0);
+    } else if (thisDeltaD != prevDeltaD && thisLcs == prevLcs && thisDeltaT != -1) {
       // S2a
-      return new Integer((int) Math.round((prevDeltaT + thisDeltaT) / 2.0));
+      return (int) Math.round((prevDeltaT + thisDeltaT) / 2.0);
     } else if (thisDeltaD == prevDeltaD && thisLcs == prevLcs) {
       // S2c
       return prevDeltaT;
@@ -141,34 +143,37 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
 
   /**
    * TODO Refactor {@link #getLcsUpdateMsg} for readability. There are multiple functions in here.
+   *
+   * @implNote We consistently use -1 to encode 'no value' in this method
    */
   @Override
   public LcsUpdateMsg getLcsUpdateMsg(CodedEnvrAntecedent currentEnvrState,
       EnvrSimState envrSimState, CodedEnvrConsequent targetEnvrTrans) {
     // store relevant details about previous state
-    Integer prevDeltaT = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTransitionTime();
-    Integer prevDeltaD = (targetEnvrTrans == null) ? null : targetEnvrTrans.getTargetState();
-    Integer prevLcs = currentEnvrState.getStartState();
+    int prevDeltaT = (targetEnvrTrans == null) ? -1 : (int) targetEnvrTrans.getTransitionTime();
+    int prevDeltaD = (targetEnvrTrans == null) ? -1 : (int) targetEnvrTrans.getTargetState();
+    int prevLcs = currentEnvrState.getStartState();
 
     // work out land cover state for this timestep and update record of physical state of cell
     Integer thisLcs = getThisLcs(envrSimState.getTimeInState(), prevDeltaT, prevLcs, prevDeltaD);
-    CodedEnvrAntecedent nextEnvrState = updatePhysicalState(currentEnvrState, thisLcs, envrSimState);
+    CodedEnvrAntecedent nextEnvrState = updatePhysicalState(currentEnvrState, thisLcs,
+        envrSimState);
 
     // target transition state based on cell's physical attributes
     CodedEnvrConsequent physAttribTrans = transMap.getEnvrConsequent(nextEnvrState);
-    Integer physAttribDeltaT =
-        (physAttribTrans == null) ? null : physAttribTrans.getTransitionTime();
-    Integer physAttribDeltaD = (physAttribTrans == null) ? null : physAttribTrans.getTargetState();
+    int physAttribDeltaT = (physAttribTrans == null) ? -1
+        : (int) physAttribTrans.getTransitionTime();
+    int physAttribDeltaD = (physAttribTrans == null) ? -1
+        : (int) physAttribTrans.getTargetState();
 
     // get updated time in state accounting for if any land cover transitions/ trajectory changes
     // have occurred
-    Integer thisTimeInState =
-        getThisTimeInState(envrSimState.getTimeInState(), prevLcs, thisLcs, prevDeltaD,
-            physAttribDeltaD);
+    int thisTimeInState = getThisTimeInState(envrSimState.getTimeInState(),
+        prevLcs, thisLcs, prevDeltaD, physAttribDeltaD);
 
     // get updated target transition time
-    Integer thisDeltaT =
-        getThisDeltaT(prevDeltaD, physAttribDeltaD, prevLcs, thisLcs, prevDeltaT, physAttribDeltaT);
+    int thisDeltaT = getThisDeltaT(prevDeltaD, physAttribDeltaD,
+        prevLcs, thisLcs, prevDeltaT, physAttribDeltaT);
 
     CodedEnvrConsequent nextTargetState;
     if (thisDeltaT == physAttribDeltaT) {
@@ -203,12 +208,14 @@ public class AgroSuccessLcsUpdateDecider implements LcsUpdateDecider {
    * evaluated after the new land-cover state is determined, but before the new target state is
    * assigned.
    * </p>
+   *
    * @param prevPhysicalState The physical state of the simulation cell as it was in the last time
    *        step
    * @param newLcs The numerical code of the land-cover state for the grid cell in the next time
-     *        step as determined by the succession rules
+   *        step as determined by the succession rules
    * @param envrSimState Simulation state relevant to the physical state update rules
-   * @return Updated environmental state of the simulation cell after applying the environmental update rules
+   * @return Updated environmental state of the simulation cell after applying the environmental
+   *         update rules
    *
    * @see SeedStateUpdater
    * @see SuccessionPathwayUpdater
