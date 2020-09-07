@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 28 - Use Repast Simphony to report land-cover type proportions - 2020-09-08
+
+### CHANGED
+
+- Rather than using my own custom `LctProportionAggregator` to report
+  land-cover proprtions, now use `LctProportionDataSource` that implements
+  `NonAggregateDataSource`.
+
+### ADDED
+
+- New `LctProportionDataSource` class
+
 ### 27 - Remove reference to graph database from context builder - 2020-09-07
 
 #### CHANGED
