@@ -39,17 +39,17 @@ import me.ajlane.geo.repast.soilmoisture.SoilMoistureParams;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureUpdater;
 import me.ajlane.geo.repast.soilmoisture.agrosuccess.AgroSuccessCurveNumberGenerator;
 import me.ajlane.geo.repast.soilmoisture.agrosuccess.SoilMoistureUpdateAction;
-import me.ajlane.geo.repast.succession.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDecider;
-import me.ajlane.geo.repast.succession.CodedLcsTransitionMap;
-import me.ajlane.geo.repast.succession.EnvrStateAliasTranslator;
-import me.ajlane.geo.repast.succession.GraphBasedLcsTransitionMapFactory;
-import me.ajlane.geo.repast.succession.LcsTransitionMapFactory;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
 import me.ajlane.geo.repast.succession.OakAgeUpdater;
 import me.ajlane.geo.repast.succession.SeedStateUpdater;
 import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
+import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
+import me.ajlane.geo.repast.succession.pathway.io.LcsTransitionMapReader;
+import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapReader;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
@@ -288,8 +288,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       String graphModelID, SoilMoistureParams smParams) {
 
     EnvrStateAliasTranslator translator = new AgroSuccessEnvrStateAliasTranslator();
-    LcsTransitionMapFactory fac =
-        new GraphBasedLcsTransitionMapFactory(graph, graphModelID, translator);
+    LcsTransitionMapReader fac =
+        new GraphBasedLcsTransitionMapReader(graph, graphModelID, translator);
     CodedLcsTransitionMap codedMap = fac.getCodedLcsTransitionMap();
 
     // TODO Refactor so oak mortality scaling parameter loaded from graph

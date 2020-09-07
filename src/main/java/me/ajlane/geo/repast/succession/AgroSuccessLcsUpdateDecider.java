@@ -1,5 +1,9 @@
 package me.ajlane.geo.repast.succession;
 
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
+
 /**
  * <p>
  * Implements the ecological succession rules for AgroSuccess.

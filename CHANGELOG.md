@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 23 - Refactor land-cover succession code - 2020-09-02
+
+#### CHANGED
+
+- Introduced various new packages under
+  `me.ajlane.geo.repast.succession.pathway` to contain code used for loading
+  and representing succession pathway models
+- Rename `GraphBasedLcsTransitionMapFactory` to
+  `GraphBasedLcsTransitionMapReader`
+- Rename `LcsTransitionMapFactory` interface to `LcsTransitionMapReader`
+- Make `CodedLcsTransitionMap` and `AliasedLcsTransitionMap` serializable
+- Refactor `LcsTransitionMapReader` so it extends new
+  `CodedLcsTransitionMapReader` and `AliasedLcsTransitionMapReader` interfaces
+  (complies with interface segregation principle).
+
 ### 22 - Add custom build.xml - 2020-09-01
 
 We add a custom build script for generating standalone model jars using Repast

@@ -11,6 +11,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrAntecedent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
+import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 
 /**
  * <p>
