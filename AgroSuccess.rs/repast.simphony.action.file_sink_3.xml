@@ -7,5 +7,5 @@
     <string>Fire occurrence and size</string>
   </sourceIds>
   <fileName>./output/FireSize.txt</fileName>
-  <addTimeStamp>false</addTimeStamp>
+  <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>
