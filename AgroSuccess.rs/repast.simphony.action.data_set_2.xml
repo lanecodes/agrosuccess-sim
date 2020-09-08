@@ -1,0 +1,30 @@
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+  <name>Lct Proportions</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>me.ajlane.neo4j.EmbeddedGraphInstance$1</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-261083532</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map"/>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map">
+    <entry>
+      <string>lct_proportions</string>
+      <repast.simphony.data2.engine.CustomDataSourceDefinition>
+        <id>lct_proportions</id>
+        <dsClassName>repast.model.agrosuccess.reporting.LctProportionDataSource</dsClassName>
+      </repast.simphony.data2.engine.CustomDataSourceDefinition>
+    </entry>
+  </customNADataSources>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

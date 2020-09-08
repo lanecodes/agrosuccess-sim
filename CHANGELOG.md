@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 29 - Update batch run configuration - 2020-09-08
+
+#### CHANGED
+
+- Send land-cover proportions to output directory
+- Batch outputs appear in `./outputs/outputs`
+
 ### 28 - Use Repast Simphony to report land-cover type proportions - 2020-09-08
 
 ### CHANGED
