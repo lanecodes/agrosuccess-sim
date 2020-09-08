@@ -92,7 +92,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     RunEnvironment modelCore = RunEnvironment.getInstance();
     Parameters params = modelCore.getParameters();
-    SimulationID simulationID = new SimulationID(params.getString("studySite"));
+    // SimulationID simulationID = new SimulationID(params.getString("studySite"));
     ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
     modelCore.endAt(params.getInteger("nTicks"));
 
@@ -131,7 +131,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         context.getValueLayer(LscapeLayer.Lct.name()));
     context.add(oakAgeUpdater);
 
-    initLctReporters(context, simulationID);
+    // initLctReporters(context, simulationID);
+    LctProportionAggregator lctPropAggregator =
+        new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
+    context.add(lctPropAggregator);
 
     return context;
   }
