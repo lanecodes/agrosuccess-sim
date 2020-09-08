@@ -2,7 +2,6 @@ package me.ajlane.geo.repast.fire;
 
 import org.apache.log4j.Logger;
 import cern.jet.random.Poisson;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.grid.GridPoint;
@@ -48,7 +47,7 @@ public class DefaultFireManager implements FireManager {
    * <p>
    */
   @Override
-  @ScheduledMethod(start = 1, interval = 1, priority = 1)
+  // @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void startFires() {
     // List<GridPoint> firesStarted = new ArrayList<GridPoint>();
     int numFiresToStart = numFires();
@@ -62,6 +61,7 @@ public class DefaultFireManager implements FireManager {
       // firesStarted.add(initialIgnitionPoint);
       this.fireSpreader.spreadFire(initialIgnitionPoint);
     }
+    logger.debug(numFiresToStart + " fires started this year");
   }
 
   /**

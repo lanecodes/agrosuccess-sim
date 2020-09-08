@@ -14,7 +14,6 @@ import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.random.ArrayUtils;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.context.Context;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.GridValueLayer;
 
 /**
@@ -252,7 +251,7 @@ public class SpatiallyRandomSeedDisperser extends SeedDisperser implements LandC
    * @see me.ajlane.geo.repast.colonisation.LandCoverColoniser#updateJuvenilePresenceLayers()
    */
   @Override
-  @ScheduledMethod(start = 1, interval = 1, priority = 1)
+  // @ScheduledMethod(start = 1, interval = 1, priority = 1)
   public void updateJuvenilePresenceLayers() {
     time++;
     removeDeadSeeds();

@@ -1,9 +1,9 @@
 package me.ajlane.geo.repast.succession;
 
 import java.util.Set;
+import org.apache.log4j.Logger;
 import repast.model.agrosuccess.AgroSuccessLcsUpdater;
 import repast.model.agrosuccess.LscapeLayer;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
@@ -14,6 +14,8 @@ import repast.simphony.valueLayer.ValueLayer;
  * @see AgroSuccessLcsUpdater
  */
 public class OakAgeUpdater {
+
+  final static Logger logger = Logger.getLogger(OakAgeUpdater.class);
   private final IGridValueLayer oakAge;
   private final ValueLayer landCoverType;
   private final Set<Integer> matureOakCodes;
@@ -61,7 +63,7 @@ public class OakAgeUpdater {
    * {@link AgroSuccessLcsUpdater#updateLandscapeLcs()}
    * </p>
    */
-  @ScheduledMethod(start = 1, interval = 1, priority = -1)
+  // @ScheduledMethod(start = 1, interval = 1, priority = -1)
   public void update() {
     for (int x = 0; x < nCols; x++) {
       for (int y = 0; y < nRows; y++) {
@@ -71,6 +73,7 @@ public class OakAgeUpdater {
         this.oakAge.set(newOakAge, x, y);
       }
     }
+    logger.debug("Updated oak age");
   }
 
   /**

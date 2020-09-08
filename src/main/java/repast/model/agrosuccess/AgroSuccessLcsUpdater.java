@@ -1,5 +1,6 @@
 package repast.model.agrosuccess;
 
+import org.apache.log4j.Logger;
 import me.ajlane.geo.repast.soilmoisture.SoilMoistureDiscretiser;
 import me.ajlane.geo.repast.succession.EnvrSimState;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
@@ -10,10 +11,10 @@ import me.ajlane.geo.repast.succession.pathway.coded.CodedEnvrConsequent;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 public class AgroSuccessLcsUpdater implements LcsUpdater {
+  final static Logger logger = Logger.getLogger(AgroSuccessLcsUpdater.class);
   LcsUpdateDecider updateDecider;
   SoilMoistureDiscretiser smDiscretiser;
   int nRows, nCols;
@@ -101,7 +102,7 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
   }
 
   @Override
-  @ScheduledMethod(start = 1, interval = 1, priority = 0)
+  // @ScheduledMethod(start = 1, interval = 1, priority = 0)
   public void updateLandscapeLcs() {
     LcsUpdateMsg updateMsg;
     for (int x = 0; x < nCols; x++) {
@@ -131,6 +132,7 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
         }
       }
     }
+    logger.debug("land-cover state updated in tick " + this.schedule.getTickCount());
   }
 
 }
