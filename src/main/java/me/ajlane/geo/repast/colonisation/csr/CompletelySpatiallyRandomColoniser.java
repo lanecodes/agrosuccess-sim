@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.apache.log4j.Logger;
 import me.ajlane.geo.CartesianGridDouble2D;
 import me.ajlane.geo.GridLoc;
 import me.ajlane.geo.WriteableCartesianGridDouble2D;
@@ -13,7 +14,6 @@ import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.SeedPresence;
 import repast.model.agrosuccess.LscapeLayer;
-import repast.simphony.engine.schedule.ScheduledMethod;
 
 /**
  * Implements the completely spatially random land-cover colonisation model.
@@ -23,6 +23,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
  */
 public class CompletelySpatiallyRandomColoniser implements LandCoverColoniser {
 
+  final static Logger logger = Logger.getLogger(CompletelySpatiallyRandomColoniser.class);
   private final CartesianGridDouble2D landCoverType;
   private final Map<LscapeLayer, WriteableCartesianGridDouble2D> juvenilePresenceLayerMap;
   private final Map<LscapeLayer, Lct> juvenileToLctMap;
@@ -89,7 +90,7 @@ public class CompletelySpatiallyRandomColoniser implements LandCoverColoniser {
   }
 
   @Override
-  @ScheduledMethod(start = 1, interval = 1, priority = 1)
+  // @ScheduledMethod(start = 1, interval = 1, priority = 1)
   // TODO To remove dependency on repast, consider scheduling this action in some other way.
   // E.g. follow the pattern in {@link SoilMoistureUpdateAction}
   public void updateJuvenilePresenceLayers() {
@@ -98,6 +99,7 @@ public class CompletelySpatiallyRandomColoniser implements LandCoverColoniser {
       addJuvenilesInCellsWithCorrespondingMatureVegetation(e.getKey(), e.getValue());
       addColonisingJuveniles(e.getKey(), e.getValue());
     }
+    logger.debug("Juvenile vegetation presence layers updated");
   }
 
   /**

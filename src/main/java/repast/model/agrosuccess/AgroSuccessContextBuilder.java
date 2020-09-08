@@ -13,6 +13,7 @@ import me.ajlane.geo.CartesianGridDouble2D;
 import me.ajlane.geo.WriteableCartesianGridDouble2D;
 import me.ajlane.geo.repast.GridValueLayerAdapter;
 import me.ajlane.geo.repast.ValueLayerAdapter;
+import me.ajlane.geo.repast.colonisation.LandCoverColonisationAction;
 import me.ajlane.geo.repast.colonisation.LandCoverColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomColoniser;
 import me.ajlane.geo.repast.colonisation.csr.CompletelySpatiallyRandomParams;
@@ -27,6 +28,7 @@ import me.ajlane.geo.repast.fire.FlammabilityChecker;
 import me.ajlane.geo.repast.fire.LcfMapGetter;
 import me.ajlane.geo.repast.fire.LcfMapGetterHardCoded;
 import me.ajlane.geo.repast.fire.ReportingRepastFireSpreader;
+import me.ajlane.geo.repast.fire.RunFireSeasonAction;
 import me.ajlane.geo.repast.fire.SlopeRiskCalculator;
 import me.ajlane.geo.repast.fire.WindRiskCalculator;
 import me.ajlane.geo.repast.soilmoisture.AgroSuccessSoilMoistureDiscretiser;
@@ -41,6 +43,7 @@ import me.ajlane.geo.repast.soilmoisture.agrosuccess.SoilMoistureUpdateAction;
 import me.ajlane.geo.repast.succession.AgroSuccessLcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdateDecider;
 import me.ajlane.geo.repast.succession.LcsUpdater;
+import me.ajlane.geo.repast.succession.OakAgeUpdateAction;
 import me.ajlane.geo.repast.succession.OakAgeUpdater;
 import me.ajlane.geo.repast.succession.SeedStateUpdater;
 import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
@@ -108,7 +111,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     LandCoverColoniser landCoverColoniser = initSeedDisperser(context, siteData,
         envrModelParams.getLandCoverColoniserParams());
-    context.add(landCoverColoniser);
+    IAction landCoverColonisation = new LandCoverColonisationAction(landCoverColoniser);
+    // context.add(landCoverColoniser);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 1), landCoverColonisation);
 
     SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context);
     IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
@@ -116,25 +121,33 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
         envrModelParams.getSoilMoistureParams());
-    context.add(lcsUpdater);
+    IAction updateLandCoverState = new UpdateLandCoverStateAction(lcsUpdater);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateLandCoverState);
+    // context.add(lcsUpdater);
 
     FireReporter<GridPoint> fireReporter = new FireReporter<>();
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name()), siteData, siteData,
         siteData, envrModelParams.getFireParams(), fireReporter, schedule);
-    context.add(fireManager);
+    IAction runFireSeason = new RunFireSeasonAction(fireManager);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 1), runFireSeason);
+    // context.add(fireManager);
     context.add(fireReporter);
 
     OakAgeUpdater oakAgeUpdater = initOakAgeUpdater(
         (IGridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name()),
         context.getValueLayer(LscapeLayer.Lct.name()));
-    context.add(oakAgeUpdater);
+    IAction updateOakAge = new OakAgeUpdateAction(oakAgeUpdater);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, -1), updateOakAge);
+    // context.add(oakAgeUpdater);
 
     // initLctReporters(context, simulationID);
     LctProportionAggregator lctPropAggregator =
         new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
     context.add(lctPropAggregator);
+
+    logger.debug(schedule.getActionCount() + " actions scheduled");
 
     return context;
   }

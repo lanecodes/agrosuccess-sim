@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 30 - Refactor method scheduling to use IAction objects - 2020-09-08
+
+While running batch runs I noticed land-cover states were not being updated,
+and fires were not taking place. It turned out that using Repast's
+`@ScheduleMethod` annotation worked during single model runs, when run in batch
+mode using `complete_model.jar` these scheduled methods were not being called.
+
+The workaround is to replace these `@ScheduleMethod` decorators with calls to
+`ISchedule#schedule(ScheduleParameters, IAction)` in the context builder. This
+requires the addition of new classes for each of the environmental model
+pseudo-agents, but is preferable to using the
+`ISchedule.schedule(ScheduleParameters, Object, String, Object...)` which
+violates type safety by requiring reference to scheduled methods by their names
+as strings. Another alternative could be to use anonymous classes that
+implement `IAction` instead.
+
+I would argue this workaround improves code readability anyway, as it avoids
+the need to scatter information about when methods are scheduled to occur
+around the model code. Now it's all in the context builder.
+
+#### CHANGED
+
+- `OakAgeUpdater`, `AgroSuccessLcsUpdater`, `DefaultFireManager`,
+  `SpatiallyRandomSeedDisperser`, and `CompletelySpatiallyRandomColoniser` no
+  longer have `@ScheduleMethod` decorators on their methods to schedule their
+  actions
+- Logging calls added to each of the above pseudo-agent classes to aid in
+  debugging situations where it's not clear if/ when they are being called
+- Calls to `ISchedule#schedule(ScheduleParameters, IAction)` added to the
+  context builder for each of the added `IAction` classes.
+
+#### ADDED
+
+- `LandCoverColonisationAction`, `RunFireSeasonAction`, `OakAgeUpdateAction`,
+  and `UpdateLandCoverStateAction` classes representing the actions carried out
+  by each of the pseudo-agents
+
 ### 29 - Update batch run configuration - 2020-09-08
 
 #### CHANGED
