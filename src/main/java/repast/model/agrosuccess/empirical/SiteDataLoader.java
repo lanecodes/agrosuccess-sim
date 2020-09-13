@@ -175,6 +175,8 @@ public class SiteDataLoader implements SiteAllData {
         new GeoRasterValueLayer(file.getAbsolutePath(), LscapeLayer.Lct.name());
     file.delete(); // Delete file LCT map temporarily extracted from the archive
 
+    logger.info("Loaded NLM number " + mapNum);
+
     IGridValueLayer layer = grvl.getValueLayer();
     checkDimensionsConsistentWithPrevious(layer);
     return layer;

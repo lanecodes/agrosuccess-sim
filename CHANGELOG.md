@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 31 - Add logic to select random NLM or null lanc-cover type maps - 2020-09-17
+
+#### CHANGED
+
+- Whereas `AgroSuccessContextBuilder` used to select the default NLM every time
+  (i.e. number 0), it now randomly samples one of the 100 pre-prepared NLMs in
+  `init_lct_maps.zip`.
+
 ### 30 - Refactor method scheduling to use IAction objects - 2020-09-08
 
 While running batch runs I noticed land-cover states were not being updated,
