@@ -96,7 +96,7 @@ public class ArrayUtilsTest {
 	private ArrayList<Integer> getArrayList(int[] ar) {
 		ArrayList<Integer> al = new ArrayList<Integer>();
 		for (int i=0; i<ar.length; i++) {
-			Integer intObject = new Integer(ar[i]);
+			Integer intObject = Integer.valueOf(ar[i]);
 			al.add(intObject);
 		}
 		return al;

@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/nio/file/FileSystems.html).
   The new implementation is cleaner (better adherance to SRP) and doesn't
   suffer from this issue, so the model now runs on both Java 8 and Java 14.
+- Replace `Integer`, `Long`, `Double`, and `Boolean` constructors with calls to
+  `.valueOf` to avoid complaints about deprecation in later Java versions.
 
 ### 32 - Change scheduling order of environmental model processes - 2020-09-18
 

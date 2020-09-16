@@ -253,7 +253,7 @@ public class RepastGridUtils extends GridUtils {
         runningTotal += gvl.get(x, y) / constDivisor;
       }
     }
-    return (new Double(runningTotal)).hashCode();
+    return (Double.valueOf(runningTotal)).hashCode();
   }
 
   /**

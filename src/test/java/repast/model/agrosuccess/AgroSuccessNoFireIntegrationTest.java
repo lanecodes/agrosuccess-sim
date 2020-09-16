@@ -66,7 +66,7 @@ public class AgroSuccessNoFireIntegrationTest {
     // default value in parameters.xml
     params.setValue("nTicks", 100);
 
-    params.setValue("useDummyData", new Boolean(true));
+    params.setValue("useDummyData", Boolean.TRUE);
 
     // Prevent fires from occurring during tests
     params.setValue("climateIgnitionScalingParam", 0);

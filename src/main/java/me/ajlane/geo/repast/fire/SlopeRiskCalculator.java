@@ -67,7 +67,7 @@ public class SlopeRiskCalculator {
     double slopePct =
         (targetPointElev - sourcePointElev) / runBetweenAdjacentPoints(direction) * 100;
 
-    return new Double(slopePctToRisk(slopePct));
+    return Double.valueOf(slopePctToRisk(slopePct));
   }
 
   /**
