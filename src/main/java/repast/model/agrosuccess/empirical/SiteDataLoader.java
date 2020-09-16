@@ -5,13 +5,6 @@ package repast.model.agrosuccess.empirical;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -214,10 +207,6 @@ public class SiteDataLoader implements SiteAllData {
    * {@code lctFileName} to a temporary directory. Return a {@code File} representing the extracted
    * GeoTiff file.
    *
-   * Takes inspiration from
-   * <a href= "https://stackoverflow.com/questions/5484158#answer-26257086">this</a> SO answer on
-   * using zip files in Java.
-   *
    * @param zipFilePath Path to the zip file containing initial land cover maps.
    * @param lctFileName Name of the file to extract from within the zip archive
    * @return Path to the extracted file, in a temporary directory.
@@ -225,30 +214,8 @@ public class SiteDataLoader implements SiteAllData {
    */
   private static File extractInitialLandCoverMap(File zipFilePath, String lctFileName)
       throws IOException {
-    Path tmpDir;
-    try {
-      tmpDir = Files.createTempDirectory(null);
-    } catch (IOException e) {
-      System.out
-          .println("Could not create temporary directory to extract initial land cover map into.");
-      throw e;
-    }
-    File outputLocation = new File(tmpDir.toFile(), lctFileName);
-    Path zipFile = Paths.get(zipFilePath.toString());
-
-    // Load zip file as filesystem
-    try (FileSystem fileSystem = FileSystems.newFileSystem(zipFile, null)) {
-      // copy file from zip file to output location
-      Path source = fileSystem.getPath(lctFileName);
-      Files.copy(source, outputLocation.toPath());
-    } catch (NoSuchFileException e) {
-      logger.error("Could not find init-landcover file in zip file. " + "Check '" + lctFileName
-          + "' is included in archive " + zipFile.toString() + ".", e);
-      throw e;
-    } catch (FileSystemNotFoundException e) {
-      logger.error("Could not find zip file " + zipFile.toString() + ".", e);
-      throw e;
-    }
+    ZipFileExtractor extractor = new ZipFileExtractor(zipFilePath);
+    File outputLocation = extractor.extract(lctFileName);
     return outputLocation;
   }
 
