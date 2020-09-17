@@ -24,8 +24,11 @@ import org.apache.log4j.Logger;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
 import me.ajlane.geo.repast.fire.WindSpeed;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.LscapeLayer;
 import repast.simphony.space.Dimensions;
+import repast.simphony.space.grid.StrictBorders;
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 
@@ -165,6 +168,15 @@ public class SiteDataLoader implements SiteAllData {
     return getLctMap(0);
   }
 
+  @Override
+  public IGridValueLayer getNullLctMap(int[] gridDimensions, int[] gridOrigin) {
+    IGridValueLayer uniformBurntLayer = new GridValueLayer(
+        LscapeLayer.Lct.name(), Lct.Burnt.getCode(), true,
+        new StrictBorders(), gridDimensions, gridOrigin);
+    checkDimensionsConsistentWithPrevious(uniformBurntLayer);
+    return uniformBurntLayer;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -186,16 +198,33 @@ public class SiteDataLoader implements SiteAllData {
    * Given a zip archive containing initial land cover maps, extract map number {@code mapNum} to a
    * temporary directory. Return a {@code File} representing the extracted GeoTiff file.
    *
-   * Takes inspiration from
-   * <a href= "https://stackoverflow.com/questions/5484158#answer-26257086">this</a> SO answer on
-   * using zip files in Java.
-   *
    * @param zipFilePath Path to the zip file containing initial land cover maps.
    * @param mapNum The number of the initial land cover map to extract from the zip file.
    * @return Path to the extracted file, in a temporary directory.
    * @throws IOException
    */
   private static File extractInitialLandCoverMap(File zipFilePath, int mapNum) throws IOException {
+    String lctFileName = "init-landcover" + Integer.valueOf(mapNum).toString() + ".tif";
+    File outputLocation = extractInitialLandCoverMap(zipFilePath, lctFileName);
+    return outputLocation;
+  }
+
+  /**
+   * Given a zip archive containing initial land cover maps, extract the file named
+   * {@code lctFileName} to a temporary directory. Return a {@code File} representing the extracted
+   * GeoTiff file.
+   *
+   * Takes inspiration from
+   * <a href= "https://stackoverflow.com/questions/5484158#answer-26257086">this</a> SO answer on
+   * using zip files in Java.
+   *
+   * @param zipFilePath Path to the zip file containing initial land cover maps.
+   * @param lctFileName Name of the file to extract from within the zip archive
+   * @return Path to the extracted file, in a temporary directory.
+   * @throws IOException
+   */
+  private static File extractInitialLandCoverMap(File zipFilePath, String lctFileName)
+      throws IOException {
     Path tmpDir;
     try {
       tmpDir = Files.createTempDirectory(null);
@@ -204,7 +233,6 @@ public class SiteDataLoader implements SiteAllData {
           .println("Could not create temporary directory to extract initial land cover map into.");
       throw e;
     }
-    String lctFileName = "init-landcover" + (new Integer(mapNum)).toString() + ".tif";
     File outputLocation = new File(tmpDir.toFile(), lctFileName);
     Path zipFile = Paths.get(zipFilePath.toString());
 
@@ -214,8 +242,8 @@ public class SiteDataLoader implements SiteAllData {
       Path source = fileSystem.getPath(lctFileName);
       Files.copy(source, outputLocation.toPath());
     } catch (NoSuchFileException e) {
-      logger.error("Could not find init-landcover file in zip file. " + "Check map number " + mapNum
-          + " is included in archive " + zipFile.toString() + ".", e);
+      logger.error("Could not find init-landcover file in zip file. " + "Check '" + lctFileName
+          + "' is included in archive " + zipFile.toString() + ".", e);
       throw e;
     } catch (FileSystemNotFoundException e) {
       logger.error("Could not find zip file " + zipFile.toString() + ".", e);
