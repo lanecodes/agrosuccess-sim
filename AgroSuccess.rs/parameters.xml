@@ -6,6 +6,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+				<parameter name="nLctNlms" displayName="Number land-cover type NLMs" type="int" 
+						defaultValue="100" 
+						isReadOnly="true" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
 				<parameter name="mesicThreshold" displayName="Mesic threshold" type="int" 
 						defaultValue="500" 
 						isReadOnly="false" 
@@ -19,6 +25,12 @@
 									
 		/>
 				<parameter name="useDummyData" displayName="Switch to use dummy data (for testing)" type="java.lang.Boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
+		/>
+				<parameter name="useNullLctNlm" displayName="Use land-cover type NLM with all cells burnt" type="java.lang.Boolean" 
 						defaultValue="false" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"

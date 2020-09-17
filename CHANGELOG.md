@@ -20,6 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `init_lct_maps.zip`.
 - Updated `SiteDataLoader` and `DummySiteData` to implement
   `getNullLctMap(int[], int[])`.
+- Add `nLctNlms` parameter to `parameters.xml` to specify the number of NLMs in
+  init_lct_maps.zip
+- Add `useNullLctNlm` parameter to indicate model should use null NLM in which
+  all cells start off in burnt state
 
 ### 30 - Refactor method scheduling to use IAction objects - 2020-09-08
 
