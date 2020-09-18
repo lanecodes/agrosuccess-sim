@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 32 - Change scheduling order of environmental model processes - 2020-09-18
+
+#### CHANGED
+
+This was never clearly thought through and made explicit in the context
+builder. The schedule order is now:
+
+1. Land-cover colonisation
+2. Update soil moisture
+3. Run the fire ignition/ spread model
+4. Land-cover update due to succession
+5. Evaluate oak age and fire frequency, determine whether cells transition from
+   regeneration to secondary succession
+
 ### 31 - Add logic to select random NLM or null lanc-cover type maps - 2020-09-17
 
 #### ADDED

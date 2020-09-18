@@ -114,17 +114,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         envrModelParams.getLandCoverColoniserParams());
     IAction landCoverColonisation = new LandCoverColonisationAction(landCoverColoniser);
     // context.add(landCoverColoniser);
-    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 1), landCoverColonisation);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 3), landCoverColonisation);
 
     SoilMoistureUpdater smCalc = initSoilMoistureCalculator(context);
     IAction updateSM = new SoilMoistureUpdateAction(smCalc, siteData.getTotalAnnualPrecipitation());
-    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateSM);
-
-    LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
-        envrModelParams.getSoilMoistureParams());
-    IAction updateLandCoverState = new UpdateLandCoverStateAction(lcsUpdater);
-    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateLandCoverState);
-    // context.add(lcsUpdater);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 2), updateSM);
 
     FireReporter<GridPoint> fireReporter = new FireReporter<>();
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
@@ -135,6 +129,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     schedule.schedule(ScheduleParameters.createRepeating(1, 1, 1), runFireSeason);
     // context.add(fireManager);
     context.add(fireReporter);
+
+    LcsUpdater lcsUpdater = initLcsUpdater(context, new File(params.getString("lcsTransMapFile")),
+        envrModelParams.getSoilMoistureParams());
+    IAction updateLandCoverState = new UpdateLandCoverStateAction(lcsUpdater);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, 0), updateLandCoverState);
+    // context.add(lcsUpdater);
 
     OakAgeUpdater oakAgeUpdater = initOakAgeUpdater(
         (IGridValueLayer) context.getValueLayer(LscapeLayer.OakAge.name()),
