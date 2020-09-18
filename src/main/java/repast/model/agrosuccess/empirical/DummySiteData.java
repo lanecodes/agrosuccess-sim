@@ -8,7 +8,10 @@ import org.apache.log4j.Logger;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.GeoRasterValueLayer;
 import me.ajlane.geo.repast.fire.WindSpeed;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.LscapeLayer;
+import repast.simphony.space.grid.StrictBorders;
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 public class DummySiteData implements SiteAllData {
@@ -73,7 +76,7 @@ public class DummySiteData implements SiteAllData {
 
   @Override
   public IGridValueLayer getSoilTypeMap(String soilTypeLetter) {
-    String name =  "dummy_51x51_soil_type_uniform_" + soilTypeLetter + ".tif";
+    String name = "dummy_51x51_soil_type_uniform_" + soilTypeLetter + ".tif";
     File file = new File(this.testDataDir, name);
     return readDummyMap(file, LscapeLayer.SoilType);
   }
@@ -90,12 +93,33 @@ public class DummySiteData implements SiteAllData {
     return readDummyMap(file, LscapeLayer.Lct);
   }
 
+  @Override
+  public IGridValueLayer getNullLctMap(int[] gridDimensions, int[] gridOrigin) {
+    IGridValueLayer uniformLayer = uniformDefaultLayer(LscapeLayer.Lct, Lct.Burnt.getCode(),
+        gridDimensions, gridOrigin);
+    return uniformLayer;
+  }
+
   private IGridValueLayer readDummyMap(File dummyFile, LscapeLayer layerType) {
     GeoRasterValueLayer grvl =
         new GeoRasterValueLayer(dummyFile.getAbsolutePath(), layerType.name());
 
     IGridValueLayer layer = grvl.getValueLayer();
     return layer;
+  }
+
+  /**
+   * @param layerType LscapeLayer this {@code GridValueLayer} will correspond to
+   * @param defaultValue Value which will be applied everywhere in this new layer
+   * @param gridDimensions [x, y] dimensions of the new layer
+   * @param gridOrigin [x, y] coordinates of the origin of the new layer
+   * @return Uniform {@code GridValueLayer} specified by the parameters
+   */
+  private IGridValueLayer uniformDefaultLayer(LscapeLayer layerType, int defaultValue,
+      int[] gridDimensions, int[] gridOrigin) {
+    String name = layerType.name();
+    return new GridValueLayer(name, defaultValue, true, new StrictBorders(), gridDimensions,
+        gridOrigin);
   }
 
   @Override

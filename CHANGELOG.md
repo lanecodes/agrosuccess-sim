@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 31 - Add logic to select random NLM or null lanc-cover type maps - 2020-09-17
+
+#### ADDED
+
+- `SiteRasterData` has a new `getNullLctMap(int[], int[])` method that
+  generates a land-cover type map in which all cells are burnt.
+
+#### CHANGED
+
+- Whereas `AgroSuccessContextBuilder` used to select the default NLM every time
+  (i.e. number 0), it now randomly samples one of the 100 pre-prepared NLMs in
+  `init_lct_maps.zip`.
+- Updated `SiteDataLoader` and `DummySiteData` to implement
+  `getNullLctMap(int[], int[])`.
+- Add `nLctNlms` parameter to `parameters.xml` to specify the number of NLMs in
+  init_lct_maps.zip
+- Add `useNullLctNlm` parameter to indicate model should use null NLM in which
+  all cells start off in burnt state
+
 ### 30 - Refactor method scheduling to use IAction objects - 2020-09-08
 
 While running batch runs I noticed land-cover states were not being updated,

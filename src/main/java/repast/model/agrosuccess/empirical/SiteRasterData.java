@@ -1,6 +1,7 @@
 package repast.model.agrosuccess.empirical;
 
 import java.io.IOException;
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 public interface SiteRasterData {
@@ -79,6 +80,20 @@ public interface SiteRasterData {
    * @throws IOException
    */
   IGridValueLayer getLctMap(int mapNum) throws IOException;
+
+  /**
+   * Extract land-cover type map for the 'null' landscape from within {@code init_lct_maps.zip}.
+   *
+   * <p>
+   * The null landscape contains uniform burnt land-cover cells, and is used for isloating the
+   * action of the land-cover succession rules from the effect of heterogeneous initial conditions.
+   * </p>
+   * @param gridDimensions The dimensions of the null land-cover type value layer
+   * @param gridOrigin The origin of hte null land-cover type value layer
+   * @return {@link GridValueLayer} encoding land-cover state for the null land-cover model.
+   * @throws IOException
+   */
+  IGridValueLayer getNullLctMap(int[] gridDimensions, int[] gridOrigin);
 
   /**
    * Grid shape dimensions (how many cells along each axis). Calculated from the Slope map.

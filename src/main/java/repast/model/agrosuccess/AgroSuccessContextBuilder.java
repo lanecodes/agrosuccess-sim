@@ -69,6 +69,7 @@ import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.grid.SimpleGridAdder;
@@ -107,7 +108,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         new SimpleGridAdder<Object>(), false, siteData.getGridDimensions(), new int[] {0, 0});
     GridFactoryFinder.createGridFactory(null).createGrid("Agent Grid", context, gridParams);
 
-    initGridValueLayers(context, siteData);
+    initGridValueLayers(context, siteData, params);
 
     LandCoverColoniser landCoverColoniser = initSeedDisperser(context, siteData,
         envrModelParams.getLandCoverColoniserParams());
@@ -179,8 +180,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @param context
    * @param studyRasterData
+   * @param Repast Simphony model parameters
    */
-  private void initGridValueLayers(Context<Object> context, SiteRasterData siteRasterData) {
+  private void initGridValueLayers(Context<Object> context, SiteRasterData siteRasterData,
+      Parameters params) {
     int[] gridDimensions = siteRasterData.getGridDimensions();
     int[] gridOrigin = new int[] {0, 0}; // Vector space origin for all spatial grids
 
@@ -203,16 +206,32 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     layerList.add(uniformDefaultLayer(LscapeLayer.FireCount, 0, gridDimensions, gridOrigin));
     layerList.add(uniformDefaultLayer(LscapeLayer.OakAge, -1, gridDimensions, gridOrigin));
 
-    try {
-      layerList.add(siteRasterData.getLctMap());
-    } catch (IOException e) {
-      throw new RuntimeException("Could not load initial land cover type map.");
+    if (params.getBoolean("useNullLctNlm")) {
+      layerList.add(siteRasterData.getNullLctMap(gridDimensions, gridOrigin));
+    } else {
+      layerList.add(chooseRandomLctMap(siteRasterData, params.getInteger("nLctNlms")));
     }
 
     for (IGridValueLayer layer : layerList) {
       context.addValueLayer(layer);
     }
 
+  }
+
+  /**
+   * @param siteRasterData Spatially varying data for study site
+   * @param nLctNlms Total number of land-cover NLMs in the input file {@code init_lct_maps.zip}
+   * @return Land-cover type map representing the state of the landscape at the beginning of the
+   *         simulation
+   */
+  private IGridValueLayer chooseRandomLctMap(SiteRasterData siteRasterData, int nLctNlms) {
+    try {
+      int maxLctMapIndex = nLctNlms - 1;
+      int lctMapNum = RandomHelper.nextIntFromTo(0, maxLctMapIndex);
+      return siteRasterData.getLctMap(lctMapNum);
+    } catch (IOException e) {
+      throw new RuntimeException("Could not load initial land cover type map.");
+    }
   }
 
   /**

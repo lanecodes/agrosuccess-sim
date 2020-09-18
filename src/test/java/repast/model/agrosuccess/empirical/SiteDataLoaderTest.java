@@ -1,6 +1,7 @@
 package repast.model.agrosuccess.empirical;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -10,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import me.ajlane.geo.Direction;
 import me.ajlane.geo.repast.fire.WindSpeed;
-import repast.model.agrosuccess.empirical.SiteDataLoader;
+import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.simphony.valueLayer.IGridValueLayer;
 
 public class SiteDataLoaderTest {
@@ -92,6 +93,26 @@ public class SiteDataLoaderTest {
     dataLoader.getFlowDirMap();
     dataLoader.getSoilTypeMap();
     dataLoader.getLctMap();
+  }
+
+  @Test
+  public void navarresNullLctMapShouldLoad() {
+    int[] navarresGridDims = {463, 463};
+    int[] navarresOrigin = {0, 0};
+    IGridValueLayer nullLctMap = dataLoader.getNullLctMap(navarresGridDims, navarresOrigin);
+
+    int width = (int) nullLctMap.getDimensions().getWidth();
+    int height = (int) nullLctMap.getDimensions().getHeight();
+
+    assertEquals(463, width);
+    assertEquals(463, height);
+    assertEquals("Lct", nullLctMap.getName());
+
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        assertEquals(Lct.Burnt.getCode(), (int) nullLctMap.get(x, y));
+      }
+    }
   }
 
   @Test
