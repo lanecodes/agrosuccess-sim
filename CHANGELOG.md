@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-### 33 - Make modifications and additions to run on Rosalind - 2020-09-18
+### 34 - Make modifications and additions to run on Rosalind - 2020-10-21
 
 #### ADDED
 
 - Scripts in `scripts/rosalind` developed by Nick Collier needed to run Repast
   Simphony models on HPCs using the Slurm scheduler.
+- `scripts/rosalind/retrieve-outputs.sh` and `scripts/rosalind/upload-model.sh`
+  to upload moodels to Rosalind and retrieve the combined results.
 - `ZipFileExtractor` class to encapsulate the work of extracting land-cover
   type NLMs from their zip archives
 
