@@ -59,3 +59,9 @@ AgroSuccess.rs/parameters_backup.xml
 
 # Profiling results
 profiling
+
+# Batch configuration file, varies for each version of the model
+batch/batch_params.xml
+
+# Run specific files
+scripts/rosalind/runs
