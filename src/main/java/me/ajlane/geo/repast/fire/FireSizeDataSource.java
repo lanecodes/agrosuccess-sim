@@ -45,6 +45,7 @@ public class FireSizeDataSource implements NonAggregateDataSource {
     StringBuilder sb = new StringBuilder();
     reporter.forEach(fireEvent -> {
       sb.append("(tick=" + fireEvent.getTick()
+          + ", ignitionPoint=" + fireEvent.getIgnitionPoint()
           + ", nCells=" + fireEvent.getBurntCells().size() + "), ");
     });
     return sb.toString();
