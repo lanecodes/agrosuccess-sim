@@ -30,7 +30,7 @@ import repast.simphony.valueLayer.GridValueLayer;
  *
  * <p>
  * This is achieved by calling {@link AgroSuccessContextBuilder#build(Context)} as usual, but
- * setting {@code climateIgnitionScalingParam} to 0, thus preventing any fires from taking place.
+ * setting {@code meanNumFiresPerYear} to 0, thus preventing any fires from taking place.
  * </p>
  *
  * <p>
@@ -69,7 +69,7 @@ public class AgroSuccessNoFireIntegrationTest {
     params.setValue("useDummyData", Boolean.TRUE);
 
     // Prevent fires from occurring during tests
-    params.setValue("climateIgnitionScalingParam", 0);
+    params.setValue("meanNumFiresPerYear", 0);
 
     schedule = new Schedule();
     RunEnvironment.init(schedule, null, params, true);

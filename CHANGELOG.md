@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 36 - Add meanNumFiresPerYear parameter - 2020-10-26
+
+The meanNumFiresPerYear parameter replaces the old climateIgnitionScalingParam
+parameter. The climate ignition scaling parameter assumed a specific model of
+how climate relates to frequency of fire occurrence. During our work to
+calibrate the wildfire model for the different study sites we found that the
+holocene average climate data for some study sites were producing imnplausibly
+low numbers of fire per year. To move to a different and more flexible
+approach, we here move the logic of how the mean number of fires per year is
+calculated out of the simulation model by specifying this as a model parameter
+directly. The former approach of using a climate ignition scale parameter can
+still be used, but the logic to calculate the mean number of fires will need to
+be performed elsewhere.
+
+#### CHANGED
+
+- `AgroSuccess.rs/parameters.xml` updated to refer to `meanNumFiresPerYear`
+  rather than `climateIgnitionScalingParam`
+- Update `FireParams` class
+- Update `ModelParamsRepastParser` to look for `meanNumFiresPerYear` in the
+  Repast parameters rather than `climateIgnitionScalingParam`
+- Update `AgroSuccessContextBuilder` so it no longer calculates mean number of
+  fires from climate ignition scaling parameter and consumes mean number of
+  fires directly. Also remove the method `initFireManager`'s dependence on site
+  climate parameters, as these are no longer used in that method. Note however
+  that the climate parameters are still used in other parts of the model,
+  e.g. the soil moisture calculation.
+- Update references to `climateIgnitionScalingParam` in test code
+
 ### 35 - Add ignition point to reported fires - 2020-10-22
 
 Previously, for each fire occurring in a simulation, we reported only the

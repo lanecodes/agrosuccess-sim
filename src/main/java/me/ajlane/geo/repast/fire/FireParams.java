@@ -2,20 +2,20 @@ package me.ajlane.geo.repast.fire;
 
 public class FireParams {
 
-  private double climateIgnitionScalingParam;
+  private double meanNumFiresPerYear;
   private LcfReplicate lcfReplicate;
 
-  public FireParams(double climateIgnitionScalingParam, LcfReplicate lcfReplicate) {
-    this.climateIgnitionScalingParam = climateIgnitionScalingParam;
+  public FireParams(double meanNumFiresPerYear, LcfReplicate lcfReplicate) {
+    this.meanNumFiresPerYear = meanNumFiresPerYear;
     this.lcfReplicate = lcfReplicate;
   }
 
   /**
-   * @return Climate ignition scaling parameter corresponding to m in Millington et al. 2009 Eq.
-   *         (7). Units are mm / °C.
+   * @return Mean number of fires occurring in the simulation grid in each simulated year.
+   *         Corresponds to λ in Millington et al. 2009 Eq. (7). Units are fires/year.
    */
-  public double getClimateIgnitionScalingParam() {
-    return this.climateIgnitionScalingParam;
+  public double getMeanNumFiresPerYear() {
+    return this.meanNumFiresPerYear;
   }
 
   /**

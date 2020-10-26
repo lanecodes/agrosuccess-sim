@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="climateIgnitionScalingParam" displayName="Climate ignition scaling parameter" type="java.lang.Double" 
-						defaultValue="12.0" 
+				<parameter name="meanNumFiresPerYear" displayName="Mean number of fires occurring in the grid in each simulated year" type="java.lang.Double" 
+						defaultValue="4.1" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

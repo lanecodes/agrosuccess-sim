@@ -52,7 +52,6 @@ import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFac
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.empirical.SiteAllData;
 import repast.model.agrosuccess.empirical.SiteAllDataFactory;
-import repast.model.agrosuccess.empirical.SiteClimateData;
 import repast.model.agrosuccess.empirical.SiteRasterData;
 import repast.model.agrosuccess.empirical.SiteWindData;
 import repast.model.agrosuccess.params.EnvrModelParams;
@@ -124,7 +123,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     FireManager fireManager = initFireManager(context.getValueLayer(LscapeLayer.Dem.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.FireCount.name()), siteData, siteData,
-        siteData, envrModelParams.getFireParams(), fireReporter, schedule);
+        envrModelParams.getFireParams(), fireReporter, schedule);
     IAction runFireSeason = new RunFireSeasonAction(fireManager);
     schedule.schedule(ScheduleParameters.createRepeating(1, 1, 1), runFireSeason);
     // context.add(fireManager);
@@ -348,7 +347,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   private FireManager initFireManager(ValueLayer demLayer, IGridValueLayer lctLayer,
       IGridValueLayer fireCount, SiteWindData windData, SiteRasterData rasterData,
-      SiteClimateData climateData, FireParams fireParams, FireReporter<GridPoint> fireReporter,
+      FireParams fireParams, FireReporter<GridPoint> fireReporter,
       ISchedule schedule) {
     double[] gridCellSize = rasterData.getGridCellPixelSize();
     double aveGridCellSize = (gridCellSize[0] + gridCellSize[1]) / 2;
@@ -356,9 +355,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     SlopeRiskCalculator srCalc = new SlopeRiskCalculator(demLayer, aveGridCellSize);
     WindRiskCalculator wrCalc = new WindRiskCalculator();
     FlammabilityChecker<GridPoint> flamChecker = new DefaultFlammabilityChecker(lctLayer);
-    // Millington et al. 2009 eq 7
-    double meanNumFires = fireParams.getClimateIgnitionScalingParam()
-        * (climateData.getMeanAnnualTemperature() / climateData.getTotalAnnualPrecipitation());
+
+    double meanNumFires = fireParams.getMeanNumFiresPerYear();
     double vegetationMoistureParam = meanNumFires; // lambda parameterises fuel moisture as well as
                                                    // number of fires
     FireSpreader<GridPoint> baseFireSpreader = new DefaultFireSpreader(lctLayer, fireCount, srCalc,

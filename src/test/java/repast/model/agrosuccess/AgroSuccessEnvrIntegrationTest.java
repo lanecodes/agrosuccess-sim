@@ -62,8 +62,8 @@ public class AgroSuccessEnvrIntegrationTest {
 
     params.setValue("useDummyData", Boolean.TRUE);
 
-    // Boost climateIgnitionScalingParameter to ensure fires take place for testing purposes
-    params.setValue("climateIgnitionScalingParam", 24);
+    // Boost meanNumFiresPerYear to ensure fires take place for testing purposes
+    params.setValue("meanNumFiresPerYear", 10);
 
     schedule = new Schedule();
     RunEnvironment.init(schedule, null, params, true);

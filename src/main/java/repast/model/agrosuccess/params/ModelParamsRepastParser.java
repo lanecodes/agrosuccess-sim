@@ -70,7 +70,7 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   private Map<String, Object> getDefaultFireParams() {
     Map<String, Object> m = new HashMap<>();
     m.put("lcfReplicate", LcfReplicate.Default);
-    m.put("climateIgnitionScalingParam", 12.0);
+    m.put("meanNumFiresPerYear", 4.1);
     return m;
   }
 
@@ -99,10 +99,10 @@ public class ModelParamsRepastParser implements EnvrModelParams {
   @Override
   public FireParams getFireParams() {
     String lcfString = getStringParam("lcfReplicate", "Default");
-    double cisParam = getDoubleParam("climateIgnitionScalingParam",
-        (double) this.defaultFireParams.get("climateIgnitionScalingParam"));
+    double meanNumFiresParam = getDoubleParam("meanNumFiresPerYear",
+        (double) this.defaultFireParams.get("meanNumFiresPerYear"));
 
-    return new FireParams(cisParam, LcfReplicate.valueOf(lcfString));
+    return new FireParams(meanNumFiresParam, LcfReplicate.valueOf(lcfString));
   }
 
   /**
