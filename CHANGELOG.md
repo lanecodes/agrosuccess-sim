@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### 35 - Add ignition point to reported fires - 2020-10-22
+
+Previously, for each fire occurring in a simulation, we reported only the
+simulation tick at which the fire occurred and the total number of cells burnt
+in the fire. However this turned out to be insufficient to enable us to
+subsequently distinguish those fires that occurred within the 'experimental
+zone', which is important for subsequent analyses. In this change we report
+also the ignition point of the fire. Analysis code can use this information to
+determine which fires should be counted as occurring within the experimental
+zone.
+
+#### CHANGED
+
+- `me.ajlane.geo.repast.fire.FireSizeDataSource` updated so that it reports the
+  ignition point of each fire in addition to the simulation tick when it
+  occurred and its total size (number of burnt cells).
+
 ### 34 - Make modifications and additions to run on Rosalind - 2020-10-21
 
 #### ADDED
