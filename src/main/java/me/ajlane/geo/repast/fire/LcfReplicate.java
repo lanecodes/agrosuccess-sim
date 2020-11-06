@@ -8,5 +8,5 @@ package me.ajlane.geo.repast.fire;
  *
  */
 public enum LcfReplicate {
-  TF1, TF2, TF3, TF4, Default, TF5, TF6, TF7, TF8
+  TFN4, TFN3, TFN2, TFN1, TF0, TF1, TF2, TF3, TF4, Default, TF5, TF6, TF7, TF8;
 }

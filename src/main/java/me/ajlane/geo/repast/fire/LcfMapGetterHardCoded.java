@@ -25,9 +25,20 @@ public class LcfMapGetterHardCoded implements LcfMapGetter {
    * @return Map from land cover types to land-cover flammability values after Millington et al.
    *         2009.
    */
+  @Override
   public Map<Lct, Double> getMap() {
     Map<Lct, Double> result;
     switch (replicate) {
+      case TFN4:
+        result = tfN4Map();
+      case TFN3:
+        result = tfN3Map();
+      case TFN2:
+        result = tfN2Map();
+      case TFN1:
+        result = tfN1Map();
+      case TF0:
+        result = tf0Map();
       case TF1:
         result = tf1Map();
         break;
@@ -60,6 +71,61 @@ public class LcfMapGetterHardCoded implements LcfMapGetter {
     }
 
     return result;
+  }
+
+  private static Map<Lct, Double> tfN4Map() {
+    Map<Lct, Double> m = new HashMap<>();
+    m.put(Lct.Pine, 0.14);
+    m.put(Lct.TransForest, 0.14);
+    m.put(Lct.Deciduous, 0.13);
+    m.put(Lct.Shrubland, 0.15);
+    m.put(Lct.Oak, 0.13);
+    m = fillCropTypes(m);
+    return m;
+  }
+
+  private static Map<Lct, Double> tfN3Map() {
+    Map<Lct, Double> m = new HashMap<>();
+    m.put(Lct.Pine, 0.15);
+    m.put(Lct.TransForest, 0.15);
+    m.put(Lct.Deciduous, 0.14);
+    m.put(Lct.Shrubland, 0.16);
+    m.put(Lct.Oak, 0.14);
+    m = fillCropTypes(m);
+    return m;
+  }
+
+  private static Map<Lct, Double> tfN2Map() {
+    Map<Lct, Double> m = new HashMap<>();
+    m.put(Lct.Pine, 0.16);
+    m.put(Lct.TransForest, 0.16);
+    m.put(Lct.Deciduous, 0.15);
+    m.put(Lct.Shrubland, 0.17);
+    m.put(Lct.Oak, 0.15);
+    m = fillCropTypes(m);
+    return m;
+  }
+
+  private static Map<Lct, Double> tfN1Map() {
+    Map<Lct, Double> m = new HashMap<>();
+    m.put(Lct.Pine, 0.17);
+    m.put(Lct.TransForest, 0.17);
+    m.put(Lct.Deciduous, 0.16);
+    m.put(Lct.Shrubland, 0.18);
+    m.put(Lct.Oak, 0.16);
+    m = fillCropTypes(m);
+    return m;
+  }
+
+  private static Map<Lct, Double> tf0Map() {
+    Map<Lct, Double> m = new HashMap<>();
+    m.put(Lct.Pine, 0.18);
+    m.put(Lct.TransForest, 0.18);
+    m.put(Lct.Deciduous, 0.17);
+    m.put(Lct.Shrubland, 0.19);
+    m.put(Lct.Oak, 0.17);
+    m = fillCropTypes(m);
+    return m;
   }
 
   private static Map<Lct, Double> tf1Map() {

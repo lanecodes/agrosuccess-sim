@@ -76,7 +76,7 @@
 						defaultValue="Default" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="TF1 TF2 TF3 TF4 Default TF5 TF6 TF7 TF8 "
+									values="TFN4 TFN3 TFN2 TFN1 TF0 TF1 TF2 TF3 TF4 Default TF5 TF6 TF7 TF8 "
 						
 		/>
 				<parameter name="graphPath" displayName="Path to graph data store" type="java.lang.String" 
