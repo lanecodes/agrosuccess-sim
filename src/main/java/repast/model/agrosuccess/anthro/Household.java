@@ -23,6 +23,19 @@ public interface Household {
   boolean subsPlanSatisfied();
 
   /**
+   * Called at the end of the simulated year to cause the household to evaluate its performance in
+   * accumulating sufficient calories. Its success or failure in this respect causes updates to the
+   * household population.
+   */
+  public void updatePopulation();
+
+  /**
+   * Relinquish control of wood and wheat patches currently under the household's control, ready for
+   * the next simulated year.
+   */
+  void releasePatches();
+
+  /**
    * @return Unique identifier for household
    */
   public long getId();

@@ -20,6 +20,9 @@ public class DefaultHouseholdTest {
   private Village village;
 
   @Mock
+  private FarmingPlanCalculator fpCalc;
+
+  @Mock
   private FarmingReturnCalculator frCalc;
 
   @Mock
@@ -37,9 +40,15 @@ public class DefaultHouseholdTest {
    */
   @Test
   public void testClaimPatch() {
-    Household household = DefaultHousehold.builder().initPopulation(5).village(village)
-        .farmingReturnCalculator(frCalc).farmingPlanParams(farmingParams)
-        .woodReturnCalculator(wrCalc).populationUpdateManager(popUpdateManager).id(1).build();
+    Household household = DefaultHousehold.builder()
+        .initPopulation(5)
+        .village(village)
+        .farmingPlanCalculator(fpCalc)
+        .farmingReturnCalculator(frCalc)
+        .farmingPlanParams(farmingParams)
+        .populationUpdateManager(popUpdateManager)
+        .id(1)
+        .build();
 
     // village assumed to be at (1, 1) so the test patches are equidistant
     PatchOption goodFarmPatch = new PatchOption(new GridPoint(0, 0), 1, 0, 1, 0);
@@ -68,14 +77,30 @@ public class DefaultHouseholdTest {
   }
 
   @Test
-  public void testGetId() {
-    Household hhExplicitId = DefaultHousehold.builder().initPopulation(5).village(village)
-        .farmingReturnCalculator(frCalc).farmingPlanParams(farmingParams)
-        .woodReturnCalculator(wrCalc).populationUpdateManager(popUpdateManager).id(42).build();
+  public void testUpdatePopulation() {
+    fail("Not yet implemented");
+  }
 
-    Household hhRandomId = DefaultHousehold.builder().initPopulation(5).village(village)
-        .farmingReturnCalculator(frCalc).farmingPlanParams(farmingParams)
-        .woodReturnCalculator(wrCalc).populationUpdateManager(popUpdateManager).build();
+  @Test
+  public void testGetId() {
+    Household hhExplicitId = DefaultHousehold.builder()
+        .initPopulation(5)
+        .village(village)
+        .farmingPlanCalculator(fpCalc)
+        .farmingReturnCalculator(frCalc)
+        .farmingPlanParams(farmingParams)
+        .populationUpdateManager(popUpdateManager)
+        .id(42)
+        .build();
+
+    Household hhRandomId = DefaultHousehold.builder()
+        .initPopulation(5)
+        .village(village)
+        .farmingPlanCalculator(fpCalc)
+        .farmingReturnCalculator(frCalc)
+        .farmingPlanParams(farmingParams)
+        .populationUpdateManager(popUpdateManager)
+        .build();
 
     assertEquals(42, hhExplicitId.getId());
     assertTrue(hhRandomId.getId() != 0);
