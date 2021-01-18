@@ -278,7 +278,11 @@ To help with this, see the embedded Neo4j database [tutorial](https://neo4j.com/
 
 ## TODO
 
-### Priority
+### Debug AgroSuccessLctUpdateIntegrationTest.java
+
+Currently deltaD and deltaT aren't being updated in integration test and it's not clear why. Also expected logging is not taking place. This test was discovered not passing on 18/1/2021 with the offending code commented out. This should be investigated and explained.
+
+### Legacy
 
 - Look at a demo model and describe in `model-config.md` my understanding of
   the difference in function between `AgroSuccess.rs/context.xml` and
