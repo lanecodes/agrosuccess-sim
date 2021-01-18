@@ -1,0 +1,14 @@
+@startuml
+Sequencer -> LandPatchAllocator : allocatePatches()
+loop each Village
+    LandPatchAllocator -> Village : getHouseholds()
+    LandPatchAllocator -> Village : appraisePatches(Set<PatchOption>)
+    
+    loop each Household
+        LandPatchAllocator -> Household : GridPoint claimPatch(availablePatches: Set<GridPoint>)
+	Household -> Household : calcSubsPlan()
+	Household -> Village : List <PatchOption> getOrderedWheatPatches()
+    
+    end
+end
+@enduml

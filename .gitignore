@@ -24,6 +24,7 @@ model/lct-colours.svg
 model/class-diagram*.jpg
 model/comm-diagram-*.jpg
 model/comm-diagram-*.pdf
+model/sequence-diagram-land-allocation.png
 
 # Derived images of software design model
 model/AgroSuccess-domain-20190205.png
