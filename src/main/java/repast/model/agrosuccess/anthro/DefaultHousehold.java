@@ -35,6 +35,7 @@ public class DefaultHousehold implements Household {
 
   private int population;
   private double massWheatPerHaLastYear;
+  private int subsistencePlan;
 
   private Set<PatchOption> wheatPatchesForYear = new HashSet<>();
 
@@ -136,22 +137,39 @@ public class DefaultHousehold implements Household {
   }
 
   @Override
+  public void calcSubsistencePlan() {
+    this.subsistencePlan = this.farmingPlanCalc.estimateNumWheatPatchesToFarm(this.population,
+        this.massWheatPerHaLastYear);
+  }
+
+  @Override
+  public boolean subsistencePlanIsSatisfied() {
+    if (this.wheatPatchesForYear.size() >= this.subsistencePlan) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public PatchOption claimPatch(Set<PatchOption> availablePatches) {
-    // TODO Auto-generated method stub
-    return null;
+    PatchOption chosenPatch = null;
+    for (PatchOption patch : this.village.getOrderedWheatPatches()) {
+      if (availablePatches.contains(patch)) {
+        chosenPatch = patch;
+        break;
+      }
+    }
+    this.wheatPatchesForYear.add(chosenPatch);
+    return chosenPatch;
   }
 
   @Override
-  public boolean subsPlanSatisfied() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public void updatePopulation() {
-
-    // TODO work out how we calculate wheat returns in kg
-    // TODO Auto-generated method stub
+  public void updatePopulation(double precipitationMm) {
+    double wheatReturnsInKg = this.farmingReturnCalc
+        .getReturns(this.wheatPatchesForYear, precipitationMm);
+    this.population = this.popUpdateManager
+        .newPopulation(this.population, wheatReturnsInKg);
   }
 
   @Override
