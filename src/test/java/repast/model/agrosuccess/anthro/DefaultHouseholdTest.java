@@ -45,7 +45,6 @@ public class DefaultHouseholdTest {
         .village(village)
         .farmingPlanCalculator(fpCalc)
         .farmingReturnCalculator(frCalc)
-        .farmingPlanParams(farmingParams)
         .populationUpdateManager(popUpdateManager)
         .id(1)
         .build();
@@ -88,7 +87,6 @@ public class DefaultHouseholdTest {
         .village(village)
         .farmingPlanCalculator(fpCalc)
         .farmingReturnCalculator(frCalc)
-        .farmingPlanParams(farmingParams)
         .populationUpdateManager(popUpdateManager)
         .id(42)
         .build();
@@ -98,7 +96,6 @@ public class DefaultHouseholdTest {
         .village(village)
         .farmingPlanCalculator(fpCalc)
         .farmingReturnCalculator(frCalc)
-        .farmingPlanParams(farmingParams)
         .populationUpdateManager(popUpdateManager)
         .build();
 

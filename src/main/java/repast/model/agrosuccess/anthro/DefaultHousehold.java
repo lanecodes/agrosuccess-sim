@@ -28,9 +28,6 @@ public class DefaultHousehold implements Household {
 
   private final FarmingPlanCalculator farmingPlanCalc;
   private final FarmingReturnCalculator farmingReturnCalc;
-  private final FarmingPlanParams farmingPlanParams; // TODO Consider removing this as dependency
-                                                     // if unused. Possibly incorporated into
-                                                     // farmingReturnCalc and farmingReturnCalc
   private final PopulationUpdateManager popUpdateManager;
 
   private final long id;
@@ -58,11 +55,7 @@ public class DefaultHousehold implements Household {
   }
 
   public interface FarmingReturnCalcStep {
-    FarmingPlanParamsStep farmingReturnCalculator(FarmingReturnCalculator farmingReturnCalc);
-  }
-
-  public interface FarmingPlanParamsStep {
-    PopulationUpdateManagerStep farmingPlanParams(FarmingPlanParams farmingPlanParams);
+    PopulationUpdateManagerStep farmingReturnCalculator(FarmingReturnCalculator farmingReturnCalc);
   }
 
   public interface PopulationUpdateManagerStep {
@@ -76,10 +69,9 @@ public class DefaultHousehold implements Household {
   }
 
   private static class Builder implements PopulationStep, VillageStep, FarmingPlanCalcStep,
-      FarmingReturnCalcStep, FarmingPlanParamsStep, PopulationUpdateManagerStep, BuildStep {
+      FarmingReturnCalcStep, PopulationUpdateManagerStep, BuildStep {
     private FarmingPlanCalculator farmingPlanCalc;
     private FarmingReturnCalculator farmingReturnCalc;
-    private FarmingPlanParams farmingPlanParams;
     private PopulationUpdateManager popUpdateManager;
 
     private Long id;
@@ -116,15 +108,9 @@ public class DefaultHousehold implements Household {
     }
 
     @Override
-    public FarmingPlanParamsStep farmingReturnCalculator(
+    public PopulationUpdateManagerStep farmingReturnCalculator(
         FarmingReturnCalculator farmingReturnCalc) {
       this.farmingReturnCalc = farmingReturnCalc;
-      return this;
-    }
-
-    @Override
-    public PopulationUpdateManagerStep farmingPlanParams(FarmingPlanParams farmingPlanParams) {
-      this.farmingPlanParams = farmingPlanParams;
       return this;
     }
 
@@ -146,7 +132,6 @@ public class DefaultHousehold implements Household {
     this.village = builder.village;
     this.farmingPlanCalc = builder.farmingPlanCalc;
     this.farmingReturnCalc = builder.farmingReturnCalc;
-    this.farmingPlanParams = builder.farmingPlanParams;
     this.popUpdateManager = builder.popUpdateManager;
   }
 
