@@ -1,14 +1,16 @@
 @startuml
-Sequencer -> LandPatchAllocator : allocatePatches()
+Scheduler -> Household : calcSubsistencePlan()
+Scheduler -> LandPatchAllocator : allocatePatches()
 loop each Village
     LandPatchAllocator -> Village : getHouseholds()
     LandPatchAllocator -> Village : appraisePatches(Set<PatchOption>)
     
     loop each Household
+    	LandPatchAllocator -> Household : boolean subsistencePlanIsSatisfied()
         LandPatchAllocator -> Household : GridPoint claimPatch(availablePatches: Set<GridPoint>)
-	Household -> Household : calcSubsPlan()
 	Household -> Village : List <PatchOption> getOrderedWheatPatches()
-    
     end
 end
+Scheduler -> Household : updatePopulation(precipitationMm: double)
+Scheduler -> Household : releasePatches()
 @enduml
