@@ -11,6 +11,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import me.ajlane.geo.CartesianGridDouble2D;
 import me.ajlane.geo.WriteableCartesianGridDouble2D;
+import me.ajlane.geo.repast.GridPointLocator;
 import me.ajlane.geo.repast.GridValueLayerAdapter;
 import me.ajlane.geo.repast.ValueLayerAdapter;
 import me.ajlane.geo.repast.colonisation.LandCoverColonisationAction;
@@ -50,6 +51,26 @@ import me.ajlane.geo.repast.succession.SuccessionPathwayUpdater;
 import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFactory;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
+import repast.model.agrosuccess.anthro.CalcSubsistencePlanAction;
+import repast.model.agrosuccess.anthro.DefaultHousehold;
+import repast.model.agrosuccess.anthro.DefaultLandPatchAllocator;
+import repast.model.agrosuccess.anthro.DefaultVillage;
+import repast.model.agrosuccess.anthro.DistanceCalculator;
+import repast.model.agrosuccess.anthro.EuclidDistanceCalculator;
+import repast.model.agrosuccess.anthro.FarmPlotValueParams;
+import repast.model.agrosuccess.anthro.FarmingPatchEvaluator;
+import repast.model.agrosuccess.anthro.FarmingPlanCalculator;
+import repast.model.agrosuccess.anthro.FarmingPlanParams;
+import repast.model.agrosuccess.anthro.FarmingReturnCalculator;
+import repast.model.agrosuccess.anthro.Household;
+import repast.model.agrosuccess.anthro.LandPatchAllocator;
+import repast.model.agrosuccess.anthro.PatchEvaluator;
+import repast.model.agrosuccess.anthro.PopulationUpdateManager;
+import repast.model.agrosuccess.anthro.PopulationUpdateParams;
+import repast.model.agrosuccess.anthro.ReleasePatchesAction;
+import repast.model.agrosuccess.anthro.UpdatePopulationAction;
+import repast.model.agrosuccess.anthro.Village;
+import repast.model.agrosuccess.anthro.WoodPatchEvaluator;
 import repast.model.agrosuccess.empirical.SiteAllData;
 import repast.model.agrosuccess.empirical.SiteAllDataFactory;
 import repast.model.agrosuccess.empirical.SiteRasterData;
@@ -146,6 +167,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     LctProportionAggregator lctPropAggregator =
         new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
     context.add(lctPropAggregator);
+
+    Set<Village> villages = new HashSet<>();
+    villages.add(addVillageToContext(context, schedule, siteData));
+    LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages);
+    ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
+    schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
 
     logger.debug(schedule.getActionCount() + " actions scheduled");
 
@@ -382,6 +409,70 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     Set<Integer> matureVegCodes = new HashSet<>(
         Arrays.asList(Lct.TransForest.getCode(), Lct.Oak.getCode()));
     return new OakAgeUpdater(oakAgeLayer, landCoverTypeLayer, matureVegCodes, -1);
+  }
+
+  /**
+   * Add a single village to the simulation context. This should be developed after being used for
+   * testing.
+   *
+   * @param context Simulation context.
+   * @param siteRasterData Raster information, used to calculate the coordinates of the centre of
+   *        the grid.
+   * @return The village that was added to the context.
+   */
+  private Village addVillageToContext(Context<Object> context, ISchedule schedule,
+      SiteAllData siteData) {
+
+    // Build the village object
+    GridPoint centrePoint = new GridPoint((int) (siteData.getGridDimensions()[0] / 2.0),
+        (int) (siteData.getGridDimensions()[1] / 2.0));
+    DistanceCalculator villageDistanceCalc = new EuclidDistanceCalculator(siteData
+        .getGridCellPixelSize()[0],
+        new GridPointLocator(siteData.getGridDimensions(), new int[] {0, 0}));
+    // TODO Review farm plot value params
+    PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(new FarmPlotValueParams(1, 1, 1),
+        villageDistanceCalc);
+    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(null, null); // Dummy, remove from
+                                                                            // village constructor
+    Village theVillage = new DefaultVillage(centrePoint, farmPatchEvaluator, woodPatchEvaluator);
+    context.add(theVillage);
+
+    double gridCellAreaSqM = siteData.getGridCellPixelSize()[0] * siteData
+        .getGridCellPixelSize()[1];
+    // Common to all households
+    FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15);
+    FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(fpParams, gridCellAreaSqM);
+    FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM);
+    PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
+        .birthRateParams(0.066, 0.08, 0.0, 0.375)
+        .deathRateParams(0.0545, 0.09, 0.0, 1.0)
+        .targetYieldBufferFactor(0.1)
+        .build();
+    ScheduleParameters subsPlanSchedule = ScheduleParameters.createRepeating(1, 1, -2);
+    // for land patch allocator
+    ScheduleParameters updatePopulationSchedule = ScheduleParameters.createRepeating(1, 1, -4);
+    ScheduleParameters releasePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -5);
+
+    // Add 10 households
+    for (int i = 0; i < 10; i++) {
+      Household newHousehold = DefaultHousehold.builder()
+          .initPopulation(6)
+          .village(theVillage)
+          .farmingPlanCalculator(fpCalc)
+          .farmingReturnCalculator(frCalc)
+          .populationUpdateManager(new PopulationUpdateManager(popUpdateParams, fpParams,
+              RandomHelper.getBinomial()))
+          .build();
+
+      theVillage.addHousehold(newHousehold);
+      context.add(newHousehold);
+      schedule.schedule(new CalcSubsistencePlanAction(newHousehold), subsPlanSchedule);
+      schedule.schedule(new UpdatePopulationAction(newHousehold,
+          siteData.getTotalAnnualPrecipitation()), updatePopulationSchedule);
+      schedule.schedule(new ReleasePatchesAction(newHousehold), releasePatchesSchedule);
+    }
+
+    return theVillage;
   }
 
   /**
