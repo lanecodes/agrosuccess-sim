@@ -27,7 +27,7 @@ public class FarmingPlanParams {
    *        4.1 from that report.
    * @param cropReseedProp Proportion of the crop \in [0,1] held back to reseed in the next year.
    */
-  FarmingPlanParams(double energyPerPersonPerDay, double energyPerKgWheat, double farmerConScalar,
+  public FarmingPlanParams(double energyPerPersonPerDay, double energyPerKgWheat, double farmerConScalar,
       double cropReseedProp) {
     this.energyPerPersonPerDay =
         checkBounds("energyPerPersonPerDay", energyPerPersonPerDay, 0, Double.MAX_VALUE);
