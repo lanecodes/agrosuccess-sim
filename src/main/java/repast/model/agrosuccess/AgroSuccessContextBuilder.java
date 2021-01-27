@@ -54,6 +54,7 @@ import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.anthro.CalcSubsistencePlanAction;
 import repast.model.agrosuccess.anthro.DefaultHousehold;
 import repast.model.agrosuccess.anthro.DefaultLandPatchAllocator;
+import repast.model.agrosuccess.anthro.DefaultPatchOptionGenerator;
 import repast.model.agrosuccess.anthro.DefaultVillage;
 import repast.model.agrosuccess.anthro.DistanceCalculator;
 import repast.model.agrosuccess.anthro.EuclidDistanceCalculator;
@@ -71,6 +72,7 @@ import repast.model.agrosuccess.anthro.ReleasePatchesAction;
 import repast.model.agrosuccess.anthro.UpdatePopulationAction;
 import repast.model.agrosuccess.anthro.Village;
 import repast.model.agrosuccess.anthro.WoodPatchEvaluator;
+import repast.model.agrosuccess.anthro.WoodPlotValueParams;
 import repast.model.agrosuccess.empirical.SiteAllData;
 import repast.model.agrosuccess.empirical.SiteAllDataFactory;
 import repast.model.agrosuccess.empirical.SiteRasterData;
@@ -170,7 +172,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     Set<Village> villages = new HashSet<>();
     villages.add(addVillageToContext(context, schedule, siteData));
-    LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages);
+    LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
+        new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
+            context.getValueLayer(LscapeLayer.Slope.name())));
     ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
     schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
 
@@ -432,7 +436,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO Review farm plot value params
     PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(new FarmPlotValueParams(1, 1, 1),
         villageDistanceCalc);
-    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(null, null); // Dummy, remove from
+    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0), villageDistanceCalc); // Dummy, remove from
                                                                             // village constructor
     Village theVillage = new DefaultVillage(centrePoint, farmPatchEvaluator, woodPatchEvaluator);
     context.add(theVillage);
@@ -466,10 +470,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
       theVillage.addHousehold(newHousehold);
       context.add(newHousehold);
-      schedule.schedule(new CalcSubsistencePlanAction(newHousehold), subsPlanSchedule);
-      schedule.schedule(new UpdatePopulationAction(newHousehold,
-          siteData.getTotalAnnualPrecipitation()), updatePopulationSchedule);
-      schedule.schedule(new ReleasePatchesAction(newHousehold), releasePatchesSchedule);
+      schedule.schedule(subsPlanSchedule, new CalcSubsistencePlanAction(newHousehold));
+      schedule.schedule(updatePopulationSchedule, new UpdatePopulationAction(newHousehold,
+          siteData.getTotalAnnualPrecipitation()));
+      schedule.schedule(releasePatchesSchedule, new ReleasePatchesAction(newHousehold));
     }
 
     return theVillage;
