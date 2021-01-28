@@ -37,6 +37,7 @@ public class DefaultHousehold implements Household {
 
   private int population;
   private double massWheatPerHaLastYear;
+  private double rasterCellAreaInSqm;
   private int subsistencePlan;
 
   private Set<PatchOption> wheatPatchesForYear = new HashSet<>();
@@ -54,11 +55,12 @@ public class DefaultHousehold implements Household {
   }
 
   public interface FarmingPlanCalcStep {
-    InitMassWheatPerHaLastYearStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
+    WheatYieldParamsStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
   }
 
-  public interface InitMassWheatPerHaLastYearStep {
-    FarmingReturnCalcStep initMassWheatPerHaLastYear(double wheatYieldPerHaInKg);
+  public interface WheatYieldParamsStep {
+    FarmingReturnCalcStep wheatYieldParams(double initMassWheatPerHaLastYear,
+        double rasterCellAreaInSqm);
   }
 
   public interface FarmingReturnCalcStep {
@@ -76,7 +78,7 @@ public class DefaultHousehold implements Household {
   }
 
   private static class Builder implements PopulationStep, VillageStep, FarmingPlanCalcStep,
-      InitMassWheatPerHaLastYearStep, FarmingReturnCalcStep, PopulationUpdateManagerStep,
+      WheatYieldParamsStep, FarmingReturnCalcStep, PopulationUpdateManagerStep,
       BuildStep {
     private FarmingPlanCalculator farmingPlanCalc;
     private FarmingReturnCalculator farmingReturnCalc;
@@ -86,6 +88,7 @@ public class DefaultHousehold implements Household {
     private Village village;
     private int initPopulation;
     private double initMassWheatPerHaLastYear;
+    private double rasterCellAreaInSqm;
 
     @Override
     public DefaultHousehold build() {
@@ -111,15 +114,17 @@ public class DefaultHousehold implements Household {
     }
 
     @Override
-    public InitMassWheatPerHaLastYearStep farmingPlanCalculator(
+    public WheatYieldParamsStep farmingPlanCalculator(
         FarmingPlanCalculator farmingPlanCalc) {
       this.farmingPlanCalc = farmingPlanCalc;
       return this;
     }
 
     @Override
-    public FarmingReturnCalcStep initMassWheatPerHaLastYear(double wheatYieldPerHaInKg) {
-      this.initMassWheatPerHaLastYear = wheatYieldPerHaInKg;
+    public FarmingReturnCalcStep wheatYieldParams(double initMassWheatPerHaLastYear,
+        double rasterCellAreaInSqm) {
+      this.initMassWheatPerHaLastYear = initMassWheatPerHaLastYear;
+      this.rasterCellAreaInSqm = rasterCellAreaInSqm;
       return this;
     }
 
@@ -148,6 +153,7 @@ public class DefaultHousehold implements Household {
     this.village = builder.village;
     this.farmingPlanCalc = builder.farmingPlanCalc;
     this.massWheatPerHaLastYear = builder.initMassWheatPerHaLastYear;
+    this.rasterCellAreaInSqm = builder.rasterCellAreaInSqm;
     this.farmingReturnCalc = builder.farmingReturnCalc;
     this.popUpdateManager = builder.popUpdateManager;
   }
