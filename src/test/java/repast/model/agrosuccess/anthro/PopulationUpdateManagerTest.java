@@ -275,7 +275,10 @@ public class PopulationUpdateManagerTest {
     // new birth rate
     expect(this.binomialDistr.nextInt(currentPop, expectedNewBirthRate)).andReturn(1);
     // new death rate
-    expect(this.binomialDistr.nextInt(currentPop, expectedNewDeathRate)).andReturn(0);
+    // The binomial distribution is not hit to get the number of deaths, because the
+    // death rate is expected to have fallen to 0. Since Binomial.nextInt(5, 0.0) is an
+    // IllegalArgumentException (second argument must be > 0), a deterministic value of
+    // 0 deaths will be returned.
 
     replay(this.binomialDistr, this.farmingPlanParams, this.popUpdateParams);
 

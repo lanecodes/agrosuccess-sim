@@ -457,6 +457,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     ScheduleParameters updatePopulationSchedule = ScheduleParameters.createRepeating(1, 1, -4);
     ScheduleParameters releasePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -5);
 
+    // Need to create default binomial distribution before use.
+    // https://repast.github.io/docs/RepastReference/RepastReference.html#_randomhelper
+    RandomHelper.createBinomial(1, 0.5);
+
     // Add 10 households
     for (int i = 0; i < 10; i++) {
       Household newHousehold = DefaultHousehold.builder()

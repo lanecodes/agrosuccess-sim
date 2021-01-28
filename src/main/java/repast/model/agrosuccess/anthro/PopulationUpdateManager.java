@@ -1,5 +1,6 @@
 package repast.model.agrosuccess.anthro;
 
+import org.apache.log4j.Logger;
 import cern.jet.random.Binomial;
 
 /**
@@ -11,6 +12,7 @@ import cern.jet.random.Binomial;
  *
  */
 public class PopulationUpdateManager {
+  final static Logger logger = Logger.getLogger(PopulationUpdateManager.class);
 
   private final PopulationUpdateParams popUpdateParams;
   private final FarmingPlanParams farmingPlanParams;
@@ -37,8 +39,8 @@ public class PopulationUpdateManager {
    * </p>
    * <p>
    * Note that calling this function updates the state of the {@code PopulationUpdateManager} with
-   * new birth and death rates calculated using the given household population and wheat obtained in the
-   * year.
+   * new birth and death rates calculated using the given household population and wheat obtained in
+   * the year.
    * </p>
    *
    * @param currentPop Number of members of the household
@@ -51,9 +53,24 @@ public class PopulationUpdateManager {
     double calSurplus = calorieSurplus(currentPop, wheatReturnsInKg);
     this.currentBirthRate = newBirthRate(calSurplus, calBuffer);
     this.currentDeathRate = newDeathRate(calSurplus, calBuffer);
+    logger.debug("currentBirthRate: " + this.currentBirthRate + ", currentDeathRate: "
+        + this.currentDeathRate);
 
-    int numBirths = this.binomialDistr.nextInt(currentPop, this.currentBirthRate);
-    int numDeaths = this.binomialDistr.nextInt(currentPop, this.currentDeathRate);
+    // Check to see if birth/ death rates are 0, because if they are then 0 births/ deaths
+    // are certain and avoids IllegalArgumentException
+    // https://dst.lbl.gov/ACSSoftware/colt/api/cern/jet/random/Binomial.html
+    int numBirths, numDeaths;
+    if (this.currentBirthRate <= 0.0) {
+      numBirths = 0;
+    } else {
+      numBirths = this.binomialDistr.nextInt(currentPop, this.currentBirthRate);
+    }
+
+    if (this.currentDeathRate <= 0.0) {
+      numDeaths = 0;
+    } else {
+      numDeaths = this.binomialDistr.nextInt(currentPop, this.currentDeathRate);
+    }
 
     return currentPop + numBirths - numDeaths;
   }
