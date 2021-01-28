@@ -463,6 +463,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
           .initPopulation(6)
           .village(theVillage)
           .farmingPlanCalculator(fpCalc)
+          .initMassWheatPerHaLastYear(3500)
           .farmingReturnCalculator(frCalc)
           .populationUpdateManager(new PopulationUpdateManager(popUpdateParams, fpParams,
               RandomHelper.getBinomial()))

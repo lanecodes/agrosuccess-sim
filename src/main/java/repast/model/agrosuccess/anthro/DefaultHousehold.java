@@ -3,6 +3,7 @@ package repast.model.agrosuccess.anthro;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.apache.log4j.Logger;
 
 /**
  * Household agent in the AgroSuccess simulation model.
@@ -25,6 +26,7 @@ import java.util.UUID;
  *
  */
 public class DefaultHousehold implements Household {
+  final static Logger logger = Logger.getLogger(DefaultHousehold.class);
 
   private final FarmingPlanCalculator farmingPlanCalc;
   private final FarmingReturnCalculator farmingReturnCalc;
@@ -52,7 +54,11 @@ public class DefaultHousehold implements Household {
   }
 
   public interface FarmingPlanCalcStep {
-    FarmingReturnCalcStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
+    InitMassWheatPerHaLastYearStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
+  }
+
+  public interface InitMassWheatPerHaLastYearStep {
+    FarmingReturnCalcStep initMassWheatPerHaLastYear(double wheatYieldPerHaInKg);
   }
 
   public interface FarmingReturnCalcStep {
@@ -70,7 +76,8 @@ public class DefaultHousehold implements Household {
   }
 
   private static class Builder implements PopulationStep, VillageStep, FarmingPlanCalcStep,
-      FarmingReturnCalcStep, PopulationUpdateManagerStep, BuildStep {
+      InitMassWheatPerHaLastYearStep, FarmingReturnCalcStep, PopulationUpdateManagerStep,
+      BuildStep {
     private FarmingPlanCalculator farmingPlanCalc;
     private FarmingReturnCalculator farmingReturnCalc;
     private PopulationUpdateManager popUpdateManager;
@@ -78,6 +85,7 @@ public class DefaultHousehold implements Household {
     private Long id;
     private Village village;
     private int initPopulation;
+    private double initMassWheatPerHaLastYear;
 
     @Override
     public DefaultHousehold build() {
@@ -103,8 +111,15 @@ public class DefaultHousehold implements Household {
     }
 
     @Override
-    public FarmingReturnCalcStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc) {
+    public InitMassWheatPerHaLastYearStep farmingPlanCalculator(
+        FarmingPlanCalculator farmingPlanCalc) {
       this.farmingPlanCalc = farmingPlanCalc;
+      return this;
+    }
+
+    @Override
+    public FarmingReturnCalcStep initMassWheatPerHaLastYear(double wheatYieldPerHaInKg) {
+      this.initMassWheatPerHaLastYear = wheatYieldPerHaInKg;
       return this;
     }
 
@@ -132,18 +147,26 @@ public class DefaultHousehold implements Household {
     this.population = builder.initPopulation;
     this.village = builder.village;
     this.farmingPlanCalc = builder.farmingPlanCalc;
+    this.massWheatPerHaLastYear = builder.initMassWheatPerHaLastYear;
     this.farmingReturnCalc = builder.farmingReturnCalc;
     this.popUpdateManager = builder.popUpdateManager;
   }
 
   @Override
   public void calcSubsistencePlan() {
+    logger.debug(this.toString() + " calculating subsistence plan");
+    // TODO initialise massWheatPerHaLastYear. Consider adding initMassWheatPerHaLastYear.
+    // Initialise with the maxWheatYieldPerHaInKg value used to initialise FarmingReturnCalculator.
+    // Also needs to be recalculated during updatePopulation. Can be calculated from number of
+    // patches farmed
+    // and the mass of wheat produced.
     this.subsistencePlan = this.farmingPlanCalc.estimateNumWheatPatchesToFarm(this.population,
         this.massWheatPerHaLastYear);
   }
 
   @Override
   public boolean subsistencePlanIsSatisfied() {
+    logger.debug(this.toString() + " subsistence plan: " + this.subsistencePlan);
     if (this.wheatPatchesForYear.size() >= this.subsistencePlan) {
       return true;
     } else {

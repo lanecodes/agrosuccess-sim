@@ -44,6 +44,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .initMassWheatPerHaLastYear(3500)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)
         .id(1)
@@ -86,6 +87,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .initMassWheatPerHaLastYear(3500)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)
         .id(42)
@@ -95,6 +97,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .initMassWheatPerHaLastYear(3500)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)
         .build();
