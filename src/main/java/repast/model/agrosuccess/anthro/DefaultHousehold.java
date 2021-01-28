@@ -161,11 +161,6 @@ public class DefaultHousehold implements Household {
   @Override
   public void calcSubsistencePlan() {
     logger.debug(this.toString() + " calculating subsistence plan");
-    // TODO initialise massWheatPerHaLastYear. Consider adding initMassWheatPerHaLastYear.
-    // Initialise with the maxWheatYieldPerHaInKg value used to initialise FarmingReturnCalculator.
-    // Also needs to be recalculated during updatePopulation. Can be calculated from number of
-    // patches farmed
-    // and the mass of wheat produced.
     this.subsistencePlan = this.farmingPlanCalc.estimateNumWheatPatchesToFarm(this.population,
         this.massWheatPerHaLastYear);
   }
@@ -199,6 +194,16 @@ public class DefaultHousehold implements Household {
         .getReturns(this.wheatPatchesForYear, precipitationMm);
     this.population = this.popUpdateManager
         .newPopulation(this.population, wheatReturnsInKg);
+    // Also update the wheat yield in the previous year.
+    // TODO think about whether this method should be renamed to reflect the fact that it's updating
+    // multiple aspects of the household's state in response to its economic performance in the
+    // previous year.
+    updateWheatYieldPerHaLastYear(wheatReturnsInKg);
+  }
+
+  private void updateWheatYieldPerHaLastYear(double wheatReturnsInKg) {
+    this.massWheatPerHaLastYear = wheatReturnsInKg / (this.subsistencePlan
+        * this.rasterCellAreaInSqm);
   }
 
   @Override
