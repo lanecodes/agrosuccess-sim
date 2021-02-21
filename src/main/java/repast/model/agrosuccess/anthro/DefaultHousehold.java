@@ -35,12 +35,12 @@ public class DefaultHousehold implements Household {
   private final long id;
   private final Village village;
 
-  private int population;
-  private double massWheatPerHaLastYear;
+  int population;  // Default access specifier to facilitate unit testing
+  double massWheatPerHaLastYear;
   private double rasterCellAreaInSqm;
   private int subsistencePlan;
 
-  private Set<PatchOption> wheatPatchesForYear = new HashSet<>();
+  Set<PatchOption> wheatPatchesForYear = new HashSet<>();
 
   public static PopulationStep builder() {
     return new Builder();
@@ -194,16 +194,15 @@ public class DefaultHousehold implements Household {
         .getReturns(this.wheatPatchesForYear, precipitationMm);
     this.population = this.popUpdateManager
         .newPopulation(this.population, wheatReturnsInKg);
-    // Also update the wheat yield in the previous year.
-    // TODO think about whether this method should be renamed to reflect the fact that it's updating
-    // multiple aspects of the household's state in response to its economic performance in the
-    // previous year.
+    // TODO think about whether {@code updatePopulation} should be renamed to reflect the fact that
+    // it's updating multiple aspects of the household's state in response to its economic
+    // performance in the previous year.
     updateWheatYieldPerHaLastYear(wheatReturnsInKg);
   }
 
   private void updateWheatYieldPerHaLastYear(double wheatReturnsInKg) {
-    this.massWheatPerHaLastYear = wheatReturnsInKg / (this.subsistencePlan
-        * this.rasterCellAreaInSqm);
+    double numHaFarmedThisYear = this.subsistencePlan * this.rasterCellAreaInSqm;
+    this.massWheatPerHaLastYear = wheatReturnsInKg / numHaFarmedThisYear;
   }
 
   @Override
