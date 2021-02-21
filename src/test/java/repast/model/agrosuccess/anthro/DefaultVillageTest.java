@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import org.easymock.EasyMockRule;
 import org.easymock.Mock;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import repast.simphony.space.grid.GridPoint;
@@ -57,9 +58,9 @@ public class DefaultVillageTest {
 
     expect(farmPlotEval.getValue(goodPatch, villageLoc)).andReturn(10.);
     expect(farmPlotEval.getValue(badPatch, villageLoc)).andReturn(5.);
-    expect(woodPlotEval.getValue(goodPatch, villageLoc)).andReturn(10.);
-    expect(woodPlotEval.getValue(badPatch, villageLoc)).andReturn(5.);
-    replay(farmPlotEval, woodPlotEval);
+    // expect(woodPlotEval.getValue(goodPatch, villageLoc)).andReturn(10.);
+    // expect(woodPlotEval.getValue(badPatch, villageLoc)).andReturn(5.);
+    replay(farmPlotEval);
 
     Village village = new DefaultVillage(villageLoc, woodPlotEval, farmPlotEval);
     village.appraisePatches(patchOptions);
@@ -67,10 +68,15 @@ public class DefaultVillageTest {
 
     assertEquals(sortedWheatValue.get(0), goodPatch);
     assertEquals(sortedWheatValue.get(1), badPatch);
-    verify(farmPlotEval, woodPlotEval);
+    verify(farmPlotEval);
   }
 
+  /**
+   * In the current version of AgroSuccess households do not evaluate wood patches, so this test is
+   * ignored.
+   */
   @Test
+  @Ignore
   public void woodPatchOrdering() {
     GridPoint villageLoc = new GridPoint(1, 1);
 

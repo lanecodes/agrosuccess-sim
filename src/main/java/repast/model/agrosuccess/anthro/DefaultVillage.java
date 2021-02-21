@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import repast.simphony.space.grid.GridPoint;
 
 /**
@@ -15,6 +16,7 @@ import repast.simphony.space.grid.GridPoint;
  *
  */
 public class DefaultVillage implements Village {
+  final static Logger logger = Logger.getLogger(DefaultVillage.class);
 
   private GridPoint location;
   private Set<Household> households = new HashSet<>();
@@ -59,9 +61,11 @@ public class DefaultVillage implements Village {
   public void appraisePatches(Set<PatchOption> allPatches) {
     Comparator<PatchOption> farmComparator = new PatchComparator(this.farmPlotEval);
     this.sortedFarmValue = patchOptionsAsSortedList(allPatches, farmComparator);
+    logger.debug("Finished sorting patches by farm value");
 
-    Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
-    this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
+    // Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
+    this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
+    // this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
   }
 
   /**
