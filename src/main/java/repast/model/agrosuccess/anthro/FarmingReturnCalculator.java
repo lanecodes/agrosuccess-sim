@@ -13,14 +13,19 @@ public class FarmingReturnCalculator {
 
   private final double maxWheatYieldPerHaInKg;
   private final double rasterCellAreaInSqm;
+  private final double maxFertility;
 
   /**
    * @param maxWheatYieldPerHaInKg Maximum wheat production per ha expressed as kg/ha
    * @param rasterCellAreaInSqm Area of each raster grid cell in m^2
+   * @param maxFertility The maximum fertility value a grid cell can have. Used to scale fertility
+   *        scores to the range [0, 1]
    */
-  public FarmingReturnCalculator(double maxWheatYieldPerHaInKg, double rasterCellAreaInSqm) {
+  public FarmingReturnCalculator(double maxWheatYieldPerHaInKg, double rasterCellAreaInSqm,
+      double maxFertility) {
     this.maxWheatYieldPerHaInKg = maxWheatYieldPerHaInKg;
     this.rasterCellAreaInSqm = rasterCellAreaInSqm;
+    this.maxFertility = maxFertility;
   }
 
   /**
@@ -52,7 +57,7 @@ public class FarmingReturnCalculator {
    * @return wheat gathering returns for {@code wheatPatch} in kg
    */
   private double returnsForPatch(PatchOption wheatPatch, double precipitationMm) {
-    double prodRate = wheatProdRate(precipitationMm, wheatPatch.getFertility());
+    double prodRate = wheatProdRate(precipitationMm, wheatPatch.getFertility(), this.maxFertility);
     return prodRate * wheatPatch.getSlopeModValue() * this.maxWheatYieldPerHaInKg
         * this.rasterCellAreaInSqm / 10000;
   }
@@ -70,11 +75,13 @@ public class FarmingReturnCalculator {
    *
    * @param precipitationMm
    * @param fertility
+   * @param maxFertility
    * @return wheat production rate
    */
-  private static double wheatProdRate(double precipitationMm, double fertility) {
+  private static double wheatProdRate(double precipitationMm, double fertility,
+      double maxFertility) {
     double precipTerm = 0.51 * Math.log(precipitationMm / 1000) + 1.03;
-    double fertilityTerm = 0.19 * Math.log(fertility) + 1;
+    double fertilityTerm = 0.19 * Math.log(fertility / maxFertility) + 1;
     return (precipTerm + fertilityTerm) / 2;
   }
 

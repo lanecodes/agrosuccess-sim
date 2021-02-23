@@ -446,7 +446,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // Common to all households
     FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15);
     FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(fpParams, gridCellAreaSqM);
-    FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM);
+    FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM, 5);
     PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
         .birthRateParams(0.066, 0.08, 0.0, 0.375)
         .deathRateParams(0.0545, 0.09, 0.0, 1.0)

@@ -14,15 +14,16 @@ public class FarmingReturnCalculatorTest {
   public void testGetReturns() {
     double maxWheatYieldPerHaInKg = 3500.; // after Ullah 2013 Ch. 6
     double rasterCellAreaInSqm = 625.; // 25 m X 25 m
+    double maxFertility = 5;
     double precipitationMm = 500.;
 
-    double patchFertility = 0.6;
+    double patchFertility = 0.6 * 5;
     double slopeModValue = 0.75;
     Set<PatchOption> wheatPatches = new HashSet<>();
     wheatPatches.add(new PatchOption(new GridPoint(0, 0), patchFertility, 0, slopeModValue, 0));
 
     FarmingReturnCalculator farmingRC =
-        new FarmingReturnCalculator(maxWheatYieldPerHaInKg, rasterCellAreaInSqm);
+        new FarmingReturnCalculator(maxWheatYieldPerHaInKg, rasterCellAreaInSqm, maxFertility);
 
     double returns = farmingRC.getReturns(wheatPatches, precipitationMm);
 
@@ -35,10 +36,11 @@ public class FarmingReturnCalculatorTest {
   public void testGetReturnsMultiplePatches() {
     double maxWheatYieldPerHaInKg = 3500.; // after Ullah 2013 Ch. 6
     double rasterCellAreaInSqm = 625.; // 25 m X 25 m
+    double maxFertility = 5;
     double precipitationMm = 500.;
 
-    double patchFertility1 = 0.6;
-    double patchFertility2 = 0.4;
+    double patchFertility1 = 0.6 * 5;
+    double patchFertility2 = 0.4 * 5;
 
     double slopeModValue1 = 0.75;
     double slopeModValue2 = 0.50;
@@ -49,7 +51,7 @@ public class FarmingReturnCalculatorTest {
     wheatPatches.add(new PatchOption(new GridPoint(0, 0), patchFertility2, 0, slopeModValue2, 0));
 
     FarmingReturnCalculator farmingRC =
-        new FarmingReturnCalculator(maxWheatYieldPerHaInKg, rasterCellAreaInSqm);
+        new FarmingReturnCalculator(maxWheatYieldPerHaInKg, rasterCellAreaInSqm, maxFertility);
 
     double returns = farmingRC.getReturns(wheatPatches, precipitationMm);
 
