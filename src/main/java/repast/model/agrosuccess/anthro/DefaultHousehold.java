@@ -201,7 +201,7 @@ public class DefaultHousehold implements Household {
   }
 
   private void updateWheatYieldPerHaLastYear(double wheatReturnsInKg) {
-    double numHaFarmedThisYear = this.subsistencePlan * this.rasterCellAreaInSqm;
+    double numHaFarmedThisYear = this.subsistencePlan * this.rasterCellAreaInSqm / 10000;
     this.massWheatPerHaLastYear = wheatReturnsInKg / numHaFarmedThisYear;
   }
 
