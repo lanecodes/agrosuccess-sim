@@ -446,7 +446,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     double gridCellAreaSqM = siteData.getGridCellPixelSize()[0] * siteData
         .getGridCellPixelSize()[1];
     // Common to all households
-    FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15);
+    FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15, 300, 50);
     FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(fpParams, gridCellAreaSqM);
     FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM, 5);
     PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()

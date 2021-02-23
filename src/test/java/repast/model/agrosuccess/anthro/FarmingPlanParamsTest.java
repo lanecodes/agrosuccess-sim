@@ -12,7 +12,7 @@ public class FarmingPlanParamsTest {
 
   @Before
   public void setUp() {
-    this.testParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15);
+    this.testParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15, 300, 50);
   }
 
   @Test
@@ -37,12 +37,12 @@ public class FarmingPlanParamsTest {
 
   @Test(expected = ParameterOutOfBoundsException.class)
   public void testErrorCropReseedProp() {
-    new FarmingPlanParams(2500, 3540, 0.75, 1.1);
+    new FarmingPlanParams(2500, 3540, 0.75, 1.1, 300, 50);
   }
 
   @Test(expected = ParameterOutOfBoundsException.class)
   public void testErrorEnergyPerPersonPerDay() {
-    new FarmingPlanParams(-40, 3540, 0.75, 0.15);
+    new FarmingPlanParams(-40, 3540, 0.75, 0.15, 300, 50);
   }
 
 }

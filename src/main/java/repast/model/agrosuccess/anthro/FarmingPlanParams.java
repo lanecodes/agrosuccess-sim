@@ -15,6 +15,9 @@ public class FarmingPlanParams {
   private final double energyPerKgWheat;
   private final double farmerConScalar;
   private final double cropReseedProp;
+  private final double labourAvailability;
+  private final double labourRequirementWheat;
+
 
   /**
    * @param energyPerPersonPerDay Energy in kcal which each member of a household needs to consume
@@ -26,14 +29,23 @@ public class FarmingPlanParams {
    *        <emph>increases</emph> the amount of wheat planted, but this is inconsistent with Eq.
    *        4.1 from that report.
    * @param cropReseedProp Proportion of the crop \in [0,1] held back to reseed in the next year.
+   * @param labourAvailability Number of person-days per year each member of the household is able
+   *        to allocate to agricultural work.
+   * @param labourRequirementWheat Number of person-days per hectare per year required for wheat
+   *        agriculture.
    */
-  public FarmingPlanParams(double energyPerPersonPerDay, double energyPerKgWheat, double farmerConScalar,
-      double cropReseedProp) {
+  public FarmingPlanParams(double energyPerPersonPerDay, double energyPerKgWheat,
+      double farmerConScalar,
+      double cropReseedProp, double labourAvailability, double labourRequirementWheat) {
     this.energyPerPersonPerDay =
         checkBounds("energyPerPersonPerDay", energyPerPersonPerDay, 0, Double.MAX_VALUE);
     this.energyPerKgWheat = checkBounds("energyPerKgWheat", energyPerKgWheat, 0, Double.MAX_VALUE);
     this.farmerConScalar = checkBounds("farmerConScalar", farmerConScalar, 0, Double.MAX_VALUE);
     this.cropReseedProp = checkBounds("cropReseedProp", cropReseedProp, 0, 1);
+    this.labourAvailability = checkBounds("labourAvailability", labourAvailability, 0,
+        Double.MAX_VALUE);
+    this.labourRequirementWheat = checkBounds("labourRequirementWheat", labourRequirementWheat, 0,
+        Double.MAX_VALUE);
   }
 
   private static double checkBounds(String paramName, double param, double lowerBound,
@@ -72,11 +84,26 @@ public class FarmingPlanParams {
     return cropReseedProp;
   }
 
+  /**
+   * @return the labourAvailability
+   */
+  public double getLabourAvailability() {
+    return labourAvailability;
+  }
+
+  /**
+   * @return the labourRequirementWheat
+   */
+  public double getLabourRequirementWheat() {
+    return labourRequirementWheat;
+  }
+
   @Override
   public String toString() {
     return "FarmingPlanParams [energyPerPersonPerDay=" + energyPerPersonPerDay
         + ", energyPerKgWheat=" + energyPerKgWheat + ", farmerConScalar=" + farmerConScalar
-        + ", cropReseedProp=" + cropReseedProp + "]";
+        + ", cropReseedProp=" + cropReseedProp + ", labourAvailability=" + labourAvailability
+        + ", labourRequirementWheat=" + labourRequirementWheat + "]";
   }
 
 }
