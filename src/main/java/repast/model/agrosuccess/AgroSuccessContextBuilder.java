@@ -170,13 +170,15 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         new LctProportionAggregator(context.getValueLayer(LscapeLayer.Lct.name()));
     context.add(lctPropAggregator);
 
-    Set<Village> villages = new HashSet<>();
-    villages.add(addVillageToContext(context, schedule, siteData));
-    LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
-        new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
-            context.getValueLayer(LscapeLayer.Slope.name())));
-    ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
-    schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
+    if (params.getBoolean("includeAnthroAgents")) {
+      Set<Village> villages = new HashSet<>();
+      villages.add(addVillageToContext(context, schedule, siteData));
+      LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
+          new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
+              context.getValueLayer(LscapeLayer.Slope.name())));
+      ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
+      schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
+    }
 
     logger.debug(schedule.getActionCount() + " actions scheduled");
 

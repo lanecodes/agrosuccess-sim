@@ -109,6 +109,13 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
+                <parameter name="includeAnthroAgents" displayName="Include subsistence agriculturalist households"
+                        type="java.lang.Boolean" 
+                        defaultValue="false" 
+                        isReadOnly="false" 
+                        converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+                  
+        />
 		</parameters>
 
 
