@@ -184,6 +184,11 @@ public class DefaultHousehold implements Household {
         break;
       }
     }
+    if (chosenPatch == null) {
+      logger.warn(this + " could not identify an available patch to select");
+    } else {
+      logger.debug(this + " selected patch: " + chosenPatch);
+    }
     this.wheatPatchesForYear.add(chosenPatch);
     return chosenPatch;
   }

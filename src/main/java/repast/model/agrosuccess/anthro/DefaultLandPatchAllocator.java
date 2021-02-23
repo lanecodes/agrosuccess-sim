@@ -68,6 +68,9 @@ public class DefaultLandPatchAllocator implements LandPatchAllocator {
             logger.debug(household.toString() + " subsistence plan satisfied");
             completedHouseholds.add(household);
           } else {
+            if (availablePatches.isEmpty()) {
+              throw new IllegalStateException("No more patches left to allocate");
+            }
             PatchOption selectedPatch = household.claimPatch(availablePatches);
             availablePatches.remove(selectedPatch);
           }
