@@ -440,7 +440,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         villageDistanceCalc);
     PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0), villageDistanceCalc); // Dummy, remove from
                                                                             // village constructor
-    Village theVillage = new DefaultVillage(centrePoint, farmPatchEvaluator, woodPatchEvaluator);
+    Village theVillage = new DefaultVillage(centrePoint, woodPatchEvaluator, farmPatchEvaluator);
     context.add(theVillage);
 
     double gridCellAreaSqM = siteData.getGridCellPixelSize()[0] * siteData
