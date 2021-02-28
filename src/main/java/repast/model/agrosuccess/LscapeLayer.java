@@ -25,7 +25,8 @@ public enum LscapeLayer {
   DeltaD ("target land cover type"),
   DeltaT ("target state transition time in years"),
   FireCount ("number of times the cells have been burnt during the simulation"),
-  OakAge ("number of years mature oak has been present in cells");
+  OakAge ("number of years mature oak has been present in cells"),
+  TimeFarmed ("number of years the land patch has been used for agriculture");
 
   private final String description;
   

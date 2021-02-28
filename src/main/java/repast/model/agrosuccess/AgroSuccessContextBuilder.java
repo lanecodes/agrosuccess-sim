@@ -52,6 +52,7 @@ import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFactory;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.anthro.CalcSubsistencePlanAction;
+import repast.model.agrosuccess.anthro.DalLcsUpdater;
 import repast.model.agrosuccess.anthro.DefaultHousehold;
 import repast.model.agrosuccess.anthro.DefaultLandPatchAllocator;
 import repast.model.agrosuccess.anthro.DefaultPatchOptionGenerator;
@@ -178,6 +179,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
               context.getValueLayer(LscapeLayer.Slope.name())));
       ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
       schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
+
+      LcsUpdater dalLctUpdater = initDalLctUpdater(context);
+      IAction updateDalLandCoverState = new UpdateLandCoverStateAction(dalLctUpdater);
+      schedule.schedule(ScheduleParameters.createRepeating(1, 1, -4), updateDalLandCoverState);
     }
 
     logger.debug(schedule.getActionCount() + " actions scheduled");
@@ -237,6 +242,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     layerList.add(uniformDefaultLayer(LscapeLayer.TimeInState, 0, gridDimensions, gridOrigin));
     layerList.add(uniformDefaultLayer(LscapeLayer.FireCount, 0, gridDimensions, gridOrigin));
     layerList.add(uniformDefaultLayer(LscapeLayer.OakAge, -1, gridDimensions, gridOrigin));
+    layerList.add(uniformDefaultLayer(LscapeLayer.TimeFarmed, 0, gridDimensions, gridOrigin));
 
     if (params.getBoolean("useNullLctNlm")) {
       layerList.add(siteRasterData.getNullLctMap(gridDimensions, gridOrigin));
@@ -484,6 +490,15 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     }
 
     return theVillage;
+  }
+
+  private LcsUpdater initDalLctUpdater(Context<Object> context) {
+    IGridValueLayer landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
+    IGridValueLayer timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
+    IGridValueLayer timeFarmed = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed.name());
+    // TODO set depleted threshold time in parameters file
+    LcsUpdater dalLcsUpdater = new DalLcsUpdater(landCoverType, timeInState, timeFarmed, 50);
+    return dalLcsUpdater;
   }
 
   /**
