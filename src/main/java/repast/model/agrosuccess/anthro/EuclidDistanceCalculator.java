@@ -1,5 +1,7 @@
 package repast.model.agrosuccess.anthro;
 
+import java.util.HashMap;
+import java.util.Map;
 import me.ajlane.geo.repast.GridPointLocator;
 import repast.simphony.space.grid.GridPoint;
 
@@ -12,6 +14,7 @@ public class EuclidDistanceCalculator implements DistanceCalculator {
 
   double gridCellEdgeLength;
   GridPointLocator gridPointLoc;
+  private Map<GridPoint, Double> maxDistMap;
 
   /**
    * @param gridCellEdgeLength Edge length of the grid cells in metres
@@ -20,6 +23,7 @@ public class EuclidDistanceCalculator implements DistanceCalculator {
   public EuclidDistanceCalculator(double gridCellEdgeLength, GridPointLocator gridPointLoc) {
     this.gridCellEdgeLength = gridCellEdgeLength;
     this.gridPointLoc = gridPointLoc;
+    this.maxDistMap = new HashMap<>();
   }
 
   /**
@@ -39,15 +43,23 @@ public class EuclidDistanceCalculator implements DistanceCalculator {
     return this.gridCellEdgeLength * unitCellDist;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public double propMaxDist(GridPoint refPoint, GridPoint tgtPoint) {
-    GridPoint furthestPoint = this.gridPointLoc.furthestPoints(refPoint).iterator().next();
-    double maxDist = distInMetres(refPoint, furthestPoint);
+    double maxDist = getMaxDist(refPoint);
     double dist = distInMetres(refPoint, tgtPoint);
     return dist / maxDist;
+  }
+
+  private double getMaxDist(GridPoint refPoint) {
+    double maxDist;
+    if (this.maxDistMap.containsKey(refPoint)) {
+      maxDist = this.maxDistMap.get(refPoint);
+    } else {
+      GridPoint furthestPoint = this.gridPointLoc.furthestPoints(refPoint).iterator().next();
+      maxDist = distInMetres(refPoint, furthestPoint);
+      this.maxDistMap.put(refPoint, maxDist);
+    }
+    return maxDist;
   }
 
 }

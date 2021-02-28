@@ -156,4 +156,41 @@ public class EuclidDistanceCalculatorTest {
     verify(this.gridPointLoc);
   }
 
+  /**
+   * Intended to test that cached values for the furthest point from the reference point are used
+   * correctly.
+   */
+  @Test
+  public void testMultipleCallsReturnSameResult() {
+    double gridCellEdgeLength = 25.;
+
+    GridPoint refPoint = new GridPoint(2, 1); // two furthest points at (0,4) and (4,4)
+    GridPoint tgtPoint = new GridPoint(4, 4);
+
+    GridPoint fp1 = new GridPoint(0, 4);
+    GridPoint fp2 = new GridPoint(4, 4);
+    Set<GridPoint> furthestPoints = new LinkedHashSet<>();
+    furthestPoints.add(fp1);
+    furthestPoints.add(fp2);
+
+    expect(this.gridPointLoc.isInGrid(refPoint)).andReturn(true).anyTimes();
+    expect(this.gridPointLoc.isInGrid(tgtPoint)).andReturn(true).anyTimes();
+    expect(this.gridPointLoc.isInGrid(fp1)).andReturn(true).anyTimes();
+    expect(this.gridPointLoc.furthestPoints(refPoint)).andReturn(furthestPoints).once();
+    replay(this.gridPointLoc);
+
+    DistanceCalculator distCalc =
+        new EuclidDistanceCalculator(gridCellEdgeLength, this.gridPointLoc);
+
+    // target point is as far away as it can be from the reference point within the grid
+    assertEquals(1.000, distCalc.propMaxDist(refPoint, tgtPoint), this.METRE_ERROR);
+    // this.gridPointLoc.furthestPoints(refPoint) only called once but the same distance returned
+    // multiple times by using cached values.
+    assertEquals(1.000, distCalc.propMaxDist(refPoint, tgtPoint), this.METRE_ERROR);
+    assertEquals(1.000, distCalc.propMaxDist(refPoint, tgtPoint), this.METRE_ERROR);
+    assertEquals(1.000, distCalc.propMaxDist(refPoint, tgtPoint), this.METRE_ERROR);
+
+    verify(this.gridPointLoc);
+  }
+
 }
