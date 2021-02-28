@@ -101,6 +101,23 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
     return (int) oakAge.get(x, y);
   }
 
+  /**
+   * Ensure seed presence is correct if land cover state updated
+   *
+   * @param prevState The state in the previous time step
+   * @param nextState The state after applying the succession update rules
+   * @param x x-coordinate of the cell being updated
+   * @param y y-coordinate of the cell being updated
+   */
+  private void updateSeedPresence(CodedEnvrAntecedent prevState, CodedEnvrAntecedent nextState,
+      int x, int y) {
+    if (prevState.getStartState() != nextState.getStartState()) {
+      this.pine.set(nextState.getPineSeeds(), x, y);
+      this.oak.set(nextState.getOakSeeds(), x, y);
+      this.deciduous.set(nextState.getDeciduousSeeds(), x, y);
+    }
+  }
+
   @Override
   // @ScheduledMethod(start = 1, interval = 1, priority = 0)
   public void updateLandscapeLcs() {
@@ -124,13 +141,7 @@ public class AgroSuccessLcsUpdater implements LcsUpdater {
           deltaT.set(updateMsg.getTargetTransition().getTransitionTime(), x, y);
         }
 
-        // Ensure seed presence is correct if land cover state updated
-        if (updateMsg.getCurrentState().getStartState() != prevEnvrState.getStartState()) {
-          this.pine.set(updateMsg.getCurrentState().getPineSeeds(), x, y);
-          this.oak.set(updateMsg.getCurrentState().getOakSeeds(), x, y);
-          this.deciduous.set(updateMsg.getCurrentState().getDeciduousSeeds(), x, y);
-        }
-      }
+        updateSeedPresence(prevEnvrState, updateMsg.getCurrentState(), x, y);      }
     }
     logger.debug("land-cover state updated in tick " + this.schedule.getTickCount());
   }
