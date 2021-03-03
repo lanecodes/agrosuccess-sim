@@ -1,0 +1,55 @@
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+  <name>Household</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>repast.model.agrosuccess.anthro.DefaultHousehold</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-2077161704</hashCode>
+  </scheduleParams>
+  <atEnd>true</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>Id</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Id</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getId</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Population</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Population</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getPopulation</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>BirthRate</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>BirthRate</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getBirthRate</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>DeathRate</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>DeathRate</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getDeathRate</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

@@ -1,11 +1,15 @@
 <repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.7.0">
-  <name>FireSize</name>
-  <dataSet>Fire Size</dataSet>
+  <name>Household</name>
+  <dataSet>Household</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>Fire occurrence and size</string>
+    <string>Id</string>
+    <string>Population</string>
+    <string>BirthRate</string>
+    <string>DeathRate</string>
+    <string>tick</string>
   </sourceIds>
-  <fileName>./output/FireSize.txt</fileName>
+  <fileName>./output/Household.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>
