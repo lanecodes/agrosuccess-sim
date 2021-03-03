@@ -72,6 +72,7 @@ import repast.model.agrosuccess.anthro.PopulationUpdateParams;
 import repast.model.agrosuccess.anthro.ReleasePatchesAction;
 import repast.model.agrosuccess.anthro.UpdatePopulationAction;
 import repast.model.agrosuccess.anthro.Village;
+import repast.model.agrosuccess.anthro.WheatPatchConverter;
 import repast.model.agrosuccess.anthro.WoodPatchEvaluator;
 import repast.model.agrosuccess.anthro.WoodPlotValueParams;
 import repast.model.agrosuccess.empirical.SiteAllData;
@@ -444,8 +445,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO Review farm plot value params
     PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(new FarmPlotValueParams(1, 1, 1),
         villageDistanceCalc);
-    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0), villageDistanceCalc); // Dummy, remove from
-                                                                            // village constructor
+    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0),
+        villageDistanceCalc); // Dummy, remove from
+    // village constructor
     Village theVillage = new DefaultVillage(centrePoint, woodPatchEvaluator, farmPatchEvaluator);
     context.add(theVillage);
 
@@ -454,6 +456,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // Common to all households
     FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15, 300, 50);
     FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(fpParams, gridCellAreaSqM);
+    WheatPatchConverter wheatPatchConverter = new WheatPatchConverter(
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name()),
+        (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed.name()));
     FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM, 5);
     PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
         .birthRateParams(0.066, 0.08, 0.0, 0.375)
@@ -475,10 +481,12 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
           .initPopulation(6)
           .village(theVillage)
           .farmingPlanCalculator(fpCalc)
+          .wheatPatchConverter(wheatPatchConverter)
           .wheatYieldParams(3500, gridCellAreaSqM)
           .farmingReturnCalculator(frCalc)
           .populationUpdateManager(new PopulationUpdateManager(popUpdateParams, fpParams,
               RandomHelper.getBinomial()))
+          .id(i)
           .build();
 
       theVillage.addHousehold(newHousehold);
@@ -494,8 +502,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
   private LcsUpdater initDalLctUpdater(Context<Object> context) {
     IGridValueLayer landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
-    IGridValueLayer timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name());
-    IGridValueLayer timeFarmed = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed.name());
+    IGridValueLayer timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState
+        .name());
+    IGridValueLayer timeFarmed = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed
+        .name());
     // TODO set depleted threshold time in parameters file
     LcsUpdater dalLcsUpdater = new DalLcsUpdater(landCoverType, timeInState, timeFarmed, 50);
     return dalLcsUpdater;

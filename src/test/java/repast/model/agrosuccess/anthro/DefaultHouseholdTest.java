@@ -42,6 +42,9 @@ public class DefaultHouseholdTest {
   private FarmingPlanCalculator fpCalc;
 
   @Mock
+  private WheatPatchConverter wpConverter;
+
+  @Mock
   private FarmingReturnCalculator frCalc;
 
   @Mock
@@ -62,6 +65,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .wheatPatchConverter(wpConverter)
         .wheatYieldParams(3500, 625)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)
@@ -197,6 +201,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .wheatPatchConverter(wpConverter)
         .wheatYieldParams(3500, 25)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)
@@ -207,6 +212,7 @@ public class DefaultHouseholdTest {
         .initPopulation(5)
         .village(village)
         .farmingPlanCalculator(fpCalc)
+        .wheatPatchConverter(wpConverter)
         .wheatYieldParams(3500, 25)
         .farmingReturnCalculator(frCalc)
         .populationUpdateManager(popUpdateManager)

@@ -29,13 +29,14 @@ public class DefaultHousehold implements Household {
   final static Logger logger = Logger.getLogger(DefaultHousehold.class);
 
   private final FarmingPlanCalculator farmingPlanCalc;
+  private final WheatPatchConverter wheatPatchConverter;
   private final FarmingReturnCalculator farmingReturnCalc;
   private final PopulationUpdateManager popUpdateManager;
 
   private final long id;
   private final Village village;
 
-  int population;  // Default access specifier to facilitate unit testing
+  int population; // Default access specifier to facilitate unit testing
   double massWheatPerHaLastYear;
   private double rasterCellAreaInSqm;
   private int subsistencePlan;
@@ -55,7 +56,11 @@ public class DefaultHousehold implements Household {
   }
 
   public interface FarmingPlanCalcStep {
-    WheatYieldParamsStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
+    WheatPatchConverterStep farmingPlanCalculator(FarmingPlanCalculator farmingPlanCalc);
+  }
+
+  public interface WheatPatchConverterStep {
+    WheatYieldParamsStep wheatPatchConverter(WheatPatchConverter wheatPatchConverter);
   }
 
   public interface WheatYieldParamsStep {
@@ -78,9 +83,10 @@ public class DefaultHousehold implements Household {
   }
 
   private static class Builder implements PopulationStep, VillageStep, FarmingPlanCalcStep,
-      WheatYieldParamsStep, FarmingReturnCalcStep, PopulationUpdateManagerStep,
-      BuildStep {
+      WheatPatchConverterStep, WheatYieldParamsStep, FarmingReturnCalcStep,
+      PopulationUpdateManagerStep, BuildStep {
     private FarmingPlanCalculator farmingPlanCalc;
+    private WheatPatchConverter wheatPatchConverter;
     private FarmingReturnCalculator farmingReturnCalc;
     private PopulationUpdateManager popUpdateManager;
 
@@ -114,9 +120,15 @@ public class DefaultHousehold implements Household {
     }
 
     @Override
-    public WheatYieldParamsStep farmingPlanCalculator(
+    public WheatPatchConverterStep farmingPlanCalculator(
         FarmingPlanCalculator farmingPlanCalc) {
       this.farmingPlanCalc = farmingPlanCalc;
+      return this;
+    }
+
+    @Override
+    public WheatYieldParamsStep wheatPatchConverter(WheatPatchConverter wheatPatchConverter) {
+      this.wheatPatchConverter = wheatPatchConverter;
       return this;
     }
 
@@ -152,6 +164,7 @@ public class DefaultHousehold implements Household {
     this.population = builder.initPopulation;
     this.village = builder.village;
     this.farmingPlanCalc = builder.farmingPlanCalc;
+    this.wheatPatchConverter = builder.wheatPatchConverter;
     this.massWheatPerHaLastYear = builder.initMassWheatPerHaLastYear;
     this.rasterCellAreaInSqm = builder.rasterCellAreaInSqm;
     this.farmingReturnCalc = builder.farmingReturnCalc;
@@ -190,6 +203,7 @@ public class DefaultHousehold implements Household {
       logger.debug(this + " selected patch: " + chosenPatch);
     }
     this.wheatPatchesForYear.add(chosenPatch);
+    this.wheatPatchConverter.convertToWheat(chosenPatch);
     return chosenPatch;
   }
 
@@ -218,6 +232,18 @@ public class DefaultHousehold implements Household {
   @Override
   public long getId() {
     return this.id;
+  }
+
+  public int getPopulation() {
+    return this.population;
+  }
+
+  public double getBirthRate() {
+    return this.popUpdateManager.getCurrentBirthRate();
+  }
+
+  public double getDeathRate() {
+    return this.popUpdateManager.getCurrentDeathRate();
   }
 
 }
