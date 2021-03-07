@@ -4,11 +4,12 @@
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
+    <string>tick</string>
     <string>Id</string>
     <string>Population</string>
     <string>BirthRate</string>
     <string>DeathRate</string>
-    <string>tick</string>
+    <string>SubsistencePlan</string>
   </sourceIds>
   <fileName>./output/Household.txt</fileName>
   <addTimeStamp>true</addTimeStamp>

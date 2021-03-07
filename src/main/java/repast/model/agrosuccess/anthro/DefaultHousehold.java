@@ -246,4 +246,8 @@ public class DefaultHousehold implements Household {
     return this.popUpdateManager.getCurrentDeathRate();
   }
 
+  public double getSubsistencePlan() {
+    return this.subsistencePlan;
+  }
+
 }

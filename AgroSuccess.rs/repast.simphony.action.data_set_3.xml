@@ -12,7 +12,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-2077161704</hashCode>
+    <hashCode>-1973559794</hashCode>
   </scheduleParams>
   <atEnd>true</atEnd>
   <methodDataSources class="linked-hash-map">
@@ -46,6 +46,14 @@
         <id>DeathRate</id>
         <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
         <methodName>getDeathRate</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>SubsistencePlan</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>SubsistencePlan</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getSubsistencePlan</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>
