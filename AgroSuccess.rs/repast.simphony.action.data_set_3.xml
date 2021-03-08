@@ -12,7 +12,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1973559794</hashCode>
+    <hashCode>350647913</hashCode>
   </scheduleParams>
   <atEnd>true</atEnd>
   <methodDataSources class="linked-hash-map">
@@ -30,22 +30,6 @@
         <id>Population</id>
         <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
         <methodName>getPopulation</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>BirthRate</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>BirthRate</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
-        <methodName>getBirthRate</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>DeathRate</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>DeathRate</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
-        <methodName>getDeathRate</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>

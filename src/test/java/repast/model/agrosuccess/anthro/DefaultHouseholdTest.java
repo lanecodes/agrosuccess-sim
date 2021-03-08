@@ -54,7 +54,7 @@ public class DefaultHouseholdTest {
   private WoodReturnCalculator wrCalc;
 
   @Mock
-  private PopulationUpdateManager popUpdateManager;
+  private DynamicPopulationUpdateManager popUpdateManager;
 
   @Mock
   private DefaultHousehold household;

@@ -7,8 +7,6 @@
     <string>tick</string>
     <string>Id</string>
     <string>Population</string>
-    <string>BirthRate</string>
-    <string>DeathRate</string>
     <string>SubsistencePlan</string>
   </sourceIds>
   <fileName>./output/Household.txt</fileName>

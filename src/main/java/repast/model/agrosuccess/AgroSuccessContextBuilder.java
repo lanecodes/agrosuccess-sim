@@ -67,9 +67,8 @@ import repast.model.agrosuccess.anthro.FarmingReturnCalculator;
 import repast.model.agrosuccess.anthro.Household;
 import repast.model.agrosuccess.anthro.LandPatchAllocator;
 import repast.model.agrosuccess.anthro.PatchEvaluator;
-import repast.model.agrosuccess.anthro.PopulationUpdateManager;
-import repast.model.agrosuccess.anthro.PopulationUpdateParams;
 import repast.model.agrosuccess.anthro.ReleasePatchesAction;
+import repast.model.agrosuccess.anthro.StaticPopulationUpdateManager;
 import repast.model.agrosuccess.anthro.UpdatePopulationAction;
 import repast.model.agrosuccess.anthro.Village;
 import repast.model.agrosuccess.anthro.WheatPatchConverter;
@@ -461,11 +460,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed.name()));
     FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM, 5);
-    PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
-        .birthRateParams(0.066, 0.08, 0.0, 0.375)
-        .deathRateParams(0.0545, 0.09, 0.0, 1.0)
-        .targetYieldBufferFactor(0.1)
-        .build();
+//    PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
+//        .birthRateParams(0.066, 0.08, 0.0, 0.1)
+//        .deathRateParams(0.0545, 0.09, 0.0545, 1.0)
+//        .targetYieldBufferFactor(0.1)
+//        .build();
     ScheduleParameters subsPlanSchedule = ScheduleParameters.createRepeating(1, 1, -2);
     // for land patch allocator
     ScheduleParameters updatePopulationSchedule = ScheduleParameters.createRepeating(1, 1, -4);
@@ -484,8 +483,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
           .wheatPatchConverter(wheatPatchConverter)
           .wheatYieldParams(3500, gridCellAreaSqM)
           .farmingReturnCalculator(frCalc)
-          .populationUpdateManager(new PopulationUpdateManager(popUpdateParams, fpParams,
-              RandomHelper.getBinomial()))
+          .populationUpdateManager(new StaticPopulationUpdateManager())
           .id(i)
           .build();
 

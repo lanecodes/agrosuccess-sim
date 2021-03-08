@@ -238,14 +238,6 @@ public class DefaultHousehold implements Household {
     return this.population;
   }
 
-  public double getBirthRate() {
-    return this.popUpdateManager.getCurrentBirthRate();
-  }
-
-  public double getDeathRate() {
-    return this.popUpdateManager.getCurrentDeathRate();
-  }
-
   public double getSubsistencePlan() {
     return this.subsistencePlan;
   }
