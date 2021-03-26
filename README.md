@@ -1,7 +1,7 @@
 # AgroSuccess
 
-Simulation model used for exploring influence of human decision making on
-ecological change.
+Simulation model used for exploring influence of human decision-making on
+land-cover change.
 
 
 ## Implemented study sites
@@ -224,7 +224,6 @@ Footnotes
 - Path to Geographic data
 
 ### Model parameters
-???
 
 ### Logging
 
@@ -268,54 +267,3 @@ Start off by using the Neo4j driver for Java to query a database running on a lo
 1. Create array of land cover types in database. Loop through and print out land cover conversion costs
 2. Review Repast code, think about how to integrate graph into agent decision making
 3. Read global parameters (e.g. Initial no agents, model ID etc) from database into Repast
-
-### ENHANCEMENT Embedding Neo4j into a Java application
-
-Eventually I will want to embed the functionality of `cymod` into a Repast application so that a simulation can be pointed to a collection of `.cql` views which are automatically ingested into an _embedded_ Neo4j database. This will make it possible to run these simulations on machines which don't have a Neo4j server installed on them. This will involve adding Neo4j itself as a [Maven dependency](https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/#_maven)
-
-To help with this, see the embedded Neo4j database [tutorial](https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/) (especially the [source code](https://github.com/neo4j/neo4j-documentation/blob/3.4/embedded-examples/src/main/java/org/neo4j/examples/EmbeddedNeo4j.java)), and this [trick](https://github.com/technige/neo4j-jython-example) for using Neo4j embedded from Jython.
-
-
-## TODO
-
-### Debug AgroSuccessLctUpdateIntegrationTest.java
-
-Currently deltaD and deltaT aren't being updated in integration test and it's not clear why. Also expected logging is not taking place. This test was discovered not passing on 18/1/2021 with the offending code commented out. This should be investigated and explained.
-
-### Legacy
-
-- Look at a demo model and describe in `model-config.md` my understanding of
-  the difference in function between `AgroSuccess.rs/context.xml` and
-  `AgroSuccess.rs/parameters.xml`. I suspect `context.xml` is more closely
-  related to the GUI, whereas `parameters.xml` is used by the
-  `ContextBuilder`.
-- Remove attribute with `id=geoDataDir` from `AgroSuccess.rs/context.xml`. A
-  search of source code on 2019-11-07 showed this doesn't seem to be used
-  anywhere in the model code, and was presumably introduced when I was
-  experimenting prior to introducing `geoDataDirRootString` to
-  `AgroSuccess.rs/parameters.xml`. Test that removing `geoDataDir` doesn't
-  break anything when running Repast Simphony GUI.
-- Remove attribute with `id=studySite` from `AgroSuccess.rs/context.xml`. This
-  has been superceded by `studySite` in `AgroSuccess.rs/parameters.xml`.
-- Rebuild the scenarios specified in `AgroSuccess.rs/scenario.xml`,
-  `AgroSuccess.rs/repast.simphony.action.display_1.xml`, and
-  `AgroSuccess.rs/repast.simphony.action.display_2.xml`. These were created
-  using Repast version 2.6 and may not work properly with 2.7.
-- Remove the parameters `configCypherFilesDir`, `cypherFileSuffix`,
-  `graphDatabaseGloablParamFile`. These relate to processing
-- Add `data-src` directory to model to hold source data. This differs from
-  `data` which holds data ready to be consumed by the simulation.
-
-### Minor
-
-- Replace DOS style line endings in `installation/installation_coordinator.xml`
-  using `M-% C-q C-m RET RET` (see [Dos To Unix]).
-- Add a proper license in `license.txt`.
-- Update `model_description.txt` so that it directs users to look in
-  `target/site` OR investigate how to configure `mvn site` to output generated
-  site files in `docs`.
-- Investigate whether `AgroSuccessEnvrIntegrationTest` can be refactored to use
-  test data instead of study site data. This would enable tests to run much
-  faster.
-
-[Dos To Unix]: https://www.emacswiki.org/emacs/DosToUnix
