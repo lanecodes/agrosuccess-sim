@@ -1,5 +1,7 @@
 # AgroSuccess
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4641430.svg)](https://doi.org/10.5281/zenodo.4641430)
+
 Simulation model used for exploring influence of human decision-making on
 land-cover change.
 
