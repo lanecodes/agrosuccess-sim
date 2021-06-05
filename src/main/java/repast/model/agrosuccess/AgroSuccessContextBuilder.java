@@ -173,7 +173,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     if (params.getBoolean("includeAnthroAgents")) {
       Set<Village> villages = new HashSet<>();
-      villages.add(addVillageToContext(context, schedule, siteData));
+      villages.add(addVillageToContext(context, schedule, siteData,
+          params.getInteger("numHouseholdsPerVillage")));
       LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
           new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
               context.getValueLayer(LscapeLayer.Slope.name())));
@@ -428,12 +429,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * testing.
    *
    * @param context Simulation context.
+   * @param schedule The Repast Simphony schedule.
    * @param siteRasterData Raster information, used to calculate the coordinates of the centre of
    *        the grid.
+   * @param numHouseholds The number of households in the village.
    * @return The village that was added to the context.
    */
   private Village addVillageToContext(Context<Object> context, ISchedule schedule,
-      SiteAllData siteData) {
+      SiteAllData siteData, int numHouseholds) {
 
     // Build the village object
     GridPoint centrePoint = new GridPoint((int) (siteData.getGridDimensions()[0] / 2.0),
@@ -474,8 +477,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // https://repast.github.io/docs/RepastReference/RepastReference.html#_randomhelper
     RandomHelper.createBinomial(1, 0.5);
 
-    // Add 10 households
-    for (int i = 0; i < 10; i++) {
+    // Add households
+    for (int i = 0; i < numHouseholds; i++) {
       Household newHousehold = DefaultHousehold.builder()
           .initPopulation(6)
           .village(theVillage)
