@@ -1,4 +1,4 @@
-<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.7.0">
+<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.8.0">
   <name>Household</name>
   <dataSet>Household</dataSet>
   <delimiter>,</delimiter>
@@ -8,6 +8,7 @@
     <string>Id</string>
     <string>Population</string>
     <string>SubsistencePlan</string>
+    <string>NumWheatPatchesForYear</string>
   </sourceIds>
   <fileName>./output/Household.txt</fileName>
   <addTimeStamp>true</addTimeStamp>

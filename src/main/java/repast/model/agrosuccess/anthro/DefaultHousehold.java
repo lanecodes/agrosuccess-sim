@@ -242,4 +242,8 @@ public class DefaultHousehold implements Household {
     return this.subsistencePlan;
   }
 
+  public int getNumWheatPatchesForYear() {
+    return this.wheatPatchesForYear.size();
+  }
+
 }

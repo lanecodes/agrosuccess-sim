@@ -1,4 +1,4 @@
-<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.7.0">
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.8.0">
   <name>Household</name>
   <type>NON_AGGREGATE</type>
   <sourceType>repast.model.agrosuccess.anthro.DefaultHousehold</sourceType>
@@ -38,6 +38,14 @@
         <id>SubsistencePlan</id>
         <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
         <methodName>getSubsistencePlan</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>NumWheatPatchesForYear</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>NumWheatPatchesForYear</id>
+        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <methodName>getNumWheatPatchesForYear</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

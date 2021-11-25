@@ -73,6 +73,24 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+        <parameter name="farmValueDistanceParam" displayName="Farm value distance parameter" type="double" 
+            defaultValue="1.0" 
+            isReadOnly="false" 
+            converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
+      <parameter name="farmValueFertilityParam" displayName="Farm value fertility parameter" type="double" 
+            defaultValue="1.0" 
+            isReadOnly="false" 
+            converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
+      <parameter name="farmValueLandCoverConversionParam" displayName="Farm value land cover conversion parameter" type="double" 
+            defaultValue="1.0" 
+            isReadOnly="false" 
+            converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
 				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
 						defaultValue="__NULL__"
 						isReadOnly="false" 

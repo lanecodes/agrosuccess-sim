@@ -173,8 +173,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     if (params.getBoolean("includeAnthroAgents")) {
       Set<Village> villages = new HashSet<>();
+      FarmPlotValueParams farmPlotValueParams = new FarmPlotValueParams(params.getDouble(
+          "farmValueDistanceParam"), params.getDouble("farmValueFertilityParam"), params.getDouble(
+              "farmValueLandCoverConversionParam"));
       villages.add(addVillageToContext(context, schedule, siteData,
-          params.getInteger("numHouseholdsPerVillage")));
+          params.getInteger("numHouseholdsPerVillage"), farmPlotValueParams));
       LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
           new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
               context.getValueLayer(LscapeLayer.Slope.name())));
@@ -430,13 +433,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    *
    * @param context Simulation context.
    * @param schedule The Repast Simphony schedule.
-   * @param siteRasterData Raster information, used to calculate the coordinates of the centre of
-   *        the grid.
+   * @param siteData Site data.
    * @param numHouseholds The number of households in the village.
+   * @param farmPlotValueParams Parameters controlling features of farm plots that farmers treat as
+   *        important.
    * @return The village that was added to the context.
    */
   private Village addVillageToContext(Context<Object> context, ISchedule schedule,
-      SiteAllData siteData, int numHouseholds) {
+      SiteAllData siteData, int numHouseholds, FarmPlotValueParams farmPlotValueParams) {
 
     // Build the village object
     GridPoint centrePoint = new GridPoint((int) (siteData.getGridDimensions()[0] / 2.0),
@@ -445,7 +449,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         .getGridCellPixelSize()[0],
         new GridPointLocator(siteData.getGridDimensions(), new int[] {0, 0}));
     // TODO Review farm plot value params
-    PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(new FarmPlotValueParams(1, 1, 1),
+    PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(farmPlotValueParams,
         villageDistanceCalc);
     PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0),
         villageDistanceCalc); // Dummy, remove from
@@ -463,11 +467,11 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
         (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed.name()));
     FarmingReturnCalculator frCalc = new FarmingReturnCalculator(3500, gridCellAreaSqM, 5);
-//    PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
-//        .birthRateParams(0.066, 0.08, 0.0, 0.1)
-//        .deathRateParams(0.0545, 0.09, 0.0545, 1.0)
-//        .targetYieldBufferFactor(0.1)
-//        .build();
+    // PopulationUpdateParams popUpdateParams = PopulationUpdateParams.builder()
+    // .birthRateParams(0.066, 0.08, 0.0, 0.1)
+    // .deathRateParams(0.0545, 0.09, 0.0545, 1.0)
+    // .targetYieldBufferFactor(0.1)
+    // .build();
     ScheduleParameters subsPlanSchedule = ScheduleParameters.createRepeating(1, 1, -2);
     // for land patch allocator
     ScheduleParameters updatePopulationSchedule = ScheduleParameters.createRepeating(1, 1, -4);
