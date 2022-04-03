@@ -134,6 +134,24 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+                <parameter name="firewoodPerCapitaPerYear" displayName="Firewood requirement per capita per year (t/person/year)" type="double" 
+                        defaultValue="1.1" 
+                        isReadOnly="false" 
+                        converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                      
+        />
+                <parameter name="climaxForestBiomassDensity" displayName="Climax forest biomass density (t/ha)" type="double" 
+                        defaultValue="300" 
+                        isReadOnly="false" 
+                        converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                      
+        />
+                <parameter name="firewoodBiomassRemovalRate" displayName="Proportion of biomass per unit area to remove when gathering firewood (unitless)" type="double" 
+                        defaultValue="0.1" 
+                        isReadOnly="false" 
+                        converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                      
+        />
 				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String" 
 						defaultValue="/AgroSuccess/data/geographic" 
 						isReadOnly="true" 
