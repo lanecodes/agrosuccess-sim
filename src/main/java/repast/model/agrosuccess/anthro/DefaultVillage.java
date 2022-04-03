@@ -62,10 +62,10 @@ public class DefaultVillage implements Village {
     Comparator<PatchOption> farmComparator = new PatchComparator(this.farmPlotEval);
     this.sortedFarmValue = patchOptionsAsSortedList(allPatches, farmComparator);
     logger.debug("Finished sorting patches by farm value");
-
-    // Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
-    this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
-    // this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
+    Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
+    // this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
+    this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
+    logger.debug("Finished sorting patches by wood value");
   }
 
   /**

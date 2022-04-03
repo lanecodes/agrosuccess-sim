@@ -91,6 +91,12 @@
             converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
                   
     />
+      <parameter name="woodValueDistanceParam" displayName="Wood value distance parameter" type="double" 
+            defaultValue="1.0" 
+            isReadOnly="false" 
+            converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
 				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
 						defaultValue="__NULL__"
 						isReadOnly="false" 
@@ -134,15 +140,14 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-                <parameter name="firewoodPerCapitaPerYear" displayName="Firewood requirement per capita per year (t/person/year)" type="double" 
-                        defaultValue="1.1" 
+                <parameter name="firewoodPerCapitaPerYear" displayName="Firewood requirement per capita per year (kg/person/year)" type="double" 
+                        defaultValue="1100" 
                         isReadOnly="false" 
                         converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-                      
         />
-                <parameter name="climaxForestBiomassDensity" displayName="Climax forest biomass density (t/ha)" type="double" 
-                        defaultValue="300" 
-                        isReadOnly="false" 
+                <parameter name="climaxForestBiomassDensity" displayName="Climax forest biomass density (kg/ha)" type="double" 
+                        defaultValue="300000" 
+                        isReadOnly="false"
                         converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
                       
         />

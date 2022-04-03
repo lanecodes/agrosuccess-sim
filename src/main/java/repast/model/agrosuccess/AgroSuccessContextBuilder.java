@@ -53,7 +53,6 @@ import me.ajlane.geo.repast.succession.pathway.io.CodedLcsTransitionMapReaderFac
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
 import repast.model.agrosuccess.anthro.CalcSubsistencePlanAction;
 import repast.model.agrosuccess.anthro.DalLcsUpdater;
-import repast.model.agrosuccess.anthro.DefaultHousehold;
 import repast.model.agrosuccess.anthro.DefaultLandPatchAllocator;
 import repast.model.agrosuccess.anthro.DefaultPatchOptionGenerator;
 import repast.model.agrosuccess.anthro.DefaultVillage;
@@ -72,7 +71,10 @@ import repast.model.agrosuccess.anthro.StaticPopulationUpdateManager;
 import repast.model.agrosuccess.anthro.UpdatePopulationAction;
 import repast.model.agrosuccess.anthro.Village;
 import repast.model.agrosuccess.anthro.WheatPatchConverter;
+import repast.model.agrosuccess.anthro.WoodGatheringHousehold;
 import repast.model.agrosuccess.anthro.WoodPatchEvaluator;
+import repast.model.agrosuccess.anthro.WoodPlanCalculator;
+import repast.model.agrosuccess.anthro.WoodPlanParams;
 import repast.model.agrosuccess.anthro.WoodPlotValueParams;
 import repast.model.agrosuccess.empirical.SiteAllData;
 import repast.model.agrosuccess.empirical.SiteAllDataFactory;
@@ -176,8 +178,10 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       FarmPlotValueParams farmPlotValueParams = new FarmPlotValueParams(params.getDouble(
           "farmValueDistanceParam"), params.getDouble("farmValueFertilityParam"), params.getDouble(
               "farmValueLandCoverConversionParam"));
+      WoodPlotValueParams woodPlotValueParams = new WoodPlotValueParams(params.getDouble(
+          "woodValueDistanceParam"));
       villages.add(addVillageToContext(context, schedule, siteData,
-          params.getInteger("numHouseholdsPerVillage"), farmPlotValueParams));
+          params.getInteger("numHouseholdsPerVillage"), farmPlotValueParams, woodPlotValueParams));
       LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
           new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
               context.getValueLayer(LscapeLayer.Slope.name())));
@@ -437,10 +441,13 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    * @param numHouseholds The number of households in the village.
    * @param farmPlotValueParams Parameters controlling features of farm plots that farmers treat as
    *        important.
+   * @paaram woodPlotValueParams Parameters controlling features of wood gathering plots that
+   *         households treat as important.
    * @return The village that was added to the context.
    */
   private Village addVillageToContext(Context<Object> context, ISchedule schedule,
-      SiteAllData siteData, int numHouseholds, FarmPlotValueParams farmPlotValueParams) {
+      SiteAllData siteData, int numHouseholds, FarmPlotValueParams farmPlotValueParams,
+      WoodPlotValueParams woodPlotValueParams) {
 
     // Build the village object
     GridPoint centrePoint = new GridPoint((int) (siteData.getGridDimensions()[0] / 2.0),
@@ -451,9 +458,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // TODO Review farm plot value params
     PatchEvaluator farmPatchEvaluator = new FarmingPatchEvaluator(farmPlotValueParams,
         villageDistanceCalc);
-    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(new WoodPlotValueParams(0),
-        villageDistanceCalc); // Dummy, remove from
-    // village constructor
+    PatchEvaluator woodPatchEvaluator = new WoodPatchEvaluator(woodPlotValueParams,
+        villageDistanceCalc);
     Village theVillage = new DefaultVillage(centrePoint, woodPatchEvaluator, farmPatchEvaluator);
     context.add(theVillage);
 
@@ -472,6 +478,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // .deathRateParams(0.0545, 0.09, 0.0545, 1.0)
     // .targetYieldBufferFactor(0.1)
     // .build();
+    WoodPlanParams wpParams = new WoodPlanParams(1100, 300000, 0.1);
+    WoodPlanCalculator wpCalc = new WoodPlanCalculator(wpParams, gridCellAreaSqM);
+
     ScheduleParameters subsPlanSchedule = ScheduleParameters.createRepeating(1, 1, -2);
     // for land patch allocator
     ScheduleParameters updatePopulationSchedule = ScheduleParameters.createRepeating(1, 1, -4);
@@ -483,13 +492,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
 
     // Add households
     for (int i = 0; i < numHouseholds; i++) {
-      Household newHousehold = DefaultHousehold.builder()
+      Household newHousehold = WoodGatheringHousehold.builder()
           .initPopulation(6)
           .village(theVillage)
           .farmingPlanCalculator(fpCalc)
           .wheatPatchConverter(wheatPatchConverter)
           .wheatYieldParams(3500, gridCellAreaSqM)
           .farmingReturnCalculator(frCalc)
+          .woodPlanCalculator(wpCalc)
           .populationUpdateManager(new StaticPopulationUpdateManager())
           .id(i)
           .build();
