@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import repast.simphony.space.grid.GridPoint;
 
@@ -66,6 +67,8 @@ public class DefaultVillage implements Village {
     // this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
     this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
     logger.debug("Finished sorting patches by wood value");
+    logger.debug("10 highest ranked wood patches: " + this.sortedWoodValue.stream().limit(10).collect(Collectors.toList()));
+    logger.debug("10 lowest ranked wood patches: " + this.sortedWoodValue.stream().skip(Math.max(0, this.sortedWoodValue.size() - 10)).limit(10).collect(Collectors.toList()));
   }
 
   /**

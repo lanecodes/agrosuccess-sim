@@ -36,8 +36,8 @@ public class DefaultPatchOptionGenerator implements PatchOptionGenerator {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         Lct patchLct = this.codeToLctMap.get((int) this.lctMap.get(x, y));
-        PatchOption patchOption =  new PatchOption(new GridPoint(x, y),
-            this.lctValueGetter.getFertility(patchLct), -1,
+        PatchOption patchOption = new PatchOption(new GridPoint(x, y),
+            this.lctValueGetter.getFertility(patchLct), this.lctValueGetter.getWoodValue(patchLct),
             this.lctValueGetter.getSlopeModificationValue(this.slopeMap.get(x, y)),
             this.lctValueGetter.getLandCoverConversionCost(patchLct));
         patchOptions.add(patchOption);

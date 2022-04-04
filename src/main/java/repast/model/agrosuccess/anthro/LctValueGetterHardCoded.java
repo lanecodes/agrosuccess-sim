@@ -62,6 +62,44 @@ public class LctValueGetterHardCoded implements LctValueGetter {
   }
 
   @Override
+  public int getWoodValue(Lct lct) {
+    int woodValue = -1;
+    switch (lct) {
+      case WaterQuarry:
+        woodValue = -1;
+        break;
+      case Burnt:
+        woodValue = 1;
+        break;
+      case Barley:
+        woodValue = -1;
+        break;
+      case Wheat:
+        woodValue = -1;
+        break;
+      case Dal:
+        woodValue = -1;
+        break;
+      case Shrubland:
+        woodValue = -1;
+        break;
+      case Pine:
+        woodValue = 5;
+        break;
+      case TransForest:
+        woodValue = 4;
+        break;
+      case Deciduous:
+        woodValue = 4;
+        break;
+      case Oak:
+        woodValue = 3;
+        break;
+    }
+    return woodValue;
+  }
+
+  @Override
   public double getSlopeModificationValue(double pctSlope) {
     if (pctSlope < 18) {
       return 1.0;
