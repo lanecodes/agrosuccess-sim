@@ -10,7 +10,6 @@ import me.ajlane.geo.repast.succession.pathway.coded.CodedLcsTransitionMap;
 import me.ajlane.geo.repast.succession.pathway.convert.AgroSuccessEnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.convert.EnvrStateAliasTranslator;
 import me.ajlane.geo.repast.succession.pathway.io.LcsTransitionMapReader;
-import me.ajlane.geo.repast.succession.pathway.io.graph.GraphBasedLcsTransitionMapReader;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 /**
@@ -37,7 +36,7 @@ public class GraphBasedLcsTransitionMapReaderTest {
   // TODO Depends on version of model. Should definitely be improved with proper test database
   private static String testDatabaseDirPath = "src/test/resources/databases/agrosuccess-test.db";
   private static String correctModelID = "AgroSuccess-dev";
-  private static int numTransRulesInGraph = 489;
+  private static int numTransRulesInGraph = 572;
 
   @Before
   public void setUp() throws Exception {

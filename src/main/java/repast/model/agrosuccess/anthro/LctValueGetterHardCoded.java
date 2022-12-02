@@ -33,7 +33,7 @@ public class LctValueGetterHardCoded implements LctValueGetter {
       case Burnt:
         fertility = 5;
         break;
-      case Barley:
+      case Grassland:
         fertility = 4;
         break;
       case Wheat:
@@ -71,7 +71,7 @@ public class LctValueGetterHardCoded implements LctValueGetter {
       case Burnt:
         woodValue = 1;
         break;
-      case Barley:
+      case Grassland:
         woodValue = -1;
         break;
       case Wheat:
@@ -122,7 +122,7 @@ public class LctValueGetterHardCoded implements LctValueGetter {
       case Burnt:
         cost = 1;
         break;
-      case Barley:
+      case Grassland:
         cost = 1;
         break;
       case Wheat:

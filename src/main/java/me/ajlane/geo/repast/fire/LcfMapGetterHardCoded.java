@@ -228,13 +228,13 @@ public class LcfMapGetterHardCoded implements LcfMapGetter {
   }
 
   /**
-   * In all scenarios, types Barley, Wheat, and Dal should be treated the same as Shrubland for
+   * In all scenarios, types Grassland, Wheat, and Dal should be treated the same as Shrubland for
    * Land-Cover Flammability puurposes.
    *
    * @return LCF map with Barley, Wheat and Dal set to behave the same as Shrubland.
    */
   private static Map<Lct, Double> fillCropTypes(Map<Lct, Double> m) {
-    m.put(Lct.Barley, m.get(Lct.Shrubland));
+    m.put(Lct.Grassland, m.get(Lct.Shrubland));
     m.put(Lct.Wheat, m.get(Lct.Shrubland));
     m.put(Lct.Dal, m.get(Lct.Shrubland));
     return m;
