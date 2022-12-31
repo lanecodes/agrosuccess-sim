@@ -180,8 +180,16 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
               "farmValueLandCoverConversionParam"));
       WoodPlotValueParams woodPlotValueParams = new WoodPlotValueParams(params.getDouble(
           "woodValueDistanceParam"));
+      FarmingPlanParams farmingPlanParams = new FarmingPlanParams(params.getDouble(
+          "energyPerPersonPerDay"), params.getDouble("energyPerKgWheat"), params.getDouble(
+              "farmerConScalar"), params.getDouble("cropReseedProp"), params.getDouble(
+                  "labourAvailability"), params.getDouble("labourRequirementWheat"));
+      WoodPlanParams woodPlanParams = new WoodPlanParams(params.getDouble(
+          "firewoodPerCapitaPerYear"), params.getDouble("climaxForestBiomassDensity"), params
+              .getDouble("firewoodBiomassRemovalRate"));
       villages.add(addVillageToContext(context, schedule, siteData,
-          params.getInteger("numHouseholdsPerVillage"), farmPlotValueParams, woodPlotValueParams));
+          params.getInteger("numHouseholdsPerVillage"), farmPlotValueParams, woodPlotValueParams,
+          farmingPlanParams, woodPlanParams));
       LandPatchAllocator landPatchAllocator = new DefaultLandPatchAllocator(villages,
           new DefaultPatchOptionGenerator(context.getValueLayer(LscapeLayer.Lct.name()),
               context.getValueLayer(LscapeLayer.Slope.name())));
@@ -449,7 +457,8 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
    */
   private Village addVillageToContext(Context<Object> context, ISchedule schedule,
       SiteAllData siteData, int numHouseholds, FarmPlotValueParams farmPlotValueParams,
-      WoodPlotValueParams woodPlotValueParams) {
+      WoodPlotValueParams woodPlotValueParams, FarmingPlanParams farmingPlanParams,
+      WoodPlanParams woodPlanParams) {
 
     // Build the village object
     GridPoint centrePoint = new GridPoint((int) (siteData.getGridDimensions()[0] / 2.0),
@@ -468,8 +477,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     double gridCellAreaSqM = siteData.getGridCellPixelSize()[0] * siteData
         .getGridCellPixelSize()[1];
     // Common to all households
-    FarmingPlanParams fpParams = new FarmingPlanParams(2500, 3540, 0.75, 0.15, 300, 50);
-    FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(fpParams, gridCellAreaSqM);
+    FarmingPlanCalculator fpCalc = new FarmingPlanCalculator(farmingPlanParams, gridCellAreaSqM);
     WheatPatchConverter wheatPatchConverter = new WheatPatchConverter(
         (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name()),
         (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState.name()),
@@ -480,8 +488,7 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     // .deathRateParams(0.0545, 0.09, 0.0545, 1.0)
     // .targetYieldBufferFactor(0.1)
     // .build();
-    WoodPlanParams wpParams = new WoodPlanParams(1100, 300000, 0.1);
-    WoodPlanCalculator wpCalc = new WoodPlanCalculator(wpParams, gridCellAreaSqM);
+    WoodPlanCalculator wpCalc = new WoodPlanCalculator(woodPlanParams, gridCellAreaSqM);
 
     ScheduleParameters subsPlanSchedule = ScheduleParameters.createRepeating(1, 1, -2);
     // for land patch allocator

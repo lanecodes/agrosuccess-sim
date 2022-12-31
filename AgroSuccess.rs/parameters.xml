@@ -163,6 +163,39 @@
             converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
                   
     />
+    <parameter name="energyPerPersonPerDay" displayName="Calories required per person per day (Kcal)" type="double" 
+                    defaultValue="2500" 
+                    isReadOnly="true"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
+    <parameter name="energyPerKgWheat" displayName="Calories obtained by eating 1 kg wheat (Kcal)" type="double" 
+                    defaultValue="3540" 
+                    isReadOnly="true"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
+    <parameter name="farmerConScalar" displayName="Farmer conservativeness scalar (dimensionless)" type="double" 
+                    defaultValue="0.75" 
+                    isReadOnly="false"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+                  
+    />
+    <parameter name="cropReseedProp" displayName="Proportion of crop kept for reseeding" type="double" 
+                    defaultValue="0.15" 
+                    isReadOnly="false"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+    />
+    <parameter name="labourAvailability" displayName="Person-days each year that each agent is able to work" type="double" 
+                    defaultValue="300" 
+                    isReadOnly="false"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+    />
+    <parameter name="labourRequirementWheat" displayName="Number of person-days per hectare per year required for wheat agriculture" type="double" 
+                    defaultValue="50" 
+                    isReadOnly="false"
+                    converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+    />
 				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String" 
 						defaultValue="/AgroSuccess/data/geographic" 
 						isReadOnly="true" 
