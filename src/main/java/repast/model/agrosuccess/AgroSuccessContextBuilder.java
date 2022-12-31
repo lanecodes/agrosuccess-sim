@@ -188,7 +188,9 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
       ScheduleParameters allocatePatchesSchedule = ScheduleParameters.createRepeating(1, 1, -3);
       schedule.schedule(allocatePatchesSchedule, landPatchAllocator, "allocatePatches");
 
-      LcsUpdater dalLctUpdater = initDalLctUpdater(context);
+      // Schedule an action to convert over-farmed patches to depleted agricultural
+      // land (DAL) after maxFarmTime years of use for wheat farming.
+      LcsUpdater dalLctUpdater = initDalLctUpdater(context, params.getInteger("maxFarmTime"));
       IAction updateDalLandCoverState = new UpdateLandCoverStateAction(dalLctUpdater);
       schedule.schedule(ScheduleParameters.createRepeating(1, 1, -4), updateDalLandCoverState);
     }
@@ -515,14 +517,14 @@ public class AgroSuccessContextBuilder implements ContextBuilder<Object> {
     return theVillage;
   }
 
-  private LcsUpdater initDalLctUpdater(Context<Object> context) {
+  private LcsUpdater initDalLctUpdater(Context<Object> context, int maxFarmTime) {
     IGridValueLayer landCoverType = (IGridValueLayer) context.getValueLayer(LscapeLayer.Lct.name());
     IGridValueLayer timeInState = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeInState
         .name());
     IGridValueLayer timeFarmed = (IGridValueLayer) context.getValueLayer(LscapeLayer.TimeFarmed
         .name());
-    // TODO set depleted threshold time in parameters file
-    LcsUpdater dalLcsUpdater = new DalLcsUpdater(landCoverType, timeInState, timeFarmed, 50);
+    LcsUpdater dalLcsUpdater = new DalLcsUpdater(landCoverType, timeInState, timeFarmed,
+        maxFarmTime);
     return dalLcsUpdater;
   }
 

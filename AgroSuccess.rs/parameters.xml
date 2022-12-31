@@ -157,6 +157,12 @@
                         converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
                       
         />
+                <parameter name="maxFarmTime" displayName="Max farmed years before soil depletion" type="int" 
+            defaultValue="50" 
+            isReadOnly="false" 
+            converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+                  
+    />
 				<parameter name="geoDataDir" displayName="Geographic Data Directory" type="java.lang.String" 
 						defaultValue="/AgroSuccess/data/geographic" 
 						isReadOnly="true" 
