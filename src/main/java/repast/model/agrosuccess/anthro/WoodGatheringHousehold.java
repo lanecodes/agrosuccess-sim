@@ -303,6 +303,7 @@ public class WoodGatheringHousehold implements Household {
   @Override
   public void releasePatches() {
     this.wheatPatchesForYear.clear();
+    this.woodPatchesForYear.clear();
   }
 
   @Override
