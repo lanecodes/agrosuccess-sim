@@ -319,8 +319,16 @@ public class WoodGatheringHousehold implements Household {
     return this.wheatSubsistencePlan;
   }
 
+  public double getWoodSubsistencePlan() {
+    return this.woodSubsistencePlan;
+  }
+
   public int getNumWheatPatchesForYear() {
     return this.wheatPatchesForYear.size();
+  }
+
+  public int getNumWoodPatchesForYear() {
+    return this.woodPatchesForYear.size();
   }
 
 }
