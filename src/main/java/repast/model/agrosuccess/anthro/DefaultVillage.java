@@ -97,6 +97,9 @@ public class DefaultVillage implements Village {
     /**
      * Place the first argument before the second argument iff {@code PatchEvaluator#getValue}
      * yields a larger value for the first argument than for the second
+     *
+     * @implNote See https://stackoverflow.com/questions/19182700 for motivation for use of
+     *  Double.compare
      */
     @Override
     public int compare(PatchOption o1, PatchOption o2) {
@@ -107,12 +110,9 @@ public class DefaultVillage implements Village {
       double o1Value = this.evaluator.getValue(o1, location);
       double o2Value = this.evaluator.getValue(o2, location);
 
-      if (o1Value > o2Value) {
-        // Higher value -> appears first in sorted list
-        return -1;
-      }
-
-      return 1;
+      // -1 if o2Value < o1Value
+      // Higher value -> appears first in sorted list
+      return Double.compare(o2Value, o1Value);
     }
   }
 
