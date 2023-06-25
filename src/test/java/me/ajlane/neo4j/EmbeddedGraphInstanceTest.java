@@ -49,7 +49,7 @@ public class EmbeddedGraphInstanceTest {
 	}
 
 	@Test
-	public void AgroSuccessShouldHave9LandCoverTypes() {
+	public void AgroSuccessShouldHave10LandCoverTypes() {
 		int numLCT;
 		try (Transaction tx = graph.beginTx()) {
 			Result result = graph.execute(
@@ -57,7 +57,7 @@ public class EmbeddedGraphInstanceTest {
 			numLCT = toIntExact((long)result.next().get("num_lct"));
 			tx.success();
 		}
-		assertEquals(9, numLCT);
+		assertEquals(10, numLCT);
 	}
 
 	@Test

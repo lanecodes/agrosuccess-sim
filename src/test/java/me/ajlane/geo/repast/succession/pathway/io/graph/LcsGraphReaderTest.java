@@ -8,7 +8,6 @@ import org.junit.Test;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrAntecedent;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedEnvrConsequent;
 import me.ajlane.geo.repast.succession.pathway.aliased.AliasedLcsTransitionMap;
-import me.ajlane.geo.repast.succession.pathway.io.graph.LcsGraphReader;
 import me.ajlane.neo4j.EmbeddedGraphInstance;
 
 public class LcsGraphReaderTest {
@@ -49,15 +48,15 @@ public class LcsGraphReaderTest {
   @Test
   public void shouldFindExpectedNumberOfPossibleTransitions() {
     AliasedLcsTransitionMap map = LcsGraphReader.read(graph);
-    assertEquals(489, map.size());
+    assertEquals(572, map.size());
   }
 
   @Test
   public void shouldMatchCorrectConsequent1() {
     AliasedEnvrAntecedent testAnte =
-        new AliasedEnvrAntecedent("Oak", "regeneration", "north", "true", "false", "true", "xeric");
+        new AliasedEnvrAntecedent("Oak", "regeneration", "south", "true", "true", "true", "xeric");
 
-    AliasedEnvrConsequent expectedCons = new AliasedEnvrConsequent("Pine", 25);
+    AliasedEnvrConsequent expectedCons = new AliasedEnvrConsequent("TransForest", 30);
 
     AliasedLcsTransitionMap map = LcsGraphReader.read(graph);
 
@@ -69,7 +68,7 @@ public class LcsGraphReaderTest {
   @Test
   public void shouldWorkWhenCorrectModelIDIsUsed() {
     AliasedLcsTransitionMap map = LcsGraphReader.read(graph, correctModelID);
-    assertEquals(489, map.size());
+    assertEquals(572, map.size());
   }
 
   @Test

@@ -64,5 +64,8 @@ profiling
 # Batch configuration file, varies for each version of the model
 batch/batch_params.xml
 
+# Batch configuration properties, contain private VPS data
+batch/batch_configuration.properties
+
 # Run specific files
 scripts/rosalind/runs

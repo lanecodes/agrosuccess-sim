@@ -1,6 +1,6 @@
 package me.ajlane.geo.repast.fire;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import java.util.Map;
 import org.junit.Test;
 import repast.model.agrosuccess.AgroSuccessCodeAliases.Lct;
@@ -24,7 +24,7 @@ public class LcfMapGetterHardCodedTest {
     Map<Lct, Double> tf4LcfMap = tf4Getter.getMap();
     assertEquals(0.22, tf4LcfMap.get(Lct.TransForest), TOLERANCE);
     assertEquals(0.23, tf4LcfMap.get(Lct.Shrubland), TOLERANCE);
-    assertEquals(0.23, tf4LcfMap.get(Lct.Barley), TOLERANCE);
+    assertEquals(0.23, tf4LcfMap.get(Lct.Grassland), TOLERANCE);
   }
 
 }

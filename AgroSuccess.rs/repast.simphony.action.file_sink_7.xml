@@ -1,0 +1,18 @@
+<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.8.0">
+  <name>Household</name>
+  <dataSet>WoodGatheringHousehold</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>run</string>
+    <string>tick</string>
+    <string>Id</string>
+    <string>Population</string>
+    <string>WheatSubsistencePlan</string>
+    <string>WoodSubsistencePlan</string>
+    <string>NumWheatPatchesForYear</string>
+    <string>NumWoodPatchesForYear</string>
+  </sourceIds>
+  <fileName>./output/Household.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

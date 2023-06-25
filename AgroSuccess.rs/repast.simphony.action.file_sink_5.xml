@@ -1,12 +1,11 @@
-<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.7.0">
-  <name>LctProps</name>
-  <dataSet>Lct Proportions</dataSet>
+<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.8.0">
+  <name>FireSize</name>
+  <dataSet>Fire Size</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>tick</string>
-    <string>lct_proportions</string>
+    <string>Fire occurrence and size</string>
   </sourceIds>
-  <fileName>./output/LctProps.txt</fileName>
+  <fileName>./output/FireSize.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

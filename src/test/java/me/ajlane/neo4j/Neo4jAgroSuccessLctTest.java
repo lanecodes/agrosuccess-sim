@@ -31,12 +31,12 @@ public class Neo4jAgroSuccessLctTest {
   }
 
   @Test
-  public void shouldFind9LandCoverTypesInGraph() {
+  public void shouldFind10LandCoverTypesInGraph() {
     // confirms
     for (Neo4jAgroSuccessLct lct : getLcts()) {
       System.out.println(lct.getCode());
     }
-    assertEquals(9, getLcts().size());
+    assertEquals(10, getLcts().size());
   }
 
 }

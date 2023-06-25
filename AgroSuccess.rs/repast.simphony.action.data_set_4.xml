@@ -1,26 +1,26 @@
 <repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.8.0">
-  <name>Household</name>
+  <name>WoodGatheringHousehold</name>
   <type>NON_AGGREGATE</type>
-  <sourceType>repast.model.agrosuccess.anthro.DefaultHousehold</sourceType>
+  <sourceType>repast.model.agrosuccess.anthro.WoodGatheringHousehold</sourceType>
   <inclTick>true</inclTick>
-  <inclBatchRun>false</inclBatchRun>
+  <inclBatchRun>true</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
   <scheduleParams>
     <start>1.0</start>
     <interval>1.0</interval>
-    <priority>-Infinity</priority>
-    <pType>LAST</pType>
+    <priority>-4.0</priority>
+    <pType>OTHER</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>350647913</hashCode>
+    <hashCode>-2145818694</hashCode>
   </scheduleParams>
-  <atEnd>true</atEnd>
+  <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
       <string>Id</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Id</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
         <methodName>getId</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -28,24 +28,40 @@
       <string>Population</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Population</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
         <methodName>getPopulation</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>SubsistencePlan</string>
+      <string>WoodSubsistencePlan</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>SubsistencePlan</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
-        <methodName>getSubsistencePlan</methodName>
+        <id>WoodSubsistencePlan</id>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
+        <methodName>getWoodSubsistencePlan</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>WheatSubsistencePlan</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>WheatSubsistencePlan</id>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
+        <methodName>getWheatSubsistencePlan</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
       <string>NumWheatPatchesForYear</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>NumWheatPatchesForYear</id>
-        <className>repast.model.agrosuccess.anthro.DefaultHousehold</className>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
         <methodName>getNumWheatPatchesForYear</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>NumWoodPatchesForYear</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>NumWoodPatchesForYear</id>
+        <className>repast.model.agrosuccess.anthro.WoodGatheringHousehold</className>
+        <methodName>getNumWoodPatchesForYear</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

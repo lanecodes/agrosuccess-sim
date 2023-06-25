@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import repast.simphony.space.grid.GridPoint;
 
@@ -62,10 +63,12 @@ public class DefaultVillage implements Village {
     Comparator<PatchOption> farmComparator = new PatchComparator(this.farmPlotEval);
     this.sortedFarmValue = patchOptionsAsSortedList(allPatches, farmComparator);
     logger.debug("Finished sorting patches by farm value");
-
-    // Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
-    this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
-    // this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
+    Comparator<PatchOption> woodComparator = new PatchComparator(this.woodPlotEval);
+    // this.sortedWoodValue = new ArrayList<>(allPatches); // DUMMY, wood value not used TODO remove
+    this.sortedWoodValue = patchOptionsAsSortedList(allPatches, woodComparator);
+    logger.debug("Finished sorting patches by wood value");
+    logger.debug("10 highest ranked wood patches: " + this.sortedWoodValue.stream().limit(10).collect(Collectors.toList()));
+    logger.debug("10 lowest ranked wood patches: " + this.sortedWoodValue.stream().skip(Math.max(0, this.sortedWoodValue.size() - 10)).limit(10).collect(Collectors.toList()));
   }
 
   /**
@@ -94,6 +97,9 @@ public class DefaultVillage implements Village {
     /**
      * Place the first argument before the second argument iff {@code PatchEvaluator#getValue}
      * yields a larger value for the first argument than for the second
+     *
+     * @implNote See https://stackoverflow.com/questions/19182700 for motivation for use of
+     *  Double.compare
      */
     @Override
     public int compare(PatchOption o1, PatchOption o2) {
@@ -104,12 +110,9 @@ public class DefaultVillage implements Village {
       double o1Value = this.evaluator.getValue(o1, location);
       double o2Value = this.evaluator.getValue(o2, location);
 
-      if (o1Value > o2Value) {
-        // Higher value -> appears first in sorted list
-        return -1;
-      }
-
-      return 1;
+      // -1 if o2Value < o1Value
+      // Higher value -> appears first in sorted list
+      return Double.compare(o2Value, o1Value);
     }
   }
 

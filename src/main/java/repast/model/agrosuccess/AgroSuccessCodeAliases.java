@@ -74,7 +74,7 @@ public class AgroSuccessCodeAliases {
     TransForest(6, "TransForest", "#b10dc9"),
     Deciduous(7, "Deciduous", "#ff851b"),
     Oak(8, "Oak", "#85144b"),
-    Barley(9, "Barley", "#333333");
+    Grassland(9, "Grassland", "#333333");
 
     private int code;
     private String alias;
